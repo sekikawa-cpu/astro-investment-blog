@@ -3,12 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://example.com',
+  // Vercelから提供される一時的なURLでも動くように、仮のURLを設定します
+  site: 'https://example.com', 
   integrations: [sitemap()],
-  markdown: {
-    shikiConfig: {
-      theme: 'github-light',
-      wrap: true,
-    },
-  },
 });
