@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  // サイトマップ機能を一旦削除しました
-  integrations: [],
+  integrations: [tailwind()],
 });
