@@ -68,15 +68,15 @@ TZ = ZoneInfo("Asia/Tokyo")
 AFFILIATE_SECTION = """
 ---
 
-## 🔗 関連リンク
+## 📚 おすすめの投資書籍
 
-本記事で紹介した指数・ETFへの投資に関心のある方は、以下のリンクから各証券会社の口座開設ページをご覧いただけます。
+投資の基本を学びたい方へ、AIが分析する市場動向と合わせて読んでおきたい名著です。
 
-- 📈 [証券会社A で口座開設する](https://example.com/affiliate/broker-a?ref=PLACEHOLDER)
-- 💰 [証券会社B の積立NISA口座](https://example.com/affiliate/broker-b?ref=PLACEHOLDER)
-- 📚 [投資の書籍をAmazonで見る](https://example.com/affiliate/amazon?ref=PLACEHOLDER)
+- 📖 [ゼロからはじめる 不労所得のつくり方 (働かずに楽しく生きるためのマインド、メソッド、スキル)](https://amzn.to/4u4MaxH)
+- 📖 [知識ゼロでもお金が勝手に増えていく「不労所得」生活](https://amzn.to/3OBmJ83)
+- 📖 [【改訂版】本当の自由を手に入れる お金の大学](https://amzn.to/491Asf5)
 
-> ※ 上記リンクはアフィリエイト広告を含みます。リンク経由でのお申し込みにより、当サイトに収益が発生する場合があります。
+> ※ 上記リンクはAmazonアソシエイトリンクを使用しています。
 """
 
 
