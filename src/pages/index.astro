@@ -1,36 +1,47 @@
 ﻿---
 import { getCollection } from 'astro:content';
 
-// 記事データを取得して日付の新しい順に並び替え
 const posts = await getCollection('blog');
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>投資自動レポートメディア</title>
-    <style>
-      body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }
-      .post-card { border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-      .post-card a { text-decoration: none; color: #1a73e8; font-size: 1.2rem; font-weight: bold; }
-      .post-card a:hover { text-decoration: underline; }
-      .date { color: #666; font-size: 0.9rem; margin-bottom: 5px; }
-    </style>
+    <title>Invest Insights | 投資自動レポートメディア</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
-    <h1>投資自動レポートメディア 📈</h1>
-    <p>毎日17時にClaudeが最新の市場状況を分析して自動更新します。</p>
-    <hr />
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+    <header class="bg-slate-900 text-white shadow-md py-4">
+      <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold tracking-wider">Invest Insights 📈</a>
+        <span class="text-sm text-slate-300 hidden md:inline">AIが毎日の市場を分析</span>
+      </div>
+    </header>
 
-    <h2>最新の記事一覧</h2>
-    <div>
-      {posts.map((post) => (
-        <div class="post-card">
-          <p class="date">{new Date(post.data.pubDate).toLocaleDateString('ja-JP')}</p>
-          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-          <p>{post.data.description}</p>
-        </div>
-      ))}
-    </div>
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full">
+      <div class="mb-12 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">最新の市場動向を、AIの眼で。</h1>
+        <p class="text-slate-600">毎日17時にClaudeが最新の市場データを読み解き、プロ視点のレポートをお届けします。</p>
+      </div>
+
+      <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">最新のレポート</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {posts.map((post) => (
+          <a href={`/blog/${post.slug}`} class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-400 hover:-translate-y-1 transition-all duration-300 p-6">
+            <p class="text-sm text-blue-600 font-bold mb-2">{new Date(post.data.pubDate).toLocaleDateString('ja-JP')}</p>
+            <h3 class="text-xl font-bold text-slate-900 mb-3 leading-tight">{post.data.title}</h3>
+            <p class="text-slate-600 text-sm line-clamp-3 mb-4">{post.data.description}</p>
+            <div class="flex items-center text-blue-600 text-sm font-semibold">
+              記事を読む <span class="ml-1">→</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
+      <p class="text-sm">&copy; 2026 Invest Insights. All rights reserved.</p>
+    </footer>
   </body>
 </html>
