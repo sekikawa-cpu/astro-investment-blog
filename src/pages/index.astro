@@ -1,13 +1,36 @@
 ﻿---
-const title = "投資自動レポートメディア";
+import { getCollection } from 'astro:content';
+
+// 記事データを取得して日付の新しい順に並び替え
+const posts = await getCollection('blog');
+posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>{title}</title>
+    <title>投資自動レポートメディア</title>
+    <style>
+      body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }
+      .post-card { border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+      .post-card a { text-decoration: none; color: #1a73e8; font-size: 1.2rem; font-weight: bold; }
+      .post-card a:hover { text-decoration: underline; }
+      .date { color: #666; font-size: 0.9rem; margin-bottom: 5px; }
+    </style>
   </head>
   <body>
-    <h1>{title}</h1>
-    <p>毎日17時にClaudeが最新の市場状況を分析して更新します。</p>
+    <h1>投資自動レポートメディア 📈</h1>
+    <p>毎日17時にClaudeが最新の市場状況を分析して自動更新します。</p>
+    <hr />
+
+    <h2>最新の記事一覧</h2>
+    <div>
+      {posts.map((post) => (
+        <div class="post-card">
+          <p class="date">{new Date(post.data.pubDate).toLocaleDateString('ja-JP')}</p>
+          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+          <p>{post.data.description}</p>
+        </div>
+      ))}
+    </div>
   </body>
 </html>
