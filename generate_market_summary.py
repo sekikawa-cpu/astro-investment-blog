@@ -194,7 +194,25 @@ def generate_summary(prices: list[PriceInfo], report_date: str) -> str:
 
 def build_markdown(prices: list[PriceInfo], summary_body: str, report_date: str) -> str:
     title = f"{report_date} 市場サマリー: 高配当ETFと優待銘柄の動向"
-    frontmatter = f'---\ntitle: "{title}"\npubDate: {report_date}\ncategory: "マーケット分析"\nauthor: "Invest Insights"\n---\n\n'
+    description = "最新の監視銘柄データをAIが分析。高配当ETFや株主優待銘柄の動向から、不労所得を育てるためのヒントをお届けします。"
+
+    # 修正箇所：Astroが要求する設定（descriptionやtags）をしっかり記載
+    frontmatter_lines = [
+        "---",
+        f'title: "{title}"',
+        f'description: "{description}"',
+        f'pubDate: {report_date}',
+        'category: "マーケット分析"',
+        'tags:',
+        '  - "高配当ETF"',
+        '  - "株主優待"',
+        '  - "不労所得"',
+        'author: "配当＆優待ナビ"',
+        'draft: false',
+        "---",
+        ""
+    ]
+    frontmatter = "\n".join(frontmatter_lines)
     
     table = "## 本日の監視銘柄データ（全20種）\n\n| 銘柄 | 終値 | 前日比 | 変化率 |\n|---|---|---|---|\n"
     for p in prices:
