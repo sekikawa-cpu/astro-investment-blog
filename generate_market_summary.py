@@ -13,6 +13,7 @@ except ImportError:
     print("Error: anthropic package is required.", file=sys.stderr)
     sys.exit(2)
 
+# ---------- 設定 ----------
 TICKER_POOL: Dict[str, str] = {
     "1489.T": "日経高配当50ETF", "^GSPC": "S&P 500", "SPYD": "SPYD (米国高配当)", "VYM": "VYM (米国高配当)",
     "2914.T": "JT", "8306.T": "三菱UFJFG", "9432.T": "NTT", "8058.T": "三菱商事",
@@ -70,34 +71,47 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     data_str = "\n".join([str(p.to_dict()) for p in prices])
     response = client.messages.create(
         model=CLAUDE_MODEL, max_tokens=3500,
-        system="1行目：銘柄コード（カンマ区切り）、2行目：備考JSON、3行目以降：各銘柄の詳細解説（###順位形式）を出力してください。",
+        system="1行目：銘柄コード（カンマ区切り）、2行目：備考JSON、3行目以降：詳細解説（### [順位]位 形式）。必ず16-20位も個別に解説してください。",
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
+    
+    # 柔軟な解析: 1行目がランキング、2行目がJSONであることを想定
     ranking_tickers = [t.strip() for t in str(lines).split(',') if t.strip()]
-    try: remarks_map = json.loads(lines)
-    except: remarks_map = {}
+    try:
+        remarks_map = json.loads(lines)
+    except:
+        remarks_map = {}
+        
     return ranking_tickers, remarks_map, "\n".join(lines[2:])
 
 def build_markdown(prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新銘柄をお届け。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
-    table = "## 📊 本日の注目銘柄ベスト20\n\n| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
+    
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の高配当・優待銘柄動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    
+    table = "## 📊 本日の注目銘柄ベスト20\n\n"
+    table += "| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n"
+    table += "|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
     for i, p in enumerate(final_list, 1):
         sign = "+" if p.change >= 0 else ""
         table += f"| {i} | `{p.ticker}` | {p.name} | {p.yield_pc:.2f}% | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% | {remarks.get(p.ticker, '-')} |\n"
+    
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
-        books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
+        books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}" referrerpolicy="no-referrer"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
+    
     footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。</div>\n"
+    
     return fm + table + "\n" + body + "\n" + books + footer
 
 def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
+        if not prices: return 1
         ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
