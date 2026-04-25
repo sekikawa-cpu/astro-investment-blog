@@ -64,7 +64,14 @@ jobs:
           fi
 
       # ------------------------------
-      # 4. 市場サマリー記事を生成
+      # 4. 書影画像をダウンロード（未取得分のみ）
+      # ------------------------------
+      - name: Download book covers
+        run: |
+          python download_covers.py || echo "⚠️ Some covers failed to download, continuing..."
+
+      # ------------------------------
+      # 5. 市場サマリー記事を生成
       # ------------------------------
       - name: Generate market summary
         id: generate
@@ -75,7 +82,7 @@ jobs:
           python generate_market_summary.py
 
       # ------------------------------
-      # 5. 変更の有無を確認
+      # 6. 変更の有無を確認
       # ------------------------------
       - name: Check for changes
         id: check
@@ -91,7 +98,7 @@ jobs:
           fi
 
       # ------------------------------
-      # 6. Git の認証情報を設定してコミット&プッシュ
+      # 7. Git の認証情報を設定してコミット&プッシュ
       # ------------------------------
       - name: Commit and push changes
         if: steps.check.outputs.has_changes == 'true' || github.event.inputs.force_commit == 'true'
@@ -103,7 +110,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # コミット対象は記事ディレクトリのみに限定(ログファイル等を巻き込まない)
-          git add src/content/blog/
+          git add src/content/blog/ public/images/books/ || true
 
           # 今日の日付をコミットメッセージに入れる
           REPORT_DATE=$(date +%Y-%m-%d)
@@ -131,7 +138,7 @@ jobs:
           exit 1
 
       # ------------------------------
-      # 7. ログファイルをアーティファクトとして保存(失敗調査用)
+      # 8. ログファイルをアーティファクトとして保存(失敗調査用)
       # ------------------------------
       - name: Upload log artifact
         if: always()  # 成功・失敗を問わず保存する
@@ -144,7 +151,7 @@ jobs:
           if-no-files-found: ignore
 
       # ------------------------------
-      # 8. 失敗時の通知(任意: Slack 等を設定している場合)
+      # 9. 失敗時の通知(任意: Slack 等を設定している場合)
       # ------------------------------
       - name: Notify on failure
         if: failure()

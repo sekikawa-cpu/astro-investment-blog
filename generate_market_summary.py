@@ -127,27 +127,30 @@ def select_books_by_theme(books: List[Dict], themes: List[str], count: int = 3) 
 # ---------------------------------------------------------------------------
 def resolve_cover_src(book: Dict) -> str:
     """
-    public/images/books/{ISBN13}.jpg が存在すればローカルパスを返す。
-    なければフォールバックとして楽天ブックスの既知URLパターンを試みる。
+    書影URLを以下の優先順で解決する:
+    1. public/images/books/{ISBN13}.jpg (download_covers.py でDL済みのローカルファイル)
+    2. books_data.json の cover_url フィールド（楽天ブックスCDN確認済みURL）
+    3. openBD / Google Books API（フォールバック）
+    4. SVG プレースホルダー（最終手段）
     """
     isbn13 = book.get("isbn13", "")
+
+    # 1. ローカルファイルが存在する場合は最優先
     local_path = PUBLIC_BOOKS_DIR / f"{isbn13}.jpg"
     if local_path.exists() and local_path.stat().st_size > 1024:
         return book["image_local"]  # /images/books/... → Astro が static ファイルとして配信
 
-    # ローカル未存在: 楽天ブックスの画像URLを構築（rakuten_id が既知の場合のみ）
-    # この URL は download_covers.py が解決したものを books_data.json に書けば理想的だが、
-    # ここでは生成時にも取得を試みる（ネット環境必須）
-    rakuten_id = book.get("rakuten_id", "")
-    if rakuten_id and isbn13:
-        last4 = isbn13[-4:]
-        # 楽天の既知パターン（_1_N の N は書籍によって異なるため、直接スクレイプが必要）
-        # ここでは fallback として openBD / Google Books を試みる
-        url = _try_remote_cover(isbn13)
-        if url:
-            return url
+    # 2. books_data.json に登録済みの cover_url（楽天ブックスCDN）
+    cover_url = book.get("cover_url", "")
+    if cover_url:
+        return cover_url
 
-    # 最終: SVG インラインプレースホルダー
+    # 3. openBD / Google Books API（ネット環境必須）
+    url = _try_remote_cover(isbn13)
+    if url:
+        return url
+
+    # 4. SVG プレースホルダー
     title_short = (book.get("title", "Book") or "")[:8]
     safe = title_short.replace('"', "").replace("'", "")
     svg = (
@@ -418,6 +421,54 @@ def generate_summary(
     return intro, ranking_tickers, remarks, body, themes
 
 
+
+# ---------------------------------------------------------------------------
+# 時事ネタ連動タイトル生成
+# ---------------------------------------------------------------------------
+def _extract_topic_title(intro: str, news: List["NewsItem"]) -> str:
+    """
+    当日の市場動向・ニュースから読者が引きつけられるタイトルを生成する。
+    intro と news の内容をキーワード解析し、最も強いテーマを反映したタイトルを返す。
+    """
+    combined = intro + " " + " ".join(n.title for n in news)
+
+    # キーワード → タイトルテンプレートのマッピング（優先度順）
+    patterns = [
+        # 金利・日銀
+        (["日銀", "利上げ", "金融正常化", "利下げ", "FOMC", "FRB"], "金利動向が変わる！銀行・高配当株の注目銘柄ベスト20"),
+        # 為替・円安円高
+        (["円安", "ドル高", "為替"], "円安局面で狙う！外貨収益・資源株の注目銘柄ベスト20"),
+        (["円高", "ドル安"], "円高局面の守り方！ディフェンシブ高配当株の注目銘柄ベスト20"),
+        # 半導体・AI・テクノロジー
+        (["半導体", "AI", "人工知能", "NVIDIA", "エヌビディア", "テック"], "AI・半導体相場に乗る！テクノロジー関連と高配当株の注目銘柄ベスト20"),
+        # 最高値・上昇相場
+        (["最高値", "最高水準", "史上", "6万円", "最高値更新"], "日経最高値更新！上昇相場で配当を積み上げる注目銘柄ベスト20"),
+        # 資源・原油
+        (["原油", "資源", "エネルギー", "INPEX", "石油"], "資源価格上昇で恩恵！エネルギー・商社株の注目銘柄ベスト20"),
+        # 決算・業績
+        (["決算", "増益", "増配", "業績"], "好決算ラッシュ！増配・業績好調の注目銘柄ベスト20"),
+        # 商社
+        (["商社", "三菱商事", "伊藤忠", "バフェット"], "バフェットも注目！総合商社と高配当株の注目銘柄ベスト20"),
+        # 銀行・金融
+        (["銀行", "メガバンク", "金融", "三菱UFJ", "三井住友"], "金利上昇で輝く！銀行・金融株の注目銘柄ベスト20"),
+        # NISA・新NISA
+        (["NISA", "新NISA", "積立"], "新NISA活用！長期で育てる高配当・優待株の注目銘柄ベスト20"),
+        # 不労所得・配当
+        (["配当", "高配当", "不労所得", "インカム"], "配当金で不労所得を構築！高配当の注目銘柄ベスト20"),
+        # 調整・下落
+        (["調整", "下落", "急落", "売られ"], "調整局面は仕込みどき！押し目買いの注目高配当銘柄ベスト20"),
+        # 米国株
+        (["S&P", "ダウ", "米国株", "ナスダック"], "米国市場に連動！日米高配当株の注目銘柄ベスト20"),
+    ]
+
+    for keywords, template in patterns:
+        if any(kw in combined for kw in keywords):
+            return template
+
+    # どれも一致しない場合のデフォルト
+    return "市場を動かすテーマで選ぶ！高配当・優待株の注目銘柄ベスト20"
+
+
 # ---------------------------------------------------------------------------
 # Markdown 構築
 # ---------------------------------------------------------------------------
@@ -440,9 +491,12 @@ def build_markdown(
     description = description.replace('"', "'").replace("\n", " ")
 
     # --- frontmatter ---
+    # 時事ネタ連動タイトルを生成（introの最初の話題から抽出）
+    topic_title = _extract_topic_title(intro, news)
+
     fm = (
         "---\n"
-        f'title: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\n'
+        f'title: "{topic_title}"\n'
         f'description: "{description}"\n'
         f"pubDate: {report_date}\n"
         'category: "マーケット分析"\n'
@@ -509,9 +563,11 @@ def build_markdown(
         title_esc = b["title"].replace('"', "&quot;")
         books_html += (
             '<div class="book-item">'
+            f'<a href="{aff_url}" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link">'
             f'<img src="{cover_src}" alt="{title_esc}" '
             'referrerpolicy="no-referrer" loading="lazy" '
             'onerror="this.onerror=null;this.style.opacity=\'0.25\';">'
+            '</a>'
             '<div class="book-info">'
             f'<strong><a href="{aff_url}" target="_blank" rel="noopener noreferrer sponsored">{b["title"]}</a></strong>'
             f'<p class="book-author">著者: {b.get("author", "")}</p>'
