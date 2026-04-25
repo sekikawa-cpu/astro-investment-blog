@@ -74,10 +74,10 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     data_str = "\n".join([str(p.to_dict()) for p in prices])
     
     system_prompt = """あなたは不労所得を目指す投資メンターです。
-1行目：【導入文】現在の経済状況や投資家へのエール（200文字程度）。
-2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで（必ず20件）。
-3行目：各銘柄の「備考（25文字以内）」をJSON形式で。増配、優待、決算など注目トピック優先。
-4行目以降：各銘柄の詳細解説（### [順位]位 [コード] [銘柄名] 形式）。
+1行目：【導入文】経済概況や投資家へのメッセージ（200文字程度）。
+2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで。
+3行目：各銘柄の「備考（25文字以内）」をJSON形式で。
+4行目以降：詳細解説（### [順位]位 [コード] [銘柄名] 形式）。
 """
     
     response = client.messages.create(
@@ -87,10 +87,10 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     
-    # 解析（ここを強固に修正しました）
+    # --- 解析部分を極めて強固に修正 ---
     intro_text = lines
     
-    # 2行目のリストをクレンジング（文字列であることを確実にする）
+    # 2行目のリストを確実に文字列として処理
     ranking_raw = str(lines)
     ranking_line = ranking_raw.replace('[', '').replace(']', '').replace("'", "").replace('"', '')
     ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
@@ -109,7 +109,7 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の高配当・優待銘柄動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の注目トピックと配当動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     
     intro_content = f'<div class="lead-text">{intro}</div>\n\n'
     
@@ -117,12 +117,8 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     table += '<div class="table-wrapper"><table>\n'
     table += '<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n'
     table += '<tbody>\n'
-    
     for i, p in enumerate(final_list, 1):
-        row_class = ""
-        if p.change > 0: row_class = ' class="row-up"'
-        elif p.change < 0: row_class = ' class="row-down"'
-        
+        row_class = ' class="row-up"' if p.change > 0 else (' class="row-down"' if p.change < 0 else '')
         table += f'  <tr{row_class}>\n'
         table += f'    <td style="text-align:center;">{i}</td>\n'
         table += f'    <td style="text-align:center;"><strong>{p.ticker}</strong></td>\n'
