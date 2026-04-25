@@ -74,11 +74,11 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([str(p.to_dict()) for p in prices])
     
-    # 備考欄の指示を強化
-    system_prompt = """あなたは不労所得を目指す投資家のメンターです。
-1行目：銘柄コード（カンマ区切り）
-2行目：各銘柄の「備考（25文字以内）」をJSON形式で。単なる説明ではなく、直近の決算、増配、自社株買い、優待など、投資家が「今」注目すべき具体的なトピックを優先してください。
-3行目以降：各銘柄の詳細解説（### [順位]位 形式）。
+    system_prompt = """あなたは不労所得を目指す投資メンターです。以下の構成で出力してください。
+1行目：【導入文】経済概況や投資家へのメッセージ（200文字程度）。
+2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで（20件）。
+3行目：各銘柄の「備考（25文字以内）」をJSON形式で。増配、優待、決算など注目トピックを優先。
+4行目以降：詳細解説（### [順位]位 [コード] [銘柄名] 形式）。
 """
     
     response = client.messages.create(
@@ -87,38 +87,60 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     )
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
-    ranking_tickers = [t.strip() for t in str(lines).split(',') if t.strip()]
-    try: remarks_map = json.loads(str(lines))
+    
+    intro_text = lines
+    ranking_line = lines.replace('[', '').replace(']', '').replace("'", "").replace('"', '')
+    ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
+    
+    try:
+        remarks_map = {}
+        for line in lines[2:6]:
+            if '{' in line and '}' in line:
+                remarks_map = json.loads(line)
+                break
     except: remarks_map = {}
-    return ranking_tickers, remarks_map, "\n".join(lines[2:])
+        
+    return intro_text, ranking_tickers, remarks_map, "\n".join(lines[3:])
 
-def build_markdown(prices, ranking_tickers, remarks, body, report_date):
+def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の注目トピックと配当動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "{intro[:50]}..." \npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     
-    # 指定の列順でテーブル作成
+    intro_content = f'<div class="lead-text">{intro}</div>\n\n'
+    
     table = "## 📊 本日の注目銘柄ベスト20\n\n"
-    table += "| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n"
-    table += "|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
+    table += '<div class="table-wrapper"><table>\n'
+    table += '<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n'
+    table += '<tbody>\n'
     for i, p in enumerate(final_list, 1):
-        sign = "+" if p.change >= 0 else ""
-        table += f"| {i} | `{p.ticker}` | {p.name} | {p.yield_pc:.2f}% | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% | {remarks.get(p.ticker, '-')} |\n"
+        row_class = ' class="row-up"' if p.change > 0 else (' class="row-down"' if p.change < 0 else '')
+        table += f'  <tr{row_class}>\n'
+        table += f'    <td style="text-align:center;">{i}</td>\n'
+        table += f'    <td style="text-align:center;"><strong>{p.ticker}</strong></td>\n'
+        table += f'    <td><strong>{p.name}</strong></td>\n'
+        table += f'    <td style="text-align:right;">{p.yield_pc:.2f}%</td>\n'
+        table += f'    <td style="text-align:right;">{p.close:,.1f}</td>\n'
+        table += f'    <td style="text-align:right;">{"+" if p.change > 0 else ""}{p.change:,.1f}</td>\n'
+        table += f'    <td style="text-align:right;">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td>\n'
+        table += f'    <td>{remarks.get(p.ticker, "-")}</td>\n'
+        table += '  </tr>\n'
+    table += '</tbody></table></div>\n\n'
     
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     
-    footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。この記事の収益はサイトの維持・運営に役立てられます。</div>\n"
-    return fm + table + "\n" + body + "\n" + books + footer
+    footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。</div>\n"
+    return fm + intro_content + table + "\n" + body + "\n" + books + footer
 
 def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
-        ranking, remarks, body = generate_summary(prices, report_date)
-        md = build_markdown(prices, ranking, remarks, body, report_date)
+        intro, ranking, remarks, body = generate_summary(prices, report_date)
+        md = build_markdown(intro, prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / f"{report_date}.md").write_text(md, encoding="utf-8")
         print("Success")
