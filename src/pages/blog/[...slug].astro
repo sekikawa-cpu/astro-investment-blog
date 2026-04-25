@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 
-// 1. 全記事の動的パスを生成
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
   return blogEntries.map(entry => ({
@@ -9,7 +8,6 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. 記事データの取得とレンダリング準備
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
@@ -58,94 +56,33 @@ const { Content } = await entry.render();
 </html>
 
 <style is:global>
-  /* --- 本文内の共通スタイル --- */
-  .markdown-content h2 {
-    @apply text-2xl font-bold text-slate-800 mt-16 mb-8 border-l-8 border-blue-600 pl-4 bg-slate-50 py-2;
-  }
-  
-  .markdown-content h3 {
-    @apply text-xl font-bold text-blue-700 mt-12 mb-4 border-b-2 border-blue-100 pb-2;
-  }
+  .markdown-content h2 { @apply text-2xl font-bold text-slate-800 mt-16 mb-8 border-l-8 border-blue-600 pl-4 bg-slate-50 py-2; }
+  .markdown-content h3 { @apply text-xl font-bold text-blue-700 mt-12 mb-4 border-b-2 border-blue-100 pb-2; }
+  .markdown-content p { @apply leading-relaxed mb-6 text-slate-700 text-base; }
 
-  .markdown-content p {
-    @apply leading-relaxed mb-6 text-slate-700 text-base;
-  }
+  /* テーブルのフォント拡大と配置 */
+  .markdown-content table { @apply w-full border-collapse my-10 shadow-sm rounded-lg overflow-hidden; display: table; font-size: 1rem; }
+  .markdown-content th { @apply bg-slate-800 text-white p-4 font-bold text-xs uppercase text-center; }
+  .markdown-content td { @apply p-4 border-b border-slate-100 text-slate-700; }
+  .markdown-content tr:nth-child(even) { background-color: #f8fafc; }
 
-  /* --- ベスト20テーブルのカスタマイズ --- */
-  .markdown-content table {
-    @apply w-full border-collapse my-10 shadow-sm rounded-lg overflow-hidden;
-    display: table;
-    font-size: 1rem; /* テーブル内のフォントを少し大きく */
-  }
-  
-  .markdown-content th {
-    @apply bg-slate-800 text-white p-4 font-bold text-xs uppercase tracking-wider text-center;
-  }
-  
-  .markdown-content td {
-    @apply p-4 border-b border-slate-100 text-slate-700;
-  }
-  
-  /* ゼブラストライプ（縞々） */
-  .markdown-content tr:nth-child(even) {
-    background-color: #f8fafc;
-  }
+  /* 数値の右揃え */
+  .markdown-content td:nth-child(4), .markdown-content td:nth-child(5), 
+  .markdown-content td:nth-child(6), .markdown-content td:nth-child(7) { text-align: right; font-variant-numeric: tabular-nums; }
+  .markdown-content td:nth-child(1), .markdown-content td:nth-child(2) { text-align: center; @apply font-semibold; }
 
-  /* ホバー時に強調 */
-  .markdown-content tr:hover {
-    background-color: #f1f5f9;
-  }
-
-  /* 列の配置調整 */
-  /* 順位(1)・コード(2) は中央 */
-  .markdown-content td:nth-child(1),
-  .markdown-content td:nth-child(2) {
-    text-align: center;
-    @apply font-semibold;
-  }
-
-  /* 配当率(4)・終値(5)・前日比(6)・変化率(7) は右揃え */
-  .markdown-content td:nth-child(4),
-  .markdown-content td:nth-child(5),
-  .markdown-content td:nth-child(6),
-  .markdown-content td:nth-child(7) {
-    text-align: right;
-    font-variant-numeric: tabular-nums; /* 数値を揃えやすく */
-  }
-
-  /* --- 書籍紹介セクション（サムネイル付き横並び） --- */
-  .book-item {
-    @apply flex flex-col md:flex-row items-start gap-6 mb-10 border border-slate-100 p-6 rounded-xl bg-slate-50;
-  }
-  
+  /* 書籍紹介の横並びデザイン（ここが修正ポイントです） */
+  .book-item { @apply flex flex-col md:flex-row items-start gap-6 mb-10 border border-slate-100 p-6 rounded-xl bg-slate-50; }
   .book-item img {
-    width: 100px;
-    min-width: 100px;
-    height: 140px;
+    width: 100px; min-width: 100px;
+    height: 140px; /* ここが 140px です */
     object-fit: cover;
     @apply rounded shadow-md flex-shrink-0 border border-slate-200 bg-slate-200;
-    /* 読み込み失敗時の対策 */
-    display: block;
   }
-  
-  .book-item .book-info {
-    @apply flex-1 min-w-0;
-  }
-  
-  .book-item strong {
-    @apply text-lg text-slate-900 block mb-3 leading-snug;
-  }
-  
-  .book-item strong a {
-    @apply text-blue-700 hover:underline hover:text-blue-500;
-  }
-  
-  .book-item p {
-    @apply text-sm text-slate-600 m-0 leading-relaxed;
-  }
+  .book-item .book-info { @apply flex-1 min-w-0; }
+  .book-item strong { @apply text-lg text-slate-900 block mb-3 leading-snug; }
+  .book-item strong a { @apply text-blue-700 hover:underline; }
+  .book-item p { @apply text-sm text-slate-600 m-0 leading-relaxed; }
 
-  /* --- 免責事項・Amazon注釈（最下部に統合） --- */
-  .disclaimer {
-    @apply mt-20 pt-8 border-t border-dashed border-slate-300 text-[11px] text-slate-400 leading-relaxed italic;
-  }
+  .disclaimer { @apply mt-20 pt-8 border-t border-dashed border-slate-300 text-[11px] text-slate-400 italic; }
 </style>
