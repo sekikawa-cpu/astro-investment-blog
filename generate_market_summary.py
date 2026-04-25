@@ -1,27 +1,14 @@
 """
-1489.T(NEXT FUNDS 日経高配当50指数連動型ETF)と S&P500(^GSPC)の終値・前日比を取得し、
-Claude API に市場解説文を生成させて Astro ブログ用 Markdown として保存するスクリプト。
-
-処理フロー:
-  1. yfinance で価格取得(指数バックオフ付きリトライ)
-  2. Claude API に解説生成を依頼(リトライ付き)
-  3. Frontmatter 付き Markdown を src/content/blog/YYYY-MM-DD.md として保存
-
-必要な環境変数:
-  ANTHROPIC_API_KEY  — Claude API のキー
-
-使い方:
-  pip install yfinance pandas anthropic
-  export ANTHROPIC_API_KEY="sk-ant-..."
-  python generate_market_summary.py
+設定した20銘柄の終値・前日比を取得し、
+Claude API に不労所得特化型の市場解説文を生成させて Astro ブログ用 Markdown として保存するスクリプト。
 """
 
 from __future__ import annotations
-
 import logging
 import os
 import sys
 import time
+import random
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -39,374 +26,184 @@ except ImportError:
     print("エラー: anthropic パッケージが必要です。`pip install anthropic` を実行してください。", file=sys.stderr)
     sys.exit(2)
 
-
 # ---------- 設定 ----------
+# 不労所得＆優待マネーマシン向けの厳選20銘柄
 TICKERS: dict[str, str] = {
-    "1489.T": "NEXT FUNDS 日経高配当50指数連動型ETF",
+    # 王道インデックス＆ETF
+    "1489.T": "日経高配当50ETF",
     "^GSPC": "S&P 500",
+    "SPYD": "SPYD (米国高配当ETF)",
+    "VYM": "VYM (米国高配当ETF)",
+    # 日本の高配当・累進配当スター銘柄
+    "2914.T": "JT (超高配当)",
+    "8306.T": "三菱UFJFG (高配当)",
+    "9432.T": "NTT (高配当・分割・優待)",
+    "8058.T": "三菱商事 (累進配当)",
+    "8593.T": "三菱HCキャピタル (連続増配)",
+    "1605.T": "INPEX (高配当)",
+    "1928.T": "積水ハウス (高配当)",
+    "7203.T": "トヨタ自動車 (日本株代表・配当)",
+    # 生活密着型の強力な株主優待銘柄
+    "8267.T": "イオン (買い物・キャッシュバック優待)",
+    "9433.T": "KDDI (連続増配・カタログ優待)",
+    "2702.T": "日本マクドナルドHD (飲食優待)",
+    "3197.T": "すかいらーくHD (飲食優待)",
+    "9861.T": "吉野家HD (飲食優待)",
+    "8282.T": "ケーズHD (家電優待・高配当)",
+    "2503.T": "キリンHD (飲食料品優待)",
+    "9202.T": "ANAHD (航空券優待)",
 }
 
-# 価格取得
 MAX_RETRIES = 3
 INITIAL_BACKOFF = 2.0
 FETCH_PERIOD = "5d"
 
-# Claude API
-CLAUDE_MODEL = "claude-opus-4-7"
-CLAUDE_MAX_TOKENS = 1200
+CLAUDE_MODEL = "claude-3-5-sonnet-20240620"
+CLAUDE_MAX_TOKENS = 1500 # 銘柄が増えたので出力上限を少し増やしました
 CLAUDE_MAX_RETRIES = 3
 CLAUDE_INITIAL_BACKOFF = 3.0
 
-# 出力先(Astro プロジェクトの src/content/blog/ 配下)
 OUTPUT_DIR = Path("src/content/blog")
-
-# タイムゾーン(日付の基準)
 TZ = ZoneInfo("Asia/Tokyo")
 
-# アフィリエイト・リンクのプレースホルダー
-# 実運用時は実際のリンクに差し替える
-AFFILIATE_SECTION = """
----
+# ---------- 📚 おすすめ書籍のプール ----------
+BOOK_POOL = [
+    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/example1", "desc": "資産形成の基本が網羅された一冊。"},
+    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/example2", "desc": "日本の高配当株投資のバイブル。"},
+    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/example3", "desc": "富と幸福に関する深い洞察が得られます。"},
+    {"title": "敗者のゲーム", "url": "https://amzn.to/example4", "desc": "インデックス投資の重要性を説く不朽の名著。"},
+    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/example5", "desc": "シンプルで力強い投資哲学が学べます。"},
+    {"title": "ほったらかし投資術", "url": "https://amzn.to/example6", "desc": "手間をかけずに資産を築く具体的な手法。"},
+    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/example7", "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
+    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/example8", "desc": "投資の本質を突いた感動的な一冊。"},
+]
 
-## 📚 おすすめの投資書籍
+def get_dynamic_affiliate_section() -> str:
+    """BOOK_POOLからランダムに3〜5冊を選んでセクションを作成する。"""
+    num_to_select = random.randint(3, 5)
+    selected_books = random.sample(BOOK_POOL, num_to_select)
+    
+    section = "\n---\n\n## 📚 本日の注目・おすすめ投資書籍\n\n"
+    section += "市場動向と合わせてチェックしておきたい、資産形成に役立つ良書をピックアップしました。\n\n"
+    
+    for book in selected_books:
+        section += f"- 📖 **[{book['title']}]({book['url']})**\n"
+        section += f"  - {book['desc']}\n"
+    
+    section += "\n> ※ 上記リンクはAmazonアソシエイトリンクを使用しています。この記事の収益はサイトの維持・運営に役立てられます。\n"
+    return section
 
-投資の基本を学びたい方へ、AIが分析する市場動向と合わせて読んでおきたい名著です。
-
-- 📖 [ゼロからはじめる 不労所得のつくり方 (働かずに楽しく生きるためのマインド、メソッド、スキル)](https://amzn.to/4u4MaxH)
-- 📖 [知識ゼロでもお金が勝手に増えていく「不労所得」生活](https://amzn.to/3OBmJ83)
-- 📖 [【改訂版】本当の自由を手に入れる お金の大学](https://amzn.to/491Asf5)
-
-> ※ 上記リンクはAmazonアソシエイトリンクを使用しています。
-"""
-
-
-# ---------- ロガー ----------
+# ---------- ロガー・データクラス ----------
 def setup_logger(log_file: str = "generate_market_summary.log") -> logging.Logger:
     logger = logging.getLogger("market_summary")
     logger.setLevel(logging.INFO)
-    if logger.handlers:
-        return logger
-
-    fmt = logging.Formatter(
-        "%(asctime)s [%(levelname)s] %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    sh = logging.StreamHandler(sys.stdout)
-    sh.setFormatter(fmt)
-    logger.addHandler(sh)
-
+    if logger.handlers: return logger
+    fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    sh = logging.StreamHandler(sys.stdout); sh.setFormatter(fmt); logger.addHandler(sh)
     try:
-        fh = logging.FileHandler(log_file, encoding="utf-8")
-        fh.setFormatter(fmt)
-        logger.addHandler(fh)
-    except OSError as e:
-        logger.warning("ログファイルを開けませんでした: %s", e)
-
+        fh = logging.FileHandler(log_file, encoding="utf-8"); fh.setFormatter(fmt); logger.addHandler(fh)
+    except OSError: pass
     return logger
-
 
 logger = setup_logger()
 
-
-# ---------- データクラス ----------
 @dataclass
 class PriceInfo:
-    ticker: str
-    name: str
-    date: pd.Timestamp
-    close: float
-    prev_close: float
-
+    ticker: str; name: str; date: pd.Timestamp; close: float; prev_close: float
     @property
-    def change(self) -> float:
-        return self.close - self.prev_close
-
+    def change(self) -> float: return self.close - self.prev_close
     @property
     def change_pct(self) -> float:
-        if self.prev_close == 0:
-            return 0.0
+        if self.prev_close == 0: return 0.0
         return (self.change / self.prev_close) * 100
-
     def to_dict(self) -> dict:
-        """LLM に渡すための辞書表現。"""
-        return {
-            "ticker": self.ticker,
-            "name": self.name,
-            "date": self.date.strftime("%Y-%m-%d"),
-            "close": round(self.close, 2),
-            "prev_close": round(self.prev_close, 2),
-            "change": round(self.change, 2),
-            "change_pct": round(self.change_pct, 2),
-        }
+        return {"ticker": self.ticker, "name": self.name, "date": self.date.strftime("%Y-%m-%d"),
+                "close": round(self.close, 2), "prev_close": round(self.prev_close, 2),
+                "change": round(self.change, 2), "change_pct": round(self.change_pct, 2)}
 
-
-# ---------- 価格取得 ----------
+# ---------- 各種処理関数 ----------
 def fetch_history(ticker: str, period: str = FETCH_PERIOD) -> pd.DataFrame:
-    last_exc: Optional[Exception] = None
     backoff = INITIAL_BACKOFF
-
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            logger.info("価格取得 %d/%d: %s", attempt, MAX_RETRIES, ticker)
             df = yf.Ticker(ticker).history(period=period, auto_adjust=False)
-            if df is None or df.empty:
-                raise ValueError(f"{ticker} のデータが空です")
+            if df is None or df.empty: raise ValueError("Data empty")
             return df
-        except (RequestException, ValueError, KeyError) as e:
-            last_exc = e
-            logger.warning("取得失敗 (%s): %s — %.1f秒後にリトライ", ticker, e, backoff)
-            if attempt < MAX_RETRIES:
-                time.sleep(backoff)
-                backoff *= 2
         except Exception as e:
-            logger.exception("予期しないエラー (%s)", ticker)
-            raise
-
-    raise RuntimeError(f"{ticker} の取得に {MAX_RETRIES} 回失敗しました") from last_exc
-
+            if attempt < MAX_RETRIES: time.sleep(backoff); backoff *= 2
+    raise RuntimeError(f"Failed to fetch {ticker}")
 
 def extract_price_info(ticker: str, name: str, df: pd.DataFrame) -> PriceInfo:
-    if len(df) < 2:
-        raise ValueError(f"{ticker}: 2営業日分のデータがありません(取得件数: {len(df)})")
-
     df_sorted = df.sort_index()
-    latest = df_sorted.iloc[-1]
-    prev = df_sorted.iloc[-2]
-
-    close = float(latest["Close"])
-    prev_close = float(prev["Close"])
-    if pd.isna(close) or pd.isna(prev_close):
-        raise ValueError(f"{ticker}: 終値に NaN が含まれています")
-
-    return PriceInfo(
-        ticker=ticker,
-        name=name,
-        date=df_sorted.index[-1],
-        close=close,
-        prev_close=prev_close,
-    )
-
+    latest, prev = df_sorted.iloc[-1], df_sorted.iloc[-2]
+    return PriceInfo(ticker=ticker, name=name, date=df_sorted.index[-1], close=float(latest["Close"]), prev_close=float(prev["Close"]))
 
 def collect_prices() -> list[PriceInfo]:
-    """全銘柄の価格を取得。失敗した銘柄があれば例外を投げる(記事生成には全銘柄必要)。"""
+    """20銘柄中、エラーが起きてもスキップして可能な限りデータを集める仕様"""
     results: list[PriceInfo] = []
     for ticker, name in TICKERS.items():
-        df = fetch_history(ticker)
-        info = extract_price_info(ticker, name, df)
-        logger.info(
-            "取得成功: %s 終値=%.2f 前日比=%+.2f (%+.2f%%)",
-            ticker, info.close, info.change, info.change_pct,
-        )
-        results.append(info)
+        try:
+            df = fetch_history(ticker)
+            info = extract_price_info(ticker, name, df)
+            results.append(info)
+        except Exception as e:
+            logger.warning(f"取得スキップ ({ticker}): {e}") # 1つ失敗しても全体は止めない
     return results
 
-
-# ---------- Claude API による解説生成 ----------
-SYSTEM_PROMPT = """あなたは「ウォール街での経験を持つベテラン証券アナリスト」であり、同時に「初心者にも分かりやすい解説で人気の投資ブロガー」です。
-提供された株価データを元に、個人投資家（特に高配当株やS&P500に投資している層）にとって有益で、毎日読みたくなるような魅力的な市場サマリー記事を日本語で執筆してください。
+SYSTEM_PROMPT = """あなたは「配当金と株主優待で不労所得（マネーマシン）の構築を目指す個人投資家」に寄り添う、温かくも鋭いAI投資メンターです。
+提供された20銘柄の株価データを元に、読者が「今日も投資を頑張ろう！」「長期保有を続けよう！」とモチベーションが上がるような魅力的なレポートを執筆してください。
 
 記事の要件:
-- 文字数は800〜1200字程度で、読み応えのある内容にする。
-- 専門用語は適度に噛み砕き、中級者〜初心者にも理解できるレベルにすること。
-- 断定的な将来予測は避け、「〜という見方が強い」「〜の可能性があります」といった客観的な表現を用いること。
-- 適度に絵文字（📈, 💡, ⚠️など）を使用し、ブログ記事としての読みやすさを意識すること。
-- Markdown形式で出力し、記事本文のみを返す(frontmatterや大タイトルは不要。Python側で表を自動生成するため、記事は挨拶とハイライトから書き始めてください)。
+- 文字数は800〜1200字程度。絵文字（💰, 🎁, 📈など）を使って親しみやすく。
+- すべての銘柄に言及する必要はありません。全体的な傾向や、特に動きの大きかった銘柄、読者が注目すべき数銘柄をピックアップして解説してください。
+- 日々の価格の上下に一喜一憂するのではなく、「暴落時は高利回りで買えるチャンス」「優待・配当の長期的な恩恵」といった、不労所得を狙う投資家目線での考察を必ず入れること。
+- 専門用語は適度に噛み砕き、これから資産形成を始める初心者にも理解できるレベルにすること。
+- Markdown形式で出力し、記事本文のみを返す(frontmatterや大タイトルは不要)。
 
 【記事の構成】以下の見出し(## または ###)を使って構造化してください。
-1. 本日の相場ハイライト（3行程度の箇条書きで分かりやすく）
-2. プロの視点：市場の背景と分析（なぜその値動きになったのか、セクター動向や背景の推測）
-3. 明日以降の注目ポイント・投資家へのアドバイス
+1. 本日の不労所得トピックス（今日の相場を一言で表すポジティブな箇条書き）
+2. 注目銘柄の動向（高配当ETFや優待銘柄の値動きが、私たちの配当利回りにどう影響するか）
+3. メンターからのアドバイス（長期目線での心構えや、明日以降の戦略）
 4. 免責事項（本記事は情報提供を目的としており、投資判断はご自身の責任で行ってください、という旨）
 """
 
-def build_user_prompt(prices: list[PriceInfo], report_date: str) -> str:
-    """LLM に渡すユーザープロンプトを組み立てる。"""
-    lines = [f"【レポート対象日】{report_date}", "", "【本日の市場データ】"]
-    for p in prices:
-        d = p.to_dict()
-        sign = "+" if d["change"] >= 0 else ""
-        lines.append(
-            f"- {d['name']}({d['ticker']})"
-            f" 終値: {d['close']:,.2f} / 前日比: {sign}{d['change']:.2f} "
-            f"({sign}{d['change_pct']:.2f}%) / 基準日: {d['date']}"
-        )
-    lines += [
-        "",
-        "上記のデータを元に、日本の高配当株(日経平均高配当50)と米国株(S&P 500)の動向を比較し、",
-        "個人投資家が「明日も読みたい！」と思えるような、深く、かつ親しみやすい分析記事を執筆してください。"
-    ]
-    return "\n".join(lines)
-
-
 def generate_summary(prices: list[PriceInfo], report_date: str) -> str:
-    """Claude API を呼び出して市場サマリーを生成する。リトライ付き。"""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise RuntimeError("環境変数 ANTHROPIC_API_KEY が設定されていません")
-
+    if not api_key: raise RuntimeError("API Key missing")
     client = anthropic.Anthropic(api_key=api_key)
-    user_prompt = build_user_prompt(prices, report_date)
-
-    last_exc: Optional[Exception] = None
-    backoff = CLAUDE_INITIAL_BACKOFF
-
-    for attempt in range(1, CLAUDE_MAX_RETRIES + 1):
-        try:
-            logger.info("Claude API 呼び出し %d/%d (model=%s)",
-                        attempt, CLAUDE_MAX_RETRIES, CLAUDE_MODEL)
-            response = client.messages.create(
-                model=CLAUDE_MODEL,
-                max_tokens=CLAUDE_MAX_TOKENS,
-                system=SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": user_prompt}],
-            )
-
-            # 応答からテキストブロックを抽出
-            text_parts = [
-                block.text for block in response.content
-                if getattr(block, "type", None) == "text"
-            ]
-            text = "\n".join(text_parts).strip()
-
-            if not text:
-                raise ValueError("Claude API から空の応答が返されました")
-
-            logger.info("Claude API 成功(入力 %d / 出力 %d トークン)",
-                        response.usage.input_tokens, response.usage.output_tokens)
-            return text
-
-        except (RateLimitError, APIConnectionError) as e:
-            # レート制限や一時的な接続エラーはリトライ
-            last_exc = e
-            logger.warning("一時的な API エラー: %s — %.1f秒後にリトライ", e, backoff)
-            if attempt < CLAUDE_MAX_RETRIES:
-                time.sleep(backoff)
-                backoff *= 2
-        except APIError as e:
-            # 400系は基本リトライしても無駄なので即停止
-            logger.error("Claude API エラー(非リトライ対象): %s", e)
-            raise
-        except ValueError as e:
-            # 空応答はリトライする価値がある
-            last_exc = e
-            logger.warning("%s — %.1f秒後にリトライ", e, backoff)
-            if attempt < CLAUDE_MAX_RETRIES:
-                time.sleep(backoff)
-                backoff *= 2
-
-    raise RuntimeError(f"Claude API 呼び出しに {CLAUDE_MAX_RETRIES} 回失敗しました") from last_exc
-
-
-# ---------- Markdown 生成 ----------
-def yaml_escape(s: str) -> str:
-    """frontmatter 用に安全な文字列(ダブルクォート)に整形。"""
-    return s.replace("\\", "\\\\").replace('"', '\\"')
-
+    user_prompt = f"レポート対象日: {report_date}\n\n【本日の市場データ】\n" + "\n".join([str(p.to_dict()) for p in prices])
+    
+    response = client.messages.create(
+        model=CLAUDE_MODEL, max_tokens=CLAUDE_MAX_TOKENS, system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_prompt}]
+    )
+    return response.content.text
 
 def build_markdown(prices: list[PriceInfo], summary_body: str, report_date: str) -> str:
-    """frontmatter + 価格サマリー表 + LLM 生成本文 + アフィリエイトを結合する。"""
-    # タイトル・description を数値ベースで生成
-    nikkei = next((p for p in prices if p.ticker == "1489.T"), None)
-    sp500 = next((p for p in prices if p.ticker == "^GSPC"), None)
-
-    def trend_word(p: Optional[PriceInfo]) -> str:
-        if p is None:
-            return "データ欠損"
-        if p.change > 0:
-            return "上昇"
-        if p.change < 0:
-            return "下落"
-        return "横ばい"
-
-    title = f"{report_date} 市場サマリー:高配当ETFとS&P500の動向"
-    description = (
-        f"{report_date}時点の市場レポート。"
-        f"日経高配当50連動ETF(1489.T)は{trend_word(nikkei)}、"
-        f"S&P 500は{trend_word(sp500)}。主要指数の終値と前日比を解説します。"
-    )
-    tags = ["市場サマリー", "高配当ETF", "S&P500", "日経平均"]
-
-    # frontmatter(Astro Content Collections のスキーマに合わせる)
-    frontmatter_lines = [
-        "---",
-        f'title: "{yaml_escape(title)}"',
-        f'description: "{yaml_escape(description)}"',
-        f"pubDate: {report_date}",
-        'category: "マーケット分析"',
-        "tags:",
-    ]
-    frontmatter_lines += [f'  - "{yaml_escape(t)}"' for t in tags]
-    frontmatter_lines += [
-        'author: "Invest Insights 編集部"',
-        "draft: false",
-        "---",
-        "",
-    ]
-
-    # データ表(事実ベースの部分は機械的に生成してLLMの誤記リスクを減らす)
-    table_lines = [
-        "## 本日の市場データ",
-        "",
-        "| 銘柄 | 終値 | 前日比 | 変化率 |",
-        "|------|------|--------|--------|",
-    ]
+    title = f"{report_date} 市場サマリー: 高配当ETFと優待銘柄の動向"
+    frontmatter = f'---\ntitle: "{title}"\npubDate: {report_date}\ncategory: "マーケット分析"\nauthor: "Invest Insights"\n---\n\n'
+    
+    table = "## 本日の監視銘柄データ（全20種）\n\n| 銘柄 | 終値 | 前日比 | 変化率 |\n|---|---|---|---|\n"
     for p in prices:
         sign = "+" if p.change >= 0 else ""
-        table_lines.append(
-            f"| {p.name} ({p.ticker}) "
-            f"| {p.close:,.2f} "
-            f"| {sign}{p.change:,.2f} "
-            f"| {sign}{p.change_pct:.2f}% |"
-        )
-    table_lines.append("")
-    table_lines.append(f"*基準日: {report_date}(データソース: Yahoo! Finance)*")
-    table_lines.append("")
+        table += f"| {p.name} | {p.close:,.2f} | {sign}{p.change:,.2f} | {sign}{p.change_pct:.2f}% |\n"
+    
+    return frontmatter + table + "\n" + summary_body + get_dynamic_affiliate_section()
 
-    return "\n".join(frontmatter_lines) + "\n".join(table_lines) + "\n" + summary_body + "\n" + AFFILIATE_SECTION
-
-
-def save_markdown(content: str, report_date: str, output_dir: Path = OUTPUT_DIR) -> Path:
-    """src/content/blog/YYYY-MM-DD.md として保存する。既存ファイルは上書き警告。"""
-    output_dir.mkdir(parents=True, exist_ok=True)
-    out_path = output_dir / f"{report_date}.md"
-    if out_path.exists():
-        logger.warning("既存ファイルを上書きします: %s", out_path)
-
-    out_path.write_text(content, encoding="utf-8")
-    logger.info("保存完了: %s (%d バイト)", out_path, len(content.encode("utf-8")))
-    return out_path
-
-
-# ---------- メイン ----------
-def main() -> int:
-    logger.info("=== 市場サマリー生成開始 ===")
-
+def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
-    logger.info("レポート対象日: %s", report_date)
-
     try:
         prices = collect_prices()
+        if not prices:
+            raise ValueError("1件もデータを取得できませんでした。")
+        summary = generate_summary(prices, report_date)
+        md = build_markdown(prices, summary, report_date)
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        (OUTPUT_DIR / f"{report_date}.md").write_text(md, encoding="utf-8")
+        print(f"Success: {report_date}.md")
     except Exception as e:
-        logger.error("価格取得に失敗したため処理を中止します: %s", e)
-        return 1
-
-    try:
-        summary_body = generate_summary(prices, report_date)
-    except Exception as e:
-        logger.error("Claude API での記事生成に失敗しました: %s", e)
-        return 1
-
-    try:
-        md = build_markdown(prices, summary_body, report_date)
-        out_path = save_markdown(md, report_date)
-    except OSError as e:
-        logger.error("Markdown 保存に失敗しました: %s", e)
-        return 1
-
-    print(f"\n✅ 記事を生成しました: {out_path}")
-    logger.info("=== 市場サマリー生成完了 ===")
+        print(f"Error: {e}"); return 1
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
