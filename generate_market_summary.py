@@ -447,7 +447,7 @@ def build_markdown(
         f"pubDate: {report_date}\n"
         'category: "マーケット分析"\n'
         'tags: ["高配当株", "不労所得", "日次レポート"]\n'
-        'author: "配当＆優待ナビ AI編集部"\n'
+        'author: "配当＆優待ナビ 編集部"\n'
         "draft: false\n"
         "---\n\n"
     )
