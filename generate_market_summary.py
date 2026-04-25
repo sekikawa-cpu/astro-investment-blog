@@ -28,15 +28,19 @@ CLAUDE_MODEL = "claude-opus-4-7"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
+# ---------- 📚 BOOK_POOL（Amazon公式配信URL） ----------
+def get_amazon_img(asin: str) -> str:
+    return f"https://ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN={asin}&Format=_SL250_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1"
+
 BOOK_POOL = [
-    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "img": "https://m.media-amazon.com/images/P/B08688RT6T.01.LZZZZZZZ.jpg", "desc": "資産形成の基本が網羅された一冊。"},
-    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "img": "https://m.media-amazon.com/images/P/B0B9XF5Z8V.01.LZZZZZZZ.jpg", "desc": "日本の高配当株投資のバイブル。"},
-    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/4d9ozFx", "img": "https://m.media-amazon.com/images/P/B08X49G7QY.01.LZZZZZZZ.jpg", "desc": "富と幸福に関する深い洞察が得られます。"},
-    {"title": "敗者のゲーム", "url": "https://amzn.to/3QvojJd", "img": "https://m.media-amazon.com/images/P/B07K963L4V.01.LZZZZZZZ.jpg", "desc": "インデックス投資の重要性を説く不朽の名著。"},
-    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/4d587XL", "img": "https://m.media-amazon.com/images/P/B09MT96T85.01.LZZZZZZZ.jpg", "desc": "シンプルで力強い投資哲学が学べます。"},
-    {"title": "ほったらかし投資術", "url": "https://amzn.to/3OAYhUh", "img": "https://m.media-amazon.com/images/P/B09QXN9L7F.01.LZZZZZZZ.jpg", "desc": "手間をかけずに資産を築く具体的な手法。"},
-    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/4e3igFr", "img": "https://m.media-amazon.com/images/P/B07P88Z2N4.01.LZZZZZZZ.jpg", "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
-    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/4cQ85lp", "img": "https://m.media-amazon.com/images/P/B08L39W8Z8.01.LZZZZZZZ.jpg", "desc": "投資の本質を突いた感動的な一冊。"},
+    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "img": get_amazon_img("B08688RT6T"), "desc": "資産形成の基本が網羅された一冊。"},
+    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "img": get_amazon_img("B0B9XF5Z8V"), "desc": "日本の高配当株投資のバイブル。"},
+    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/4d9ozFx", "img": get_amazon_img("B08X49G7QY"), "desc": "富と幸福に関する深い洞察が得られます。"},
+    {"title": "敗者のゲーム", "url": "https://amzn.to/3QvojJd", "img": get_amazon_img("B07K963L4V"), "desc": "インデックス投資の重要性を説く不朽の名著。"},
+    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/4d587XL", "img": get_amazon_img("B09MT96T85"), "desc": "シンプルで力強い投資哲学が学べます。"},
+    {"title": "ほったらかし投資術", "url": "https://amzn.to/3OAYhUh", "img": get_amazon_img("B09QXN9L7F"), "desc": "手間をかけずに資産を築く具体的な手法。"},
+    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/4e3igFr", "img": get_amazon_img("B07P88Z2N4"), "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
+    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/4cQ85lp", "img": get_amazon_img("B08L39W8Z8"), "desc": "投資の本質を突いた感動的な一冊。"},
 ]
 
 @dataclass
@@ -69,47 +73,50 @@ def force_to_str(obj: Any) -> str:
 def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([str(p.to_dict()) for p in prices])
+    
+    # 備考欄の指示を強化
+    system_prompt = """あなたは不労所得を目指す投資家のメンターです。
+1行目：銘柄コード（カンマ区切り）
+2行目：各銘柄の「備考（25文字以内）」をJSON形式で。単なる説明ではなく、直近の決算、増配、自社株買い、優待など、投資家が「今」注目すべき具体的なトピックを優先してください。
+3行目以降：各銘柄の詳細解説（### [順位]位 形式）。
+"""
+    
     response = client.messages.create(
-        model=CLAUDE_MODEL, max_tokens=3500,
-        system="1行目：銘柄コード（カンマ区切り）、2行目：備考JSON、3行目以降：各銘柄の詳細解説（### 順位位 形式）を出力してください。",
+        model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
-    
-    # 【重要修正】1行目だけを確実に取り出す
     ranking_tickers = [t.strip() for t in str(lines).split(',') if t.strip()]
-    try:
-        remarks_map = json.loads(str(lines))
-    except:
-        remarks_map = {}
-        
+    try: remarks_map = json.loads(str(lines))
+    except: remarks_map = {}
     return ranking_tickers, remarks_map, "\n".join(lines[2:])
 
 def build_markdown(prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の注目銘柄動向をお届けします。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の注目トピックと配当動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     
-    table = "## 📊 本日の注目銘柄ベスト20\n\n| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
+    # 指定の列順でテーブル作成
+    table = "## 📊 本日の注目銘柄ベスト20\n\n"
+    table += "| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n"
+    table += "|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
     for i, p in enumerate(final_list, 1):
         sign = "+" if p.change >= 0 else ""
         table += f"| {i} | `{p.ticker}` | {p.name} | {p.yield_pc:.2f}% | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% | {remarks.get(p.ticker, '-')} |\n"
     
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
-        # 確実に表示させるためimg属性のみで構成
         books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     
-    footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。</div>\n"
+    footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。この記事の収益はサイトの維持・運営に役立てられます。</div>\n"
     return fm + table + "\n" + body + "\n" + books + footer
 
 def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
-        if not prices: return 1
         ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
