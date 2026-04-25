@@ -24,13 +24,14 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-CLAUDE_MODEL = "claude-3-5-sonnet-20240620"
+# モデル名を latest に修正して404を回避
+CLAUDE_MODEL = "claude-3-5-sonnet-latest" 
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
 def get_amazon_img(asin: str) -> str:
-    # 最も表示されやすいAmazon公式の画像サーバーパス
-    return f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
+    # 2026年時点で最も安定している配信パス
+    return f"https://images-fe.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
 
 BOOK_POOL = [
     {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "asin": "B08688RT6T", "desc": "資産形成の基本が網羅された一冊。"},
@@ -68,14 +69,13 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     system_prompt = """あなたは投資メンターです。
 1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
 2行目：おすすめ20銘柄のコードをカンマ区切りで。
-3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配傾向", "9432.T": "還元強化"}
-4行目以降：各銘柄の詳細解説。"""
+3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "配当利回り高水準", "9432.T": "安定感あり"}
+4行目以降：各銘柄の詳細解説（### [順位]位 形式）。"""
     response = client.messages.create(model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
                                      messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}])
     full_text = response.content.text.strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     intro = lines
-    # 銘柄リスト解析の堅牢化
     ranking_raw = str(lines).replace('[','').replace(']','').replace("'","").replace('"','')
     ranking_tickers = [t.strip() for t in ranking_raw.split(',') if t.strip()]
     remarks = {}
@@ -97,8 +97,8 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     content += '</tbody></table></div>\n\n'
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
-        # 確実に画像を表示させるための referrerpolicy="no-referrer"
         img_url = get_amazon_img(b['asin'])
+        # referrerpolicy="no-referrer" でAmazonのチェックを回避
         books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     return fm + content + body + books
 

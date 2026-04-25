@@ -12,14 +12,14 @@ const { Content } = await entry.render();
     <meta charset="utf-8" />
     <title>{entry.data.title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta name="referrer" content="no-referrer">
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
     <header class="bg-slate-900 text-white shadow-md py-4">
       <div class="max-w-5xl mx-auto px-4"><a href="/" class="text-xl font-bold">配当＆優待ナビ 💸</a></div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-10 w-full bg-white shadow-sm my-6 rounded-lg">
+    <main class="max-w-5xl mx-auto px-4 py-10 w-full bg-white shadow-sm my-6 rounded-lg border border-slate-100">
       <article class="prose prose-slate max-w-none px-4 md:px-10">
         <header class="mb-10 border-b pb-8">
           <p class="text-blue-600 font-bold mb-3">{new Date(entry.data.pubDate).toLocaleDateString('ja-JP')}</p>
@@ -36,17 +36,15 @@ const { Content } = await entry.render();
   /* 導入文 */
   .lead-text { @apply text-lg text-slate-600 leading-relaxed mb-12 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 italic; }
 
-  /* テーブル */
+  /* テーブル基本 */
   .table-wrapper { @apply overflow-x-auto my-10 shadow-sm rounded-lg border border-slate-200; }
   .stock-table { @apply w-full border-collapse bg-white text-sm !important; }
   .stock-table th { @apply bg-slate-800 text-white p-3 font-bold text-center !important; }
   .stock-table td { @apply p-3 border-b border-slate-100 !important; }
   
-  /* --- 行の色分け設定 --- */
-  /* 前日比プラス: 赤色 */
-  .red-row td { color: #ef4444 !important; font-weight: 500; }
-  /* 前日比マイナス: ダークグリーン (視認性向上) */
-  .green-row td { color: #166534 !important; font-weight: 500; }
+  /* --- 色分けルール --- */
+  .red-row td { color: #ef4444 !important; font-weight: 500; }   /* 赤色 */
+  .green-row td { color: #166534 !important; font-weight: 600; } /* 濃い緑色（視認性UP） */
   
   .red-row td strong, .green-row td strong { color: inherit; }
 
@@ -55,15 +53,12 @@ const { Content } = await entry.render();
   .text-right { text-align: right !important; }
   .font-bold { font-weight: 700 !important; }
 
-  /* 書籍リストのデザイン修正 */
+  /* 書籍リスト */
   .book-item { @apply flex flex-col md:flex-row items-center gap-6 mb-10 border p-6 rounded-xl bg-slate-50; }
   .book-item img { 
-    width: 100px; 
-    height: 140px; 
-    object-fit: contain; 
+    width: 100px; height: 140px; object-fit: contain;
     @apply rounded shadow-md flex-shrink-0 bg-white border border-slate-200; 
   }
-  .book-item .book-info { @apply flex-1; }
   .book-item strong { @apply text-lg block mb-2 text-slate-900; }
   .book-item p { @apply text-sm text-slate-600 m-0; }
 </style>
