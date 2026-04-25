@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 
-// 1. 全記事のパスを生成
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
   return blogEntries.map(entry => ({
@@ -9,7 +8,6 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. 記事データの取得
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
@@ -58,7 +56,6 @@ const { Content } = await entry.render();
 </html>
 
 <style is:global>
-  /* 記事本文内のMarkdown要素のスタイル調整 */
   .markdown-content h2 {
     @apply text-2xl font-bold text-slate-800 mt-12 mb-6 border-l-4 border-blue-600 pl-4;
   }
@@ -69,17 +66,16 @@ const { Content } = await entry.render();
     @apply leading-relaxed mb-6 text-slate-700;
   }
 
-  /* --- テーブルのカスタマイズ（縞々・右揃え） --- */
   .markdown-content table {
     width: 100%;
     border-collapse: collapse;
     margin: 2rem 0;
     font-size: 0.9rem;
     display: block;
-    overflow-x: auto; /* スマホで見切れないように横スクロール許可 */
+    overflow-x: auto;
   }
   .markdown-content th {
-    background-color: #1e293b; /* ダークな紺色 */
+    background-color: #1e293b;
     color: white;
     padding: 12px;
     font-weight: bold;
@@ -92,29 +88,21 @@ const { Content } = await entry.render();
     color: #334155;
   }
   
-  /* 奇数・偶数行の色分け（ゼブラストライプ） */
   .markdown-content tr:nth-child(even) {
     background-color: #f8fafc;
   }
 
-  /* マウスホバーで強調 */
-  .markdown-content tr:hover {
-    background-color: #f1f5f9;
-  }
-
-  /* Python側で指定した :---: (右揃え) などを適用 */
+  /* フォント指定（Courier New）を削除し、メインフォントに統一 */
   .markdown-content td:nth-child(4),
   .markdown-content td:nth-child(5),
   .markdown-content td:nth-child(6) {
     text-align: right;
-    font-family: 'Courier New', Courier, monospace; /* 数値を揃えやすくする */
   }
   .markdown-content td:nth-child(1),
   .markdown-content td:nth-child(3) {
     text-align: center;
   }
 
-  /* 免責事項を控えめにする */
   small {
     display: block;
     margin-top: 3rem;
@@ -125,11 +113,11 @@ const { Content } = await entry.render();
     color: #94a3b8 !important;
   }
 
-  /* おすすめ書籍セクションの微調整 */
+  /* 書籍セクション：カード風デザインを解除し、シンプルなリストに */
   .markdown-content ul {
-    @apply list-none p-0;
+    @apply list-disc pl-6 mb-6;
   }
   .markdown-content li {
-    @apply mb-4 p-4 bg-blue-50 rounded-lg border border-blue-100;
+    @apply mb-2 text-slate-700;
   }
 </style>
