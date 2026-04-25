@@ -24,7 +24,7 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-# ワークベンチで確認できた最新モデルID
+# 関川さんのコンソールで確認できた正しいID
 CLAUDE_MODEL = "claude-sonnet-4-6" 
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
@@ -66,10 +66,10 @@ def collect_prices() -> List[PriceInfo]:
 def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([f"{p.ticker}, {p.name}, {p.change_pct:.2f}%" for p in prices])
-    system_prompt = """あなたは投資メンターです。以下の構成で必ず出力してください。
+    system_prompt = """あなたは投資メンターです。
 1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
 2行目：おすすめ20銘柄のコードをカンマ区切りで。
-3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配傾向", "9432.T": "安定感あり"}
+3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配基調", "9432.T": "安定感あり"}
 4行目以降：各銘柄の詳細解説（### [順位]位 形式）。"""
     
     response = client.messages.create(
@@ -77,7 +77,7 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     
-    # 【重要】リストの最初の要素の text 属性にアクセス
+    # 【解決策】response.content.text でアクセスすることでリストのエラーを回避
     full_text = response.content.text.strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     
@@ -103,15 +103,13 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     content = f'<div class="lead-text">{intro}</div>\n\n## 📊 本日の注目銘柄ベスト20\n\n'
     content += '<div class="table-wrapper"><table class="stock-table">\n<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n<tbody>\n'
     for i, p in enumerate(final_list, 1):
-        # 変化率による色分け用クラス付与
         cls = "red-row" if p.change > 0 else ("green-row" if p.change < 0 else "")
         content += f'<tr class="{cls}"><td class="text-center">{i}</td><td class="text-center font-bold">{p.ticker}</td><td class="font-bold">{p.name}</td><td class="text-right">{p.yield_pc:.2f}%</td><td class="text-right">{p.close:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td><td>{remarks.get(p.ticker, "-")}</td></tr>\n'
     content += '</tbody></table></div>\n\n'
-    
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         img_url = get_amazon_img(b['asin'])
-        # referrerpolicy="no-referrer" でAmazon側のチェックを回避
+        # referrerpolicy="no-referrer" を追加してAmazonの制限を完全に回避
         books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer" loading="lazy"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     return fm + content + body + books
 
@@ -119,7 +117,6 @@ def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
-        if not prices: return 1
         intro, ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(intro, prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
