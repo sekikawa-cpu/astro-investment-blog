@@ -24,22 +24,23 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-CLAUDE_MODEL = "claude-opus-4-7"
+CLAUDE_MODEL = "claude-3-5-sonnet-20240620"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
 def get_amazon_img(asin: str) -> str:
-    return f"https://ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN={asin}&Format=_SL250_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1"
+    # 最も表示されやすいAmazon公式の画像サーバーパス
+    return f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
 
 BOOK_POOL = [
-    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "img": get_amazon_img("B08688RT6T"), "desc": "資産形成の基本が網羅された一冊。"},
-    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "img": get_amazon_img("B0B9XF5Z8V"), "desc": "日本の高配当株投資のバイブル。"},
-    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/4d9ozFx", "img": get_amazon_img("B08X49G7QY"), "desc": "富と幸福に関する深い洞察が得られます。"},
-    {"title": "敗者のゲーム", "url": "https://amzn.to/3QvojJd", "img": get_amazon_img("B07K963L4V"), "desc": "インデックス投資の重要性を説く不朽の名著。"},
-    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/4d587XL", "img": get_amazon_img("B09MT96T85"), "desc": "シンプルで力強い投資哲学が学べます。"},
-    {"title": "ほったらかし投資術", "url": "https://amzn.to/3OAYhUh", "img": get_amazon_img("B09QXN9L7F"), "desc": "手間をかけずに資産を築く具体的な手法。"},
-    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/4e3igFr", "img": get_amazon_img("B07P88Z2N4"), "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
-    {"title": "父が娘に伝える 自由に生きるための30 investment の教え", "url": "https://amzn.to/4cQ85lp", "img": get_amazon_img("B08L39W8Z8"), "desc": "投資の本質を突いた感動的な一冊。"},
+    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "asin": "B08688RT6T", "desc": "資産形成の基本が網羅された一冊。"},
+    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "asin": "B0B9XF5Z8V", "desc": "日本の高配当株投資のバイブル。"},
+    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/4d9ozFx", "asin": "B08X49G7QY", "desc": "富と幸福に関する深い洞察が得られます。"},
+    {"title": "敗者のゲーム", "url": "https://amzn.to/3QvojJd", "asin": "B07K963L4V", "desc": "インデックス投資の重要性を説く不朽の名著。"},
+    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/4d587XL", "asin": "B09MT96T85", "desc": "シンプルで力強い投資哲学が学べます。"},
+    {"title": "ほったらかし投資術", "url": "https://amzn.to/3OAYhUh", "asin": "B09QXN9L7F", "desc": "手間をかけずに資産を築く具体的な手法。"},
+    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/4e3igFr", "asin": "B07P88Z2N4", "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
+    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/4cQ85lp", "asin": "B08L39W8Z8", "desc": "投資の本質を突いた感動的な一冊。"},
 ]
 
 @dataclass
@@ -49,7 +50,6 @@ class PriceInfo:
     def change(self) -> float: return self.close - self.prev_close
     @property
     def change_pct(self) -> float: return (self.change / self.prev_close) * 100 if self.prev_close != 0 else 0
-    def to_dict(self) -> dict: return {"ticker": self.ticker, "name": self.name, "yield": f"{self.yield_pc:.2f}%", "close": round(self.close, 2), "change_pct": f"{self.change_pct:.2f}%"}
 
 def collect_prices() -> List[PriceInfo]:
     results = []
@@ -62,84 +62,50 @@ def collect_prices() -> List[PriceInfo]:
         except: continue
     return results
 
-def force_to_str(obj: Any) -> str:
-    if obj is None: return ""
-    if isinstance(obj, str): return obj
-    if isinstance(obj, list): return "".join([force_to_str(item) for item in obj])
-    if hasattr(obj, 'text'): return force_to_str(obj.text)
-    return str(obj)
-
 def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-    data_str = "\n".join([str(p.to_dict()) for p in prices])
-    system_prompt = """あなたは不労所得を目指す投資メンターです。
-1行目：【導入文】現在の経済状況や投資家へのメッセージ（200文字程度）。
-2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで（20件）。
-3行目：各銘柄の「備考（25文字以内）」をJSON形式で。
-4行目以降：詳細解説（### [順位]位 形式）。
-"""
-    response = client.messages.create(
-        model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
-        messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
-    )
-    full_text = force_to_str(response.content).strip()
+    data_str = "\n".join([f"{p.ticker}, {p.name}, {p.change_pct:.2f}%" for p in prices])
+    system_prompt = """あなたは投資メンターです。
+1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
+2行目：おすすめ20銘柄のコードをカンマ区切りで。
+3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配傾向", "9432.T": "還元強化"}
+4行目以降：各銘柄の詳細解説。"""
+    response = client.messages.create(model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
+                                     messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}])
+    full_text = response.content.text.strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
-    
-    intro_text = lines
-    # ここでリストを強制的に文字列にしてから置換
-    ranking_raw = str(lines)
-    ranking_line = ranking_raw.replace('[', '').replace(']', '').replace("'", "").replace('"', '')
-    ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
-    
-    try:
-        remarks_map = {}
-        for line in lines[2:6]:
-            if '{' in line and '}' in line:
-                remarks_map = json.loads(str(line))
-                break
-    except: remarks_map = {}
-        
-    return intro_text, ranking_tickers, remarks_map, "\n".join(lines[3:])
+    intro = lines
+    # 銘柄リスト解析の堅牢化
+    ranking_raw = str(lines).replace('[','').replace(']','').replace("'","").replace('"','')
+    ranking_tickers = [t.strip() for t in ranking_raw.split(',') if t.strip()]
+    remarks = {}
+    for l in lines[2:6]:
+        if '{' in l and '}' in l:
+            try: remarks = json.loads(l); break
+            except: continue
+    return intro, ranking_tickers, remarks, "\n".join(lines[3:])
 
 def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
-    
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の高配当・優待銘柄動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
-    
-    intro_content = f'<div class="lead-text">{intro}</div>\n\n'
-    
-    table = "## 📊 本日の注目銘柄ベスト20\n\n"
-    table += '<div class="table-wrapper"><table>\n'
-    table += '<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n'
-    table += '<tbody>\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AI厳選の高配当動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    content = f'<div class="lead-text">{intro}</div>\n\n## 📊 本日の注目銘柄ベスト20\n\n'
+    content += '<div class="table-wrapper"><table class="stock-table">\n<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n<tbody>\n'
     for i, p in enumerate(final_list, 1):
-        # プラスなら赤、マイナスなら緑のクラスを付与
-        row_class = ' class="row-up"' if p.change > 0 else (' class="row-down"' if p.change < 0 else '')
-        table += f'  <tr{row_class}>\n'
-        table += f'    <td style="text-align:center;">{i}</td>\n'
-        table += f'    <td style="text-align:center;"><strong>{p.ticker}</strong></td>\n'
-        table += f'    <td><strong>{p.name}</strong></td>\n'
-        table += f'    <td style="text-align:right;">{p.yield_pc:.2f}%</td>\n'
-        table += f'    <td style="text-align:right;">{p.close:,.1f}</td>\n'
-        table += f'    <td style="text-align:right;">{"+" if p.change > 0 else ""}{p.change:,.1f}</td>\n'
-        table += f'    <td style="text-align:right;">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td>\n'
-        table += f'    <td>{remarks.get(p.ticker, "-")}</td>\n'
-        table += '  </tr>\n'
-    table += '</tbody></table></div>\n\n'
-    
+        cls = "red-row" if p.change > 0 else ("green-row" if p.change < 0 else "")
+        content += f'<tr class="{cls}"><td class="text-center">{i}</td><td class="text-center font-bold">{p.ticker}</td><td class="font-bold">{p.name}</td><td class="text-right">{p.yield_pc:.2f}%</td><td class="text-right">{p.close:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td><td>{remarks.get(p.ticker, "-")}</td></tr>\n'
+    content += '</tbody></table></div>\n\n'
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
-        books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
-    
-    footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。</div>\n"
-    return fm + intro_content + table + "\n" + body + "\n" + books + footer
+        # 確実に画像を表示させるための referrerpolicy="no-referrer"
+        img_url = get_amazon_img(b['asin'])
+        books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
+    return fm + content + body + books
 
 def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
-        if not prices: return 1
         intro, ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(intro, prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
