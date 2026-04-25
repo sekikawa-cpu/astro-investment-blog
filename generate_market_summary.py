@@ -1,15 +1,8 @@
-"""
-設定した銘柄プールからAIが今日のベスト20を厳選・ランキングし、
-不労所得特化型の市場解説文を生成するスクリプト。
-"""
-
-from __future__ import annotations
 import logging
 import os
 import sys
 import time
 import random
-import json
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -22,56 +15,29 @@ import yfinance as yf
 try:
     import anthropic
 except ImportError:
-    print("エラー: anthropic パッケージが必要です。", file=sys.stderr)
+    print("Error: anthropic package is required.", file=sys.stderr)
     sys.exit(2)
 
 # ---------- 設定 ----------
-# AIが選定・ランキングするための「銘柄プール（30種）」
-# ここからAIが今日のベスト20を選び出します
 TICKER_POOL: dict[str, str] = {
-    "1489.T": "日経高配当50ETF",
-    "^GSPC": "S&P 500",
-    "SPYD": "SPYD (米国高配当)",
-    "VYM": "VYM (米国高配当)",
-    "2914.T": "JT",
-    "8306.T": "三菱UFJFG",
-    "9432.T": "NTT",
-    "8058.T": "三菱商事",
-    "8593.T": "三菱HCキャピタル",
-    "1605.T": "INPEX",
-    "1928.T": "積水ハウス",
-    "7203.T": "トヨタ自動車",
-    "8267.T": "イオン",
-    "9433.T": "KDDI",
-    "2702.T": "日本マクドナルドHD",
-    "3197.T": "すかいらーくHD",
-    "9861.T": "吉野家HD",
-    "8282.T": "ケーズHD",
-    "2503.T": "キリンHD",
-    "9202.T": "ANAHD",
-    # 追加の動的候補（優待・高配当）
-    "9101.T": "日本郵船",
-    "8001.T": "伊藤忠商事",
-    "4502.T": "武田薬品工業",
-    "8316.T": "三井住友FG",
-    "4063.T": "信越化学工業",
-    "9020.T": "JR東日本",
-    "3088.T": "マツキヨココカラ",
-    "7453.T": "良品計画",
-    "3382.T": "セブン＆アイHD",
-    "2802.T": "味の素",
+    "1489.T": "日経高配当50ETF", "^GSPC": "S&P 500", "SPYD": "SPYD (米国高配当)", "VYM": "VYM (米国高配当)",
+    "2914.T": "JT", "8306.T": "三菱UFJFG", "9432.T": "NTT", "8058.T": "三菱商事",
+    "8593.T": "三菱HCキャピタル", "1605.T": "INPEX", "1928.T": "積水ハウス", "7203.T": "トヨタ自動車",
+    "8267.T": "イオン", "9433.T": "KDDI", "2702.T": "日本マクドナルドHD", "3197.T": "すかいらーくHD",
+    "9861.T": "吉野家HD", "8282.T": "ケーズHD", "2503.T": "キリンHD", "9202.T": "ANAHD",
+    "9101.T": "日本郵船", "8001.T": "伊藤忠商事", "4502.T": "武田薬品工業", "8316.T": "三井住友FG",
+    "4063.T": "信越化学工業", "9020.T": "JR東日本", "3088.T": "マツキヨココカラ", "7453.T": "良品計画",
+    "3382.T": "セブン＆アイHD", "2802.T": "味の素",
 }
 
 MAX_RETRIES = 3
-INITIAL_BACKOFF = 2.0
 FETCH_PERIOD = "5d"
-
 CLAUDE_MODEL = "claude-opus-4-7"
 CLAUDE_MAX_TOKENS = 2000 
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
-# ---------- 📚 BOOK_POOL（内容は保持） ----------
+# ---------- 📚 BOOK_POOL（内容保持） ----------
 BOOK_POOL = [
     {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "desc": "資産形成の基本が網羅された一冊。"},
     {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "desc": "日本の高配当株投資のバイブル。"},
@@ -116,11 +82,10 @@ def collect_prices() -> list[PriceInfo]:
 SYSTEM_PROMPT = """あなたは不労所得を目指す投資家向けのメンターです。
 与えられた銘柄リストから、今日の相場状況を踏まえ「長期投資家が今注目すべき銘柄」をベスト20の順位で選定し、分析レポートを書いてください。
 
-【出力のルール】
-1. 最初に「ベスト20の銘柄コード」を、おすすめ順にカンマ区切りで一行目に書いてください。（例: 9432.T, 1489.T, ...）
-2. 次に、Markdown形式でレポート本文を書いてください。
-3. 文体は温かく、モチベーションが上がる表現を。
-4. 本文のみを返し、タイトルやfrontmatterは不要です。
+【出力の絶対ルール】
+1. 1行目に必ず、おすすめ順の銘柄コード（カンマ区切り）だけを書いてください。
+   例: 1489.T, 9432.T, SPYD, ...
+2. 2行目以降に、読者のモチベーションが上がる温かいレポート本文をMarkdown形式で書いてください。
 """
 
 def generate_summary(prices: list[PriceInfo], report_date: str):
@@ -133,15 +98,24 @@ def generate_summary(prices: list[PriceInfo], report_date: str):
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     
-    full_text = "".join([b.text for b in response.content if hasattr(b, 'text')])
-    lines = full_text.strip().split('\n')
-    # 一行目からランキングを取得
-    ranking_tickers = [t.strip() for t in lines.split(',')]
+    # テキスト抽出の安全な処理
+    text_parts = []
+    for block in response.content:
+        if hasattr(block, 'text'): text_parts.append(block.text)
+        elif isinstance(block, dict): text_parts.append(block.get('text', ''))
+    
+    full_text = "".join(text_parts).strip()
+    if not full_text: raise ValueError("AIからの応答が空でした。")
+    
+    lines = full_text.split('\n')
+    # 1行目からランキングを取得
+    ranking_line = lines.strip()
+    ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
+    
     body = '\n'.join(lines[1:]).strip()
     return ranking_tickers, body
 
 def build_markdown(prices: list[PriceInfo], ranking_tickers: list[str], body: str, report_date: str) -> str:
-    # ランキングに基づいてデータを並べ替え（最大20件）
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
@@ -152,13 +126,13 @@ def build_markdown(prices: list[PriceInfo], ranking_tickers: list[str], body: st
     
     table = "## 📊 本日の注目銘柄データ（AI推奨順ベスト20）\n\n"
     table += "| 順位 | 銘柄名 | コード | 終値 | 前日比 | 変化率 |\n"
-    table += "|:---:|:---|:---:|---:|---:|---:|\n" # 右揃え設定
+    table += "|:---:|:---|:---:|---:|---:|---:|\n"
     
     for i, p in enumerate(final_list, 1):
         sign = "+" if p.change >= 0 else ""
         table += f"| {i} | {p.name} | `{p.ticker}` | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% |\n"
     
-    disclaimer = "\n\n<small style='color: #666;'>※ 免責事項：本記事はAIによる自動生成情報であり、特定の銘柄の購入を推奨するものではありません。投資判断は必ずご自身の責任において行ってください。</small>\n"
+    disclaimer = "\n\n<small style='color: #94a3b8;'>※ 免責事項：本記事はAIによる自動生成情報であり、特定の銘柄の購入を推奨するものではありません。投資判断は必ずご自身の責任において行ってください。</small>\n"
     
     return fm + table + "\n" + body + get_dynamic_affiliate_section() + disclaimer
 
@@ -166,6 +140,7 @@ def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
+        if not prices: raise ValueError("銘柄データが取得できませんでした。")
         ranking, body = generate_summary(prices, report_date)
         md = build_markdown(prices, ranking, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
