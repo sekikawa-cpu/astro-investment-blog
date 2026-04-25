@@ -24,13 +24,13 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-# 2026年時点で最も標準的なSonnet 3.5 v2のID
-CLAUDE_MODEL = "claude-3-5-sonnet-20241022" 
+# 関川さんのコンソールで確認できた有効なモデル名
+CLAUDE_MODEL = "claude-sonnet-4-6" 
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
 def get_amazon_img(asin: str) -> str:
-    # Amazonの画像制限を回避しやすい最新の配信パス
+    # Amazonの画像を表示させるための標準パス
     return f"https://m.media-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
 
 BOOK_POOL = [
@@ -67,29 +67,30 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([f"{p.ticker}, {p.name}, {p.change_pct:.2f}%" for p in prices])
     system_prompt = """あなたは投資メンターです。
-1行目：【導入文】現在の経済概況と投資家へのメッセージ（200文字程度）。
+1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
 2行目：おすすめ20銘柄のコードをカンマ区切りで。
-3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配基調", "9432.T": "安定感抜群"}
+3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "好配当利回り", "9432.T": "買い増し圏内"}
 4行目以降：各銘柄の詳細解説。"""
     
-    try:
-        response = client.messages.create(model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
-                                         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}])
-    except Exception as e:
-        print(f"Critial AI Error: {e}", file=sys.stderr)
-        # 404エラー時に、利用可能なモデルを手動で探すためのヒント
-        print("💡 Hint: Check your Anthropic Console for enabled models.", file=sys.stderr)
-        raise
-
+    response = client.messages.create(model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
+                                     messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}])
     full_text = response.content.text.strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
+    
     intro = lines
+    # 解析を文字列として確実に行う
     ranking_raw = str(lines).replace('[','').replace(']','').replace("'","").replace('"','')
     ranking_tickers = [t.strip() for t in ranking_raw.split(',') if t.strip()]
+    
     remarks = {}
     for l in lines[2:6]:
         if '{' in l and '}' in l:
-            try: remarks = json.loads(l); break
+            try:
+                # JSON部分のみを抽出する試み
+                start = l.find('{')
+                end = l.rfind('}') + 1
+                remarks = json.loads(l[start:end])
+                break
             except: continue
     return intro, ranking_tickers, remarks, "\n".join(lines[3:])
 
@@ -103,10 +104,11 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
         cls = "red-row" if p.change > 0 else ("green-row" if p.change < 0 else "")
         content += f'<tr class="{cls}"><td class="text-center">{i}</td><td class="text-center font-bold">{p.ticker}</td><td class="font-bold">{p.name}</td><td class="text-right">{p.yield_pc:.2f}%</td><td class="text-right">{p.close:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td><td>{remarks.get(p.ticker, "-")}</td></tr>\n'
     content += '</tbody></table></div>\n\n'
+    
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         img_url = get_amazon_img(b['asin'])
-        # 画像表示を「ねじ伏せる」ための referrerpolicy
+        # referrerpolicy="no-referrer" を追加してAmazonの制限を回避
         books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer" loading="lazy"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     return fm + content + body + books
 
