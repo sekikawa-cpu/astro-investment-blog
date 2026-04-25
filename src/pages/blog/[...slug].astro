@@ -13,6 +13,7 @@ const { Content } = await entry.render();
     <title>{entry.data.title} | 配当＆優待ナビ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="referrer no-referrer">
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
     <header class="bg-slate-900 text-white shadow-md py-4">
@@ -34,31 +35,86 @@ const { Content } = await entry.render();
 
 <style is:global>
   /* 導入文：アイスブレイク用 */
-  .lead-text { @apply text-lg text-slate-600 leading-relaxed mb-12 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 italic; }
+  .lead-text {
+    @apply text-lg text-slate-700 leading-relaxed mb-12 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500;
+    font-style: italic;
+  }
 
   /* テーブル基本設定 */
-  .table-wrapper { @apply overflow-x-auto my-10 shadow-sm rounded-lg border border-slate-200; }
-  .stock-table { @apply w-full border-collapse bg-white text-sm !important; }
-  .stock-table th { @apply bg-slate-800 text-white p-3 font-bold text-center !important; }
-  .stock-table td { @apply p-3 border-b border-slate-100 !important; }
-  
-  /* --- 行の色分け（条件付きスタイル） --- */
-  .red-row td { color: #ef4444 !important; font-weight: 500; }   /* ポジティブ：赤 */
-  .green-row td { color: #064e3b !important; font-weight: 700; } /* ネガティブ：ダークグリーン（視認性重視） */
-  
-  .red-row td strong, .green-row td strong { color: inherit; }
+  .table-wrapper { @apply overflow-x-auto my-10 shadow-md rounded-lg border border-slate-200; }
+  .stock-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background-color: #ffffff !important;
+    font-size: 0.875rem !important;
+  }
+  .stock-table thead th {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    padding: 0.75rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    border-bottom: 2px solid #0f172a !important;
+  }
+  .stock-table tbody td {
+    padding: 0.75rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+  }
+  .stock-table tbody tr:hover { background-color: #f8fafc !important; }
 
-  /* 位置・装飾 */
-  .text-center { text-align: center !important; }
-  .text-right { text-align: right !important; }
-  .font-bold { font-weight: 700 !important; }
+  /* --- 行の色分け（条件付きスタイル） --- */
+  /* ポジティブ：赤（前日比プラス） */
+  .stock-table tbody tr.red-row td {
+    color: #ef4444 !important;
+    font-weight: 500 !important;
+  }
+  /* ネガティブ：視認性の高いダークグリーン（前日比マイナス） */
+  .stock-table tbody tr.green-row td {
+    color: #064e3b !important;
+    font-weight: 700 !important;
+  }
+  /* 太字セル（コード・銘柄名）は行の色を継承して太字を維持 */
+  .stock-table tbody tr.red-row td strong,
+  .stock-table tbody tr.green-row td strong {
+    color: inherit !important;
+    font-weight: 800 !important;
+  }
+  /* 通常行でもコード・銘柄名は太字 */
+  .stock-table tbody td strong {
+    font-weight: 700 !important;
+    color: #0f172a;
+  }
+
+  /* 位置・装飾ユーティリティ */
+  .stock-table .text-center { text-align: center !important; }
+  .stock-table .text-right  { text-align: right  !important; }
+  .stock-table .font-bold   { font-weight: 700   !important; }
+
+  /* 詳細解説セクションの見出し */
+  .markdown-content h2 {
+    @apply text-2xl font-extrabold text-slate-900 mt-12 mb-6 pb-3 border-b-2 border-blue-500;
+  }
+  .markdown-content h3 {
+    @apply text-xl font-bold text-slate-800 mt-8 mb-3 pl-3 border-l-4 border-blue-400;
+  }
+  .markdown-content p {
+    @apply text-base text-slate-700 leading-relaxed mb-4;
+  }
 
   /* 書籍紹介セクション */
-  .book-item { @apply flex flex-col md:flex-row items-center gap-6 mb-10 border p-6 rounded-xl bg-slate-50; }
-  .book-item img { 
-    width: 100px; height: 140px; object-fit: contain; 
-    @apply rounded shadow-md flex-shrink-0 bg-white border border-slate-200; 
+  .book-item {
+    @apply flex flex-col md:flex-row items-center gap-6 mb-8 border border-slate-200 p-6 rounded-xl bg-slate-50;
   }
+  .book-item img {
+    width: 100px;
+    height: 140px;
+    object-fit: contain;
+    background-color: #ffffff;
+    @apply rounded shadow-md flex-shrink-0 border border-slate-200;
+  }
+  .book-info { @apply flex-1; }
   .book-item strong { @apply text-lg block mb-2 text-slate-900; }
+  .book-item strong a { @apply text-slate-900 no-underline hover:text-blue-600; }
   .book-item p { @apply text-sm text-slate-600 m-0 leading-relaxed; }
 </style>

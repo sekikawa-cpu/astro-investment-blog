@@ -24,13 +24,11 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-# 関川さんのコンソールで確認できた正しいID
-CLAUDE_MODEL = "claude-sonnet-4-6" 
+CLAUDE_MODEL = "claude-sonnet-4-6"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
 def get_amazon_img(asin: str) -> str:
-    # Amazonの画像制限を回避しやすいURL形式
     return f"https://m.media-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
 
 BOOK_POOL = [
@@ -46,46 +44,108 @@ BOOK_POOL = [
 
 @dataclass
 class PriceInfo:
-    ticker: str; name: str; close: float; prev_close: float; yield_pc: float
+    ticker: str
+    name: str
+    close: float
+    prev_close: float
+    yield_pc: float
+
     @property
-    def change(self) -> float: return self.close - self.prev_close
+    def change(self) -> float:
+        return self.close - self.prev_close
+
     @property
-    def change_pct(self) -> float: return (self.change / self.prev_close) * 100 if self.prev_close != 0 else 0
+    def change_pct(self) -> float:
+        return (self.change / self.prev_close) * 100 if self.prev_close != 0 else 0
+
 
 def collect_prices() -> List[PriceInfo]:
     results = []
     for ticker, name in TICKER_POOL.items():
         try:
-            t = yf.Ticker(ticker); df = t.history(period="5d", auto_adjust=False).sort_index()
-            if df.empty: continue
-            y = t.info.get('dividendYield', 0); y_pc = (y * 100) if y and y < 1 else (y or 0.0)
-            results.append(PriceInfo(ticker, name, float(df.iloc[-1]["Close"]), float(df.iloc[-2]["Close"]), y_pc))
-        except: continue
+            t = yf.Ticker(ticker)
+            df = t.history(period="5d", auto_adjust=False).sort_index()
+            if df.empty or len(df) < 2:
+                continue
+            try:
+                y = t.info.get('dividendYield', 0) or 0
+            except Exception:
+                y = 0
+            y_pc = (y * 100) if y and y < 1 else (y or 0.0)
+            results.append(PriceInfo(
+                ticker, name,
+                float(df.iloc[-1]["Close"]),
+                float(df.iloc[-2]["Close"]),
+                float(y_pc)
+            ))
+        except Exception:
+            continue
     return results
+
+
+def _extract_text_from_response(response) -> str:
+    """
+    Anthropic SDK の response.content は TextBlock のリスト。
+    制約事項に従い response.content.text 形式でアクセスできるよう吸収する。
+    """
+    content = response.content
+    # ケース1: SDK が単一オブジェクトを返した場合
+    if hasattr(content, "text"):
+        return content.text
+    # ケース2: リストの場合（通常）→ text を持つブロックを連結
+    if isinstance(content, list):
+        texts = []
+        for block in content:
+            if hasattr(block, "text"):
+                texts.append(block.text)
+            elif isinstance(block, dict) and block.get("type") == "text":
+                texts.append(block.get("text", ""))
+        return "\n".join(texts)
+    return str(content)
+
 
 def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-    data_str = "\n".join([f"{p.ticker}, {p.name}, {p.change_pct:.2f}%" for p in prices])
-    system_prompt = """あなたは投資メンターです。
-1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
-2行目：おすすめ20銘柄のコードをカンマ区切りで。
-3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配基調", "9432.T": "安定感あり"}
-4行目以降：各銘柄の詳細解説（### [順位]位 形式）。"""
-    
+    data_str = "\n".join([
+        f"{p.ticker}, {p.name}, 終値:{p.close:.2f}, 前日比:{p.change_pct:+.2f}%, 配当利回り:{p.yield_pc:.2f}%"
+        for p in prices
+    ])
+
+    system_prompt = """あなたは経験豊富な投資メンターです。以下の厳密なフォーマットで出力してください。
+
+【1行目】経済全体の概況（アイスブレイク）を約200文字で記述。日本市場・米国市場・為替・金利動向に軽く触れ、長期投資家への前向きなメッセージで締める。改行を入れず1行で。
+
+【2行目】注目銘柄ベスト20のティッカーコードのみをカンマ区切りで列挙。例: 1489.T,9432.T,8306.T,...
+
+【3行目】各銘柄の備考を JSON オブジェクト（1行）で出力。例: {"1489.T":"増配基調で安定","9432.T":"通信インフラの王者"}
+備考は各銘柄15〜25文字程度の簡潔なコメントとする。
+
+【4行目以降】各銘柄の詳細解説を「### [順位]位 [銘柄名]（[ティッカー]）」の見出し形式で20件分記述。各解説は2〜3文程度。
+
+重要: 1行目・2行目・3行目は必ず1行で出力し、絶対に途中改行しないこと。"""
+
     response = client.messages.create(
-        model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
-        messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
+        model=CLAUDE_MODEL,
+        max_tokens=4000,
+        system=system_prompt,
+        messages=[{"role": "user", "content": f"日付: {report_date}\n\n以下の市場データを基に分析してください:\n\n{data_str}"}]
     )
-    
-    # 【解決策】response.content.text でアクセスすることでリストのエラーを回避
-    full_text = response.content.text.strip()
+
+    full_text = _extract_text_from_response(response).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
-    
-    intro = lines
-    ranking_raw = str(lines).replace('[','').replace(']','').replace("'","").replace('"','')
+
+    if len(lines) < 3:
+        raise ValueError(f"AI response format error: only {len(lines)} lines returned")
+
+    # 1行目: 導入文
+    intro = lines[0]
+
+    # 2行目: ランキング（カンマ区切り）
+    ranking_raw = lines[1].replace('[', '').replace(']', '').replace("'", "").replace('"', '').replace('`', '')
     ranking_tickers = [t.strip() for t in ranking_raw.split(',') if t.strip()]
-    
-    remarks = {}
+
+    # 3行目: 備考JSON
+    remarks: Dict[str, str] = {}
     for l in lines[2:6]:
         if '{' in l and '}' in l:
             try:
@@ -93,36 +153,89 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
                 end = l.rfind('}') + 1
                 remarks = json.loads(l[start:end])
                 break
-            except: continue
-    return intro, ranking_tickers, remarks, "\n".join(lines[3:])
+            except Exception:
+                continue
+
+    # 4行目以降: 詳細解説本文
+    body_start = 3
+    body = "\n\n".join(lines[body_start:])
+    return intro, ranking_tickers, remarks, body
+
 
 def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+
+    # フォールバック: AIランキングが取れなかった場合は全銘柄から先頭20件
+    if not final_list:
+        final_list = prices[:20]
+
+    fm = (
+        f'---\n'
+        f'title: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\n'
+        f'pubDate: {report_date}\n'
+        f'tags: ["高配当株", "不労所得"]\n'
+        f'---\n\n'
+    )
+
     content = f'<div class="lead-text">{intro}</div>\n\n## 📊 本日の注目銘柄ベスト20\n\n'
-    content += '<div class="table-wrapper"><table class="stock-table">\n<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n<tbody>\n'
+    content += '<div class="table-wrapper"><table class="stock-table">\n'
+    content += '<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n'
+    content += '<tbody>\n'
+
     for i, p in enumerate(final_list, 1):
         cls = "red-row" if p.change > 0 else ("green-row" if p.change < 0 else "")
-        content += f'<tr class="{cls}"><td class="text-center">{i}</td><td class="text-center font-bold">{p.ticker}</td><td class="font-bold">{p.name}</td><td class="text-right">{p.yield_pc:.2f}%</td><td class="text-right">{p.close:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td><td>{remarks.get(p.ticker, "-")}</td></tr>\n'
+        sign = "+" if p.change > 0 else ""
+        remark = remarks.get(p.ticker, "-")
+        content += (
+            f'<tr class="{cls}">'
+            f'<td class="text-center">{i}</td>'
+            f'<td class="text-center"><strong>{p.ticker}</strong></td>'
+            f'<td><strong>{p.name}</strong></td>'
+            f'<td class="text-right">{p.yield_pc:.2f}%</td>'
+            f'<td class="text-right">{p.close:,.1f}</td>'
+            f'<td class="text-right">{sign}{p.change:,.1f}</td>'
+            f'<td class="text-right">{sign}{p.change_pct:.2f}%</td>'
+            f'<td>{remark}</td>'
+            f'</tr>\n'
+        )
     content += '</tbody></table></div>\n\n'
+
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         img_url = get_amazon_img(b['asin'])
-        # referrerpolicy="no-referrer" を追加してAmazonの制限を完全に回避
-        books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer" loading="lazy"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
-    return fm + content + body + books
+        books += (
+            f'<div class="book-item">'
+            f'<img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer" loading="lazy">'
+            f'<div class="book-info">'
+            f'<strong><a href="{b["url"]}" target="_blank" rel="noopener noreferrer">{b["title"]}</a></strong>'
+            f'<p>{b["desc"]}</p>'
+            f'</div></div>\n'
+        )
+
+    return fm + content + body + "\n\n" + books
+
 
 def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
+        if not prices:
+            print("Error: 価格データを取得できませんでした")
+            return 1
         intro, ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(intro, prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / f"{report_date}.md").write_text(md, encoding="utf-8")
         print("Success")
-    except Exception as e: print(f"Error: {e}"); return 1
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
     return 0
 
-if __name__ == "__main__": sys.exit(main())
+
+if __name__ == "__main__":
+    sys.exit(main())
+    
