@@ -10,7 +10,7 @@ const { Content } = await entry.render();
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>{entry.data.title}</title>
+    <title>{entry.data.title} | 配当＆優待ナビ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
   </head>
@@ -33,31 +33,30 @@ const { Content } = await entry.render();
 </html>
 
 <style is:global>
-  /* 導入文 */
+  /* 導入文：アイスブレイク用 */
   .lead-text { @apply text-lg text-slate-600 leading-relaxed mb-12 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 italic; }
 
-  /* テーブル */
+  /* テーブル基本設定 */
   .table-wrapper { @apply overflow-x-auto my-10 shadow-sm rounded-lg border border-slate-200; }
   .stock-table { @apply w-full border-collapse bg-white text-sm !important; }
   .stock-table th { @apply bg-slate-800 text-white p-3 font-bold text-center !important; }
   .stock-table td { @apply p-3 border-b border-slate-100 !important; }
   
-  /* --- 行の色分けルール --- */
-  .red-row td { color: #ef4444 !important; font-weight: 500; }   /* 明るい赤 */
-  .green-row td { color: #064e3b !important; font-weight: 700; } /* 非常に濃い緑（ダークグリーン） */
+  /* --- 行の色分け（条件付きスタイル） --- */
+  .red-row td { color: #ef4444 !important; font-weight: 500; }   /* ポジティブ：赤 */
+  .green-row td { color: #064e3b !important; font-weight: 700; } /* ネガティブ：ダークグリーン（視認性重視） */
   
   .red-row td strong, .green-row td strong { color: inherit; }
 
+  /* 位置・装飾 */
   .text-center { text-align: center !important; }
   .text-right { text-align: right !important; }
   .font-bold { font-weight: 700 !important; }
 
-  /* 書籍リスト */
+  /* 書籍紹介セクション */
   .book-item { @apply flex flex-col md:flex-row items-center gap-6 mb-10 border p-6 rounded-xl bg-slate-50; }
   .book-item img { 
-    width: 100px; 
-    height: 140px; 
-    object-fit: contain; 
+    width: 100px; height: 140px; object-fit: contain; 
     @apply rounded shadow-md flex-shrink-0 bg-white border border-slate-200; 
   }
   .book-item strong { @apply text-lg block mb-2 text-slate-900; }
