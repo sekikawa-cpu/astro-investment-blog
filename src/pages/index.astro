@@ -1,0 +1,50 @@
+﻿---
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+---
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>配当＆優待ナビ | 不労所得を育てるAIメディア</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+    <header class="bg-slate-900 text-white shadow-md py-4">
+      <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold tracking-wider hover:text-blue-300 transition-colors">配当＆優待ナビ 💸</a>
+        <span class="text-sm text-slate-300 hidden md:inline">不労所得を育てるAIメディア</span>
+      </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full">
+      <div class="mb-12 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">「お金に働いてもらう」仕組みを作ろう。</h1>
+        <p class="text-slate-600 leading-relaxed">
+          毎日17時に、高配当ETFや株主優待銘柄の最新動向をAIが分析。<br class="hidden md:block" />
+          あなたの「不労所得」を増やし、経済的なゆとりを作るためのヒントをお届けします。
+        </p>
+      </div>
+
+      <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">最新のレポート</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {posts.map((post) => (
+          <a href={`/blog/${post.slug}`} class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-400 hover:-translate-y-1 transition-all duration-300 p-6">
+            <p class="text-sm text-blue-600 font-bold mb-2">{new Date(post.data.pubDate).toLocaleDateString('ja-JP')}</p>
+            <h3 class="text-xl font-bold text-slate-900 mb-3 leading-tight">{post.data.title}</h3>
+            <p class="text-slate-600 text-sm line-clamp-3 mb-4">{post.data.description}</p>
+            <div class="flex items-center text-blue-600 text-sm font-semibold">
+              記事を読む <span class="ml-1">→</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
+      <p class="text-sm">&copy; 2026 配当＆優待ナビ. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

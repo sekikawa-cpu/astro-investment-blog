@@ -1,0 +1,133 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import type { CollectionEntry } from 'astro:content';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate, author, category, tags, heroImage } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <article class="article">
+    <div class="container-narrow">
+      <header class="article-header">
+        <div class="article-meta-top">
+          <span class="badge">{category}</span>
+        </div>
+        <h1 class="article-title">{title}</h1>
+        <p class="article-lead">{description}</p>
+        <div class="article-meta">
+          <span class="meta-author">{author}</span>
+          <span class="meta-sep">·</span>
+          <FormattedDate date={pubDate} />
+          {updatedDate && (
+            <>
+              <span class="meta-sep">·</span>
+              <span class="meta-updated">更新: <FormattedDate date={updatedDate} /></span>
+            </>
+          )}
+        </div>
+      </header>
+
+      {heroImage && (
+        <div class="article-hero">
+          <img src={heroImage} alt={title} />
+        </div>
+      )}
+
+      <div class="prose article-content">
+        <slot />
+      </div>
+
+      {tags.length > 0 && (
+        <div class="article-tags">
+          {tags.map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <div class="disclaimer">
+        <strong>免責事項:</strong> 本記事は情報提供を目的としており、特定の金融商品の購入・売却を推奨するものではありません。投資に関する最終的な判断はご自身の責任でお願いいたします。
+      </div>
+
+      <div class="back-link">
+        <a href="/blog">← 記事一覧に戻る</a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article { padding: 3rem 0 1rem; }
+  .article-header {
+    text-align: left;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 2.5rem;
+  }
+  .article-meta-top { margin-bottom: 1rem; }
+  .article-title {
+    font-size: 2.1rem;
+    line-height: 1.4;
+    margin: 0 0 1rem;
+    color: var(--color-primary-900);
+  }
+  .article-lead {
+    font-size: 1.08rem;
+    color: var(--color-muted);
+    line-height: 1.75;
+    margin: 0 0 1.5rem;
+  }
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    flex-wrap: wrap;
+  }
+  .meta-author { color: var(--color-primary-800); font-weight: 600; }
+  .meta-sep { color: var(--color-border); }
+  .article-hero { margin: 0 0 2.5rem; }
+  .article-hero img {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .article-content { margin-bottom: 2.5rem; }
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2rem 0;
+  }
+  .tag {
+    background: var(--color-bg-soft);
+    color: var(--color-primary-700);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    border: 1px solid var(--color-border);
+  }
+  .disclaimer {
+    margin: 2.5rem 0;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg-soft);
+    border-left: 3px solid var(--color-primary-500);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+  .disclaimer strong { color: var(--color-primary-800); }
+  .back-link {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.95rem;
+  }
+  @media (max-width: 640px) {
+    .article-title { font-size: 1.65rem; }
+  }
+</style>
