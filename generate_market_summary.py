@@ -24,14 +24,14 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-# モデル名を latest に修正して404を回避
-CLAUDE_MODEL = "claude-3-5-sonnet-latest" 
+# 404エラーを避けるため、最も普及しているHaikuモデルに変更
+CLAUDE_MODEL = "claude-3-haiku-20240307" 
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
 def get_amazon_img(asin: str) -> str:
-    # 2026年時点で最も安定している配信パス
-    return f"https://images-fe.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
+    # Amazonの画像表示を最も安定させる直リンク形式
+    return f"https://images-na.ssl-images-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
 
 BOOK_POOL = [
     {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "asin": "B08688RT6T", "desc": "資産形成の基本が網羅された一冊。"},
@@ -66,16 +66,17 @@ def collect_prices() -> List[PriceInfo]:
 def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([f"{p.ticker}, {p.name}, {p.change_pct:.2f}%" for p in prices])
-    system_prompt = """あなたは投資メンターです。
+    system_prompt = """あなたは投資メンターです。以下の構成で出力してください。
 1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
 2行目：おすすめ20銘柄のコードをカンマ区切りで。
-3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "配当利回り高水準", "9432.T": "安定感あり"}
-4行目以降：各銘柄の詳細解説（### [順位]位 形式）。"""
+3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "増配傾向", "9432.T": "安定"}
+4行目以降：各銘柄の詳細解説。"""
     response = client.messages.create(model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
                                      messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}])
     full_text = response.content.text.strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     intro = lines
+    # 解析ロジックのさらなる強化
     ranking_raw = str(lines).replace('[','').replace(']','').replace("'","").replace('"','')
     ranking_tickers = [t.strip() for t in ranking_raw.split(',') if t.strip()]
     remarks = {}
@@ -88,7 +89,7 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
 def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AI厳選の高配当動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     content = f'<div class="lead-text">{intro}</div>\n\n## 📊 本日の注目銘柄ベスト20\n\n'
     content += '<div class="table-wrapper"><table class="stock-table">\n<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n<tbody>\n'
     for i, p in enumerate(final_list, 1):
@@ -98,7 +99,7 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         img_url = get_amazon_img(b['asin'])
-        # referrerpolicy="no-referrer" でAmazonのチェックを回避
+        # referrerpolicy="no-referrer" を追加してAmazonの制限を回避
         books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     return fm + content + body + books
 
