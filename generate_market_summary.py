@@ -33,7 +33,7 @@ CLAUDE_MODEL = "claude-opus-4-7"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
-# ---------- 📚 BOOK_POOL（ここにご自身のリンクを貼り直してください） ----------
+# ---------- 📚 BOOK_POOL（内容は保持してください） ----------
 BOOK_POOL = [
     {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "desc": "資産形成の基本が網羅された一冊。"},
     {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "desc": "日本の高配当株投資のバイブル。"},
@@ -75,11 +75,12 @@ def collect_prices() -> List[PriceInfo]:
         except: continue
     return results
 
-SYSTEM_PROMPT = """あなたは不労所得を目指す投資家向けのメンターです。提供された30銘柄のデータから、今日注目すべき銘柄をベスト20の順位で選定し、レポートを書いてください。
+SYSTEM_PROMPT = """あなたは不労所得を目指す投資家向けのメンターです。
+与えられた銘柄リストから、長期投資家が今注目すべき銘柄をベスト20の順位で選定し、レポートを書いてください。
 
-【出力の絶対ルール】
-1. 最初の1行目には必ず、おすすめ順の銘柄コード（例: 1489.T, 9432.T, SPYD...）だけをカンマ区切りで書いてください。
-2. 2行目以降に、Markdown形式でレポート本文を書いてください。
+【出力の絶対ルール：形式を厳守してください】
+1行目：おすすめ順の銘柄コードをカンマ区切りだけで出力（例: 1489.T, 9432.T, SPYD...）
+2行目以降：Markdown形式のレポート本文（温かい文体で、タイトル不要）
 """
 
 def generate_summary(prices: List[PriceInfo], report_date: str):
@@ -92,27 +93,32 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     
-    # 堅牢なテキスト抽出：リストの中身を確実に文字列として結合する
-    full_text = ""
+    # 【超重要】どんな型が来ても強制的に文字列に結合する「防弾処理」
+    full_response_text = ""
     for block in response.content:
         if hasattr(block, 'text'):
-            full_text += block.text
+            full_response_text += str(block.text)
         elif isinstance(block, dict) and 'text' in block:
-            full_text += block['text']
-
-    if not full_text.strip():
-        raise ValueError("AIからの応答が空でした。")
-
-    # 文字列を改行で分割
-    lines = [line.strip() for line in full_text.split('\n') if line.strip()]
+            full_response_text += str(block['text'])
     
-    # 1行目からランキングを抽出
-    ranking_line = lines
+    if not full_response_text.strip():
+        raise ValueError("AIからの返答が空でした。")
+
+    # 文字列として確実に処理
+    content_str = str(full_response_text).strip()
+    all_lines = content_str.split('\n')
+    lines = [l.strip() for l in all_lines if l.strip()]
+
+    if not lines:
+        raise ValueError("解析可能なテキストが見つかりませんでした。")
+    
+    # 1行目（ランキング）を確実に文字列として取得して分割
+    ranking_line = str(lines)
     ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
     
     # 2行目以降を本文とする
-    body = "\n".join(lines[1:])
-    return ranking_tickers, body
+    body_content = "\n".join(lines[1:])
+    return ranking_tickers, body_content
 
 def build_markdown(prices: List[PriceInfo], ranking_tickers: List[str], body: str, report_date: str) -> str:
     price_map = {p.ticker: p for p in prices}
@@ -129,12 +135,13 @@ def build_markdown(prices: List[PriceInfo], ranking_tickers: List[str], body: st
     
     table = "## 📊 本日の注目銘柄データ（AI推奨順ベスト20）\n\n"
     table += "| 順位 | 銘柄名 | コード | 終値 | 前日比 | 変化率 |\n"
-    table += "|:---:|:---|:---:|---:|---:|---:|\n"
+    table += "|:---:|:---|:---:|---:|---:|---:|\n" # 揃え設定：中央、左、中央、右、右、右
     
     for i, p in enumerate(final_list, 1):
         sign = "+" if p.change >= 0 else ""
         table += f"| {i} | {p.name} | `{p.ticker}` | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% |\n"
     
+    # 免責事項を小さく文末に配置
     disclaimer = "\n\n<small style='color: #94a3b8;'>※ 免責事項：本記事はAIによる自動生成情報であり、特定の銘柄の購入を推奨するものではありません。投資判断は必ずご自身の責任において行ってください。</small>\n"
     
     return fm + table + "\n" + body + get_dynamic_affiliate_section() + disclaimer
@@ -143,7 +150,8 @@ def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
-        if not prices: return 1
+        if not prices:
+            print("エラー: 銘柄データを取得できませんでした。"); return 1
         ranking, body = generate_summary(prices, report_date)
         md = build_markdown(prices, ranking, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
