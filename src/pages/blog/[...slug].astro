@@ -1,15 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 
-// 1. 全記事のパスを生成
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
-  return blogEntries.map(entry => ({
-    params: { slug: entry.slug }, props: { entry },
-  }));
+  return blogEntries.map(entry => ({ params: { slug: entry.slug }, props: { entry } }));
 }
 
-// 2. 記事データの取得
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
@@ -23,26 +19,19 @@ const { Content } = await entry.render();
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
     <header class="bg-slate-900 text-white shadow-md py-4">
-      <div class="max-w-4xl mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="text-xl md:text-2xl font-bold tracking-wider hover:text-blue-300 transition-colors">配当＆優待ナビ 💸</a>
+      <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
+        <a href="/" class="text-xl md:text-2xl font-bold tracking-wider hover:text-blue-300">配当＆優待ナビ 💸</a>
         <a href="/" class="text-sm text-slate-300 hover:underline">一覧に戻る</a>
       </div>
     </header>
 
-    <main class="flex-grow max-w-4xl mx-auto px-4 py-10 w-full bg-white shadow-sm my-6 rounded-lg">
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full bg-white shadow-sm my-6 rounded-lg">
       <article class="prose prose-slate max-w-none">
         <header class="mb-8 border-b pb-6">
-          <p class="text-blue-600 font-bold mb-2">
-            {new Date(entry.data.pubDate).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
+          <p class="text-blue-600 font-bold mb-2">{new Date(entry.data.pubDate).toLocaleDateString('ja-JP')}</p>
           <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
             {entry.data.title}
           </h1>
-          <div class="mt-4 flex flex-wrap gap-2">
-            {entry.data.tags.map((tag: string) => (
-              <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded">#{tag}</span>
-            ))}
-          </div>
         </header>
 
         <div class="markdown-content">
@@ -58,54 +47,34 @@ const { Content } = await entry.render();
 </html>
 
 <style is:global>
-  /* --- 記事本文全体のスタイル調整 --- */
-  .markdown-content h2 {
-    @apply text-2xl font-bold text-slate-800 mt-12 mb-6 border-l-4 border-blue-600 pl-4;
-  }
+  /* 基本フォント設定 */
+  .markdown-content { @apply text-slate-700; }
   
-  /* 個別銘柄の解説見出し（###）のスタイル */
-  .markdown-content h3 {
-    @apply text-xl font-bold text-blue-700 mt-10 mb-2 border-b-2 border-blue-100 pb-1;
-  }
+  /* 解説セクションの見出し */
+  .markdown-content h2 { @apply text-2xl font-bold text-slate-800 mt-12 mb-6 border-l-4 border-blue-600 pl-4; }
+  .markdown-content h3 { @apply text-xl font-bold text-blue-700 mt-10 mb-2 border-b-2 border-blue-100 pb-1; }
+  
+  /* 解説本文の改行後の余白 */
+  .markdown-content h3 + p { @apply mt-4 mb-8; }
 
-  /* 解説本文 */
-  .markdown-content p {
-    @apply leading-relaxed mb-6 text-slate-700;
-  }
-
-  /* --- テーブルのカスタマイズ（縞々・フォント拡大・右揃え） --- */
+  /* --- テーブルのカスタマイズ（フォント拡大・右揃え） --- */
   .markdown-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
-    font-size: 1rem; /* フォントサイズを少し大きく（text-base相当） */
-    display: block;
-    overflow-x: auto;
+    @apply w-full border-collapse my-8;
+    display: table;
+    font-size: 1rem; /* テーブル内のフォントを少し大きく */
   }
   
   .markdown-content th {
-    background-color: #1e293b;
-    color: white;
-    padding: 10px;
-    font-weight: bold;
-    text-align: center;
-    font-size: 0.85rem;
-    white-space: nowrap;
+    @apply bg-slate-800 text-white p-3 font-bold text-xs text-center border border-slate-700;
   }
   
   .markdown-content td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #e2e8f0;
-    color: #334155;
-    white-space: nowrap;
+    @apply p-3 border-b border-slate-200 text-slate-700;
   }
   
-  /* 縞々（ゼブラ）設定 */
-  .markdown-content tr:nth-child(even) {
-    background-color: #f8fafc;
-  }
+  .markdown-content tr:nth-child(even) { background-color: #f8fafc; }
 
-  /* 数値列の右揃え（配当率、終値、前日比、変化率） */
+  /* 右揃え（標準フォントを使用） */
   .markdown-content td:nth-child(4),
   .markdown-content td:nth-child(5),
   .markdown-content td:nth-child(6),
@@ -113,7 +82,6 @@ const { Content } = await entry.render();
     text-align: right;
   }
   
-  /* 順位とコードの中央揃え */
   .markdown-content td:nth-child(1),
   .markdown-content td:nth-child(2) {
     text-align: center;
@@ -121,46 +89,21 @@ const { Content } = await entry.render();
 
   /* --- 書籍紹介セクション（サムネイル横並び） --- */
   .book-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
+    @apply flex items-center gap-6 mb-6 border-b border-slate-100 pb-6;
   }
   
   .book-item img {
-    width: 80px;
-    height: auto;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    flex-shrink: 0;
+    @apply w-16 h-auto rounded shadow-sm flex-shrink-0 border border-slate-200;
   }
   
-  .book-item .book-info {
-    flex-grow: 1;
-  }
+  .book-item .book-info { @apply flex-1; }
   
-  .book-item strong {
-    display: block;
-    font-size: 1.1rem;
-    margin-bottom: 0.25rem;
-    color: #0f172a;
-  }
+  .book-item strong { @apply text-base text-slate-900 block mb-1; }
   
-  .book-item p {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin: 0;
-  }
+  .book-item p { @apply text-sm text-slate-500 m-0; }
 
-  /* --- 免責事項と注釈（最下部に統合） --- */
+  /* --- 免責事項（最下部に統合） --- */
   .disclaimer {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px dashed #cbd5e1;
-    font-size: 0.75rem;
-    color: #94a3b8;
-    line-height: 1.8;
+    @apply mt-16 pt-8 border-t border-dashed border-slate-300 text-[11px] text-slate-400 leading-relaxed;
   }
 </style>

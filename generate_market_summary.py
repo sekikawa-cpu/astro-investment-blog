@@ -72,23 +72,24 @@ def collect_prices() -> List[PriceInfo]:
 
 SYSTEM_PROMPT = """あなたは不労所得を目指す投資家向けのメンターです。提供データから注目銘柄ベスト20を選定してください。
 
-【出力形式の絶対ルール】
-1行目：おすすめ順の銘柄コード（カンマ区切り）
+【出力形式の絶対ルール：この通りに必ず出力してください】
+1行目：おすすめ順の銘柄コードをカンマ区切りだけで出力（例: 1489.T, 9432.T, SPYD...）
 2行目：各銘柄の「備考（20文字以内）」をコード順に並べたJSON形式。例: {"1489.T": "利回り4.2%の鉄板ETF", ...}
 3行目以降：各銘柄の詳細解説
-   - フォーマット：### **[順位]位 [コード] [銘柄名]**
-     （空行を1行入れる）
-     [解説本文を150文字程度で記述]
-※16〜20位も省略せず、上記###形式で1つずつ個別に解説してください。
+   - フォーマット：
+     ### **[順位]位 [コード] [銘柄名]**
+     （ここに必ず改行を1行入れる）
+     [解説本文を記述。16〜20位も省略せず、必ず1つずつこの形式で書いてください]
 """
 
-def extract_text(content: Any) -> str:
-    """どんな型が来ても再帰的にテキストを抽出する防弾関数"""
-    if isinstance(content, str): return content
-    if isinstance(content, list): return "".join([extract_text(c) for c in content])
-    if hasattr(content, 'text'): return str(content.text)
-    if isinstance(content, dict) and 'text' in content: return str(content['text'])
-    return ""
+def force_to_str(obj: Any) -> str:
+    """どんな型が来ても強制的に文字列にする究極の防弾関数"""
+    if obj is None: return ""
+    if isinstance(obj, str): return obj
+    if isinstance(obj, list): return "".join([force_to_str(item) for item in obj])
+    if hasattr(obj, 'text'): return force_to_str(obj.text)
+    if isinstance(obj, dict) and 'text' in obj: return force_to_str(obj['text'])
+    return str(obj)
 
 def generate_summary(prices: List[PriceInfo], report_date: str):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -96,17 +97,26 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     data_str = "\n".join([str(p.to_dict()) for p in prices])
     
     response = client.messages.create(
-        model=CLAUDE_MODEL, max_tokens=3000, system=SYSTEM_PROMPT,
+        model=CLAUDE_MODEL, max_tokens=3500, system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     
-    # ここで不沈関数を使用
-    full_text = extract_text(response.content)
-    lines = [l.strip() for l in full_text.strip().split('\n') if l.strip()]
+    # どんなデータが来てもstrに叩き直す
+    full_text = force_to_str(response.content).strip()
     
-    ranking_tickers = [t.strip() for t in lines.split(',') if t.strip()]
-    try: remarks_map = json.loads(lines)
-    except: remarks_map = {}
+    lines = [l.strip() for l in full_text.split('\n') if l.strip()]
+    if len(lines) < 2:
+        raise ValueError("AIからの応答が不十分です。")
+    
+    # 1行目がリストとして誤認されないよう、再度str変換してからsplit
+    ranking_line = str(lines)
+    ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
+    
+    try:
+        remarks_map = json.loads(lines)
+    except:
+        remarks_map = {}
+        
     body_content = "\n".join(lines[2:])
     return ranking_tickers, remarks_map, body_content
 
@@ -125,7 +135,7 @@ def build_markdown(prices: List[PriceInfo], ranking_tickers: List[str], remarks:
         rm = remarks.get(p.ticker, "-")
         table += f"| {i} | `{p.ticker}` | {p.name} | {p.yield_pc:.2f}% | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% | {rm} |\n"
     
-    books_html = "## 📚 本日の注目・おすすめ投資書籍\n\n"
+    books_html = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         books_html += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
 
