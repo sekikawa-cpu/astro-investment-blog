@@ -71,16 +71,16 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     data_str = "\n".join([str(p.to_dict()) for p in prices])
     response = client.messages.create(
         model=CLAUDE_MODEL, max_tokens=3500,
-        system="1行目：銘柄コード（カンマ区切り）、2行目：備考JSON、3行目以降：詳細解説（### [順位]位 形式）。必ず16-20位も個別に解説してください。",
+        system="1行目：銘柄コード（カンマ区切り）、2行目：備考JSON、3行目以降：各銘柄の詳細解説（### 順位位 形式）を出力してください。",
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     
-    # 柔軟な解析: 1行目がランキング、2行目がJSONであることを想定
+    # 【重要修正】1行目だけを確実に取り出す
     ranking_tickers = [t.strip() for t in str(lines).split(',') if t.strip()]
     try:
-        remarks_map = json.loads(lines)
+        remarks_map = json.loads(str(lines))
     except:
         remarks_map = {}
         
@@ -90,21 +90,19 @@ def build_markdown(prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の高配当・優待銘柄動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の注目銘柄動向をお届けします。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     
-    table = "## 📊 本日の注目銘柄ベスト20\n\n"
-    table += "| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n"
-    table += "|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
+    table = "## 📊 本日の注目銘柄ベスト20\n\n| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
     for i, p in enumerate(final_list, 1):
         sign = "+" if p.change >= 0 else ""
         table += f"| {i} | `{p.ticker}` | {p.name} | {p.yield_pc:.2f}% | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% | {remarks.get(p.ticker, '-')} |\n"
     
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
-        books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}" referrerpolicy="no-referrer"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
+        # 確実に表示させるためimg属性のみで構成
+        books += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     
     footer = "\n\n---\n\n<div class='disclaimer'>※ 免責事項：投資判断はご自身の責任において行ってください。<br>※ 上記リンクはAmazonアソシエイトリンクを使用しています。</div>\n"
-    
     return fm + table + "\n" + body + "\n" + books + footer
 
 def main():
