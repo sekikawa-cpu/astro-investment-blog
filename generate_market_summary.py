@@ -28,7 +28,6 @@ CLAUDE_MODEL = "claude-opus-4-7"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
-# ---------- 📚 BOOK_POOL（Amazon公式配信URL） ----------
 def get_amazon_img(asin: str) -> str:
     return f"https://ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN={asin}&Format=_SL250_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1"
 
@@ -74,11 +73,11 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([str(p.to_dict()) for p in prices])
     
-    system_prompt = """あなたは不労所得を目指す投資メンターです。以下の構成で出力してください。
-1行目：【導入文】経済概況や投資家へのメッセージ（200文字程度）。
-2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで（20件）。
-3行目：各銘柄の「備考（25文字以内）」をJSON形式で。増配、優待、決算など注目トピックを優先。
-4行目以降：詳細解説（### [順位]位 [コード] [銘柄名] 形式）。
+    system_prompt = """あなたは不労所得を目指す投資メンターです。
+1行目：【導入文】現在の経済状況や投資家へのエール（200文字程度）。
+2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで（必ず20件）。
+3行目：各銘柄の「備考（25文字以内）」をJSON形式で。増配、優待、決算など注目トピック優先。
+4行目以降：各銘柄の詳細解説（### [順位]位 [コード] [銘柄名] 形式）。
 """
     
     response = client.messages.create(
@@ -88,15 +87,19 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     
+    # 解析（ここを強固に修正しました）
     intro_text = lines
-    ranking_line = lines.replace('[', '').replace(']', '').replace("'", "").replace('"', '')
+    
+    # 2行目のリストをクレンジング（文字列であることを確実にする）
+    ranking_raw = str(lines)
+    ranking_line = ranking_raw.replace('[', '').replace(']', '').replace("'", "").replace('"', '')
     ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
     
     try:
         remarks_map = {}
         for line in lines[2:6]:
             if '{' in line and '}' in line:
-                remarks_map = json.loads(line)
+                remarks_map = json.loads(str(line))
                 break
     except: remarks_map = {}
         
@@ -106,7 +109,7 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "{intro[:50]}..." \npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の高配当・優待銘柄動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     
     intro_content = f'<div class="lead-text">{intro}</div>\n\n'
     
@@ -114,8 +117,12 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     table += '<div class="table-wrapper"><table>\n'
     table += '<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n'
     table += '<tbody>\n'
+    
     for i, p in enumerate(final_list, 1):
-        row_class = ' class="row-up"' if p.change > 0 else (' class="row-down"' if p.change < 0 else '')
+        row_class = ""
+        if p.change > 0: row_class = ' class="row-up"'
+        elif p.change < 0: row_class = ' class="row-down"'
+        
         table += f'  <tr{row_class}>\n'
         table += f'    <td style="text-align:center;">{i}</td>\n'
         table += f'    <td style="text-align:center;"><strong>{p.ticker}</strong></td>\n'
@@ -139,6 +146,7 @@ def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
+        if not prices: return 1
         intro, ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(intro, prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

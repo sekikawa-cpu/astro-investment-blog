@@ -10,7 +10,7 @@ const { Content } = await entry.render();
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>{entry.data.title} | 配当＆優待ナビ</title>
+    <title>{entry.data.title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
@@ -27,7 +27,6 @@ const { Content } = await entry.render();
           <p class="text-blue-600 font-bold mb-3">{new Date(entry.data.pubDate).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
           <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">{entry.data.title}</h1>
         </header>
-
         <div class="markdown-content"><Content /></div>
       </article>
     </main>
@@ -42,18 +41,18 @@ const { Content } = await entry.render();
   /* 導入文スタイル */
   .lead-text { @apply text-lg text-slate-600 leading-relaxed mb-12 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500 italic; }
 
-  /* 共通装飾 */
+  /* 共通 */
   .markdown-content h2 { @apply text-2xl font-bold text-slate-800 mt-16 mb-8 border-l-8 border-blue-600 pl-4 bg-slate-50 py-2; }
   .markdown-content h3 { @apply text-xl font-bold text-blue-700 mt-12 mb-4 border-b-2 border-blue-100 pb-2; }
 
-  /* テーブル制御 */
+  /* テーブル */
   .table-wrapper { @apply overflow-x-auto my-10 shadow-sm rounded-lg border border-slate-200; }
   table { @apply w-full border-collapse bg-white text-sm md:text-base; }
-  th { @apply bg-slate-800 text-white p-4 font-bold text-center whitespace-nowrap; }
-  td { @apply p-4 border-b border-slate-100 text-slate-700; }
+  th { @apply bg-slate-800 text-white p-4 font-bold text-center; }
+  td { @apply p-4 border-b border-slate-100; }
   tr:nth-child(even) { background-color: #f8fafc; }
 
-  /* 行の色分け */
+  /* 色分けルール */
   tr.row-up td { color: #ef4444 !important; }   /* プラスは赤 */
   tr.row-down td { color: #22c55e !important; } /* マイナスは緑 */
   tr.row-up td strong, tr.row-down td strong { color: inherit; }
