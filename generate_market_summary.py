@@ -39,7 +39,7 @@ BOOK_POOL = [
     {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/4d587XL", "img": get_amazon_img("B09MT96T85"), "desc": "シンプルで力強い投資哲学が学べます。"},
     {"title": "ほったらかし投資術", "url": "https://amzn.to/3OAYhUh", "img": get_amazon_img("B09QXN9L7F"), "desc": "手間をかけずに資産を築く具体的な手法。"},
     {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/4e3igFr", "img": get_amazon_img("B07P88Z2N4"), "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
-    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/4cQ85lp", "img": get_amazon_img("B08L39W8Z8"), "desc": "投資の本質を突いた感動的な一冊。"},
+    {"title": "父が娘に伝える 自由に生きるための30 investment の教え", "url": "https://amzn.to/4cQ85lp", "img": get_amazon_img("B08L39W8Z8"), "desc": "投資の本質を突いた感動的な一冊。"},
 ]
 
 @dataclass
@@ -72,14 +72,12 @@ def force_to_str(obj: Any) -> str:
 def generate_summary(prices: List[PriceInfo], report_date: str):
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
     data_str = "\n".join([str(p.to_dict()) for p in prices])
-    
     system_prompt = """あなたは不労所得を目指す投資メンターです。
-1行目：【導入文】経済概況や投資家へのメッセージ（200文字程度）。
-2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで。
+1行目：【導入文】現在の経済状況や投資家へのメッセージ（200文字程度）。
+2行目：おすすめ銘柄ベスト20のコードをカンマ区切りで（20件）。
 3行目：各銘柄の「備考（25文字以内）」をJSON形式で。
-4行目以降：詳細解説（### [順位]位 [コード] [銘柄名] 形式）。
+4行目以降：詳細解説（### [順位]位 形式）。
 """
-    
     response = client.messages.create(
         model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
@@ -87,10 +85,8 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     full_text = force_to_str(response.content).strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     
-    # --- 解析部分を極めて強固に修正 ---
     intro_text = lines
-    
-    # 2行目のリストを確実に文字列として処理
+    # ここでリストを強制的に文字列にしてから置換
     ranking_raw = str(lines)
     ranking_line = ranking_raw.replace('[', '').replace(']', '').replace("'", "").replace('"', '')
     ranking_tickers = [t.strip() for t in ranking_line.split(',') if t.strip()]
@@ -109,7 +105,7 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の注目トピックと配当動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "AIが厳選した最新の高配当・優待銘柄動向。"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     
     intro_content = f'<div class="lead-text">{intro}</div>\n\n'
     
@@ -118,6 +114,7 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     table += '<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n'
     table += '<tbody>\n'
     for i, p in enumerate(final_list, 1):
+        # プラスなら赤、マイナスなら緑のクラスを付与
         row_class = ' class="row-up"' if p.change > 0 else (' class="row-down"' if p.change < 0 else '')
         table += f'  <tr{row_class}>\n'
         table += f'    <td style="text-align:center;">{i}</td>\n'

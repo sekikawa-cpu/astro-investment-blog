@@ -45,16 +45,16 @@ const { Content } = await entry.render();
   .markdown-content h2 { @apply text-2xl font-bold text-slate-800 mt-16 mb-8 border-l-8 border-blue-600 pl-4 bg-slate-50 py-2; }
   .markdown-content h3 { @apply text-xl font-bold text-blue-700 mt-12 mb-4 border-b-2 border-blue-100 pb-2; }
 
-  /* テーブル */
+  /* テーブル制御 */
   .table-wrapper { @apply overflow-x-auto my-10 shadow-sm rounded-lg border border-slate-200; }
   table { @apply w-full border-collapse bg-white text-sm md:text-base; }
   th { @apply bg-slate-800 text-white p-4 font-bold text-center; }
   td { @apply p-4 border-b border-slate-100; }
   tr:nth-child(even) { background-color: #f8fafc; }
 
-  /* 色分けルール */
-  tr.row-up td { color: #ef4444 !important; }   /* プラスは赤 */
-  tr.row-down td { color: #22c55e !important; } /* マイナスは緑 */
+  /* --- 行の色分け (最重要) --- */
+  tr.row-up td { color: #ef4444 !important; font-weight: 500; }   /* 赤 */
+  tr.row-down td { color: #22c55e !important; font-weight: 500; } /* 緑 */
   tr.row-up td strong, tr.row-down td strong { color: inherit; }
 
   /* 書籍リスト */
