@@ -13,7 +13,6 @@ except ImportError:
     print("Error: anthropic package is required.", file=sys.stderr)
     sys.exit(2)
 
-# ---------- 設定 ----------
 TICKER_POOL: Dict[str, str] = {
     "1489.T": "日経高配当50ETF", "^GSPC": "S&P 500", "SPYD": "SPYD (米国高配当)", "VYM": "VYM (米国高配当)",
     "2914.T": "JT", "8306.T": "三菱UFJFG", "9432.T": "NTT", "8058.T": "三菱商事",
@@ -28,7 +27,6 @@ CLAUDE_MODEL = "claude-opus-4-7"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
-# ---------- 📚 BOOK_POOL（ASIN画像URL） ----------
 BOOK_POOL = [
     {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "img": "https://m.media-amazon.com/images/P/B08688RT6T.01.LZZZZZZZ.jpg", "desc": "資産形成の基本が網羅された一冊。"},
     {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "img": "https://m.media-amazon.com/images/P/B0B9XF5Z8V.01.LZZZZZZZ.jpg", "desc": "日本の高配当株投資のバイブル。"},
