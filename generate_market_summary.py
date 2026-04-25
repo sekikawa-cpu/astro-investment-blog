@@ -2,10 +2,11 @@ import os
 import sys
 import time
 import random
+import json
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Any
 from zoneinfo import ZoneInfo
 
 import pandas as pd
@@ -33,8 +34,7 @@ CLAUDE_MODEL = "claude-opus-4-7"
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
-# ---------- 📚 BOOK_POOL（サムネイルURLを追加） ----------
-# 画像URLは適切なものに差し替えてください
+# ---------- 📚 BOOK_POOL（サムネイル付き） ----------
 BOOK_POOL = [
     {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "desc": "資産形成の基本が網羅された一冊。"},
     {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "desc": "日本の高配当株投資のバイブル。"},
@@ -48,25 +48,14 @@ BOOK_POOL = [
 
 @dataclass
 class PriceInfo:
-    ticker: str
-    name: str
-    close: float
-    prev_close: float
-    yield_pc: float  # 配当利回り(%)
-
+    ticker: str; name: str; close: float; prev_close: float; yield_pc: float
     @property
     def change(self) -> float: return self.close - self.prev_close
     @property
     def change_pct(self) -> float:
         return (self.change / self.prev_close) * 100 if self.prev_close != 0 else 0
     def to_dict(self) -> dict:
-        return {
-            "ticker": self.ticker, 
-            "name": self.name, 
-            "yield": f"{self.yield_pc:.2f}%",
-            "close": round(self.close, 2), 
-            "change_pct": f"{self.change_pct:.2f}%"
-        }
+        return {"ticker": self.ticker, "name": self.name, "yield": f"{self.yield_pc:.2f}%", "close": round(self.close, 2), "change_pct": f"{self.change_pct:.2f}%"}
 
 def collect_prices() -> List[PriceInfo]:
     results = []
@@ -75,32 +64,31 @@ def collect_prices() -> List[PriceInfo]:
             t = yf.Ticker(ticker)
             df = t.history(period="5d", auto_adjust=False).sort_index()
             if df.empty: continue
-            
-            # 配当利回りの取得（infoから取得、取得できない場合は0.0）
-            info = t.info
-            y = info.get('dividendYield', 0)
-            if y is None: y = 0
-            y_pc = y * 100 if y < 1 else y # 小数かパーセントか補正
-            
+            y = t.info.get('dividendYield', 0)
+            y_pc = (y * 100) if y and y < 1 else (y or 0.0)
             results.append(PriceInfo(ticker, name, float(df.iloc[-1]["Close"]), float(df.iloc[-2]["Close"]), y_pc))
         except: continue
     return results
 
-SYSTEM_PROMPT = """あなたは不労所得を目指す投資家向けのメンターです。
-提供されたデータから「長期投資家が今注目すべき銘柄」をベスト20選定してください。
+SYSTEM_PROMPT = """あなたは不労所得を目指す投資家向けのメンターです。提供データから注目銘柄ベスト20を選定してください。
 
 【出力形式の絶対ルール】
-1. 1行目：おすすめ順の銘柄コード（カンマ区切り）
-2. 2行目：各銘柄の「備考（20文字以内）」をコード順に並べたJSON形式
-   例: {"1489.T": "利回り4%超の鉄板ETF", "9432.T": "NTT、安定感抜群"...}
-3. 3行目以降：各銘柄の詳細解説
-   - フォーマット：
-     ### **[順位]位 [コード] [銘柄名]**
-     （ここに改行を入れる）
+1行目：おすすめ順の銘柄コード（カンマ区切り）
+2行目：各銘柄の「備考（20文字以内）」をコード順に並べたJSON形式。例: {"1489.T": "利回り4.2%の鉄板ETF", ...}
+3行目以降：各銘柄の詳細解説
+   - フォーマット：### **[順位]位 [コード] [銘柄名]**
+     （空行を1行入れる）
      [解説本文を150文字程度で記述]
-
 ※16〜20位も省略せず、上記###形式で1つずつ個別に解説してください。
 """
+
+def extract_text(content: Any) -> str:
+    """どんな型が来ても再帰的にテキストを抽出する防弾関数"""
+    if isinstance(content, str): return content
+    if isinstance(content, list): return "".join([extract_text(c) for c in content])
+    if hasattr(content, 'text'): return str(content.text)
+    if isinstance(content, dict) and 'text' in content: return str(content['text'])
+    return ""
 
 def generate_summary(prices: List[PriceInfo], report_date: str):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -112,18 +100,13 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
         messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
     )
     
-    full_text = response.content.text
+    # ここで不沈関数を使用
+    full_text = extract_text(response.content)
     lines = [l.strip() for l in full_text.strip().split('\n') if l.strip()]
     
     ranking_tickers = [t.strip() for t in lines.split(',') if t.strip()]
-    
-    # 備考JSONの解析
-    import json
-    try:
-        remarks_map = json.loads(lines)
-    except:
-        remarks_map = {}
-        
+    try: remarks_map = json.loads(lines)
+    except: remarks_map = {}
     body_content = "\n".join(lines[2:])
     return ranking_tickers, remarks_map, body_content
 
@@ -131,12 +114,8 @@ def build_markdown(prices: List[PriceInfo], ranking_tickers: List[str], remarks:
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
     
-    title = f"{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"
-    desc = "最新の市場動向から、不労所得を最大化するための注目銘柄をAIが厳選。"
+    fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\ndescription: "最新の市場動向から、AIが厳選した高配当・優待銘柄をお届けします。"\npubDate: {report_date}\ncategory: "マーケット分析"\ntags: ["高配当株", "株主優待", "不労所得"]\nauthor: "配当＆優待ナビ"\n---\n\n'
     
-    fm = f'---\ntitle: "{title}"\ndescription: "{desc}"\npubDate: {report_date}\ncategory: "マーケット分析"\ntags: ["高配当株", "株主優待", "不労所得"]\nauthor: "配当＆優待ナビ"\n---\n\n'
-    
-    # テーブル作成
     table = "## 📊 本日の注目銘柄ベスト20\n\n"
     table += "| 順位 | コード | 銘柄名 | 配当率 | 終値 | 前日比 | 変化率 | 備考 |\n"
     table += "|:---:|:---:|:---|---:|---:|---:|---:|:---|\n"
@@ -146,17 +125,13 @@ def build_markdown(prices: List[PriceInfo], ranking_tickers: List[str], remarks:
         rm = remarks.get(p.ticker, "-")
         table += f"| {i} | `{p.ticker}` | {p.name} | {p.yield_pc:.2f}% | {p.close:,.1f} | {sign}{p.change:,.1f} | {sign}{p.change_pct:.2f}% | {rm} |\n"
     
-    # 書籍セクション（サムネイル付き）
     books_html = "## 📚 本日の注目・おすすめ投資書籍\n\n"
-    selected_books = random.sample(BOOK_POOL, 3)
-    for b in selected_books:
+    for b in random.sample(BOOK_POOL, 3):
         books_html += f'<div class="book-item"><img src="{b["img"]}" alt="{b["title"]}"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
 
-    # 免責事項の統合
     footer = f"\n\n---\n\n<div class='disclaimer'>\n"
     footer += "※ 免責事項：本記事はAIによる自動生成情報であり、特定の銘柄の購入を推奨するものではありません。投資判断は必ずご自身の責任において行ってください。<br>\n"
-    footer += "※ 上記リンクはAmazonアソシエイトリンクを使用しています。この記事の収益はサイトの維持・運営に役立てられます。\n"
-    footer += "</div>\n"
+    footer += "※ 上記リンクはAmazonアソシエイトリンクを使用しています。この記事の収益はサイトの維持・運営に役立てられます。\n</div>\n"
     
     return fm + table + "\n" + body + "\n" + books_html + footer
 
@@ -164,11 +139,12 @@ def main():
     report_date = datetime.now(TZ).strftime("%Y-%m-%d")
     try:
         prices = collect_prices()
+        if not prices: return 1
         ranking, remarks, body = generate_summary(prices, report_date)
         md = build_markdown(prices, ranking, remarks, body, report_date)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / f"{report_date}.md").write_text(md, encoding="utf-8")
-        print(f"Success")
+        print("Success")
     except Exception as e:
         print(f"Error: {e}"); return 1
     return 0
