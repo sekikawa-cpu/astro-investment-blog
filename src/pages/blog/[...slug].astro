@@ -21,10 +21,7 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     <title>{title} | 配当＆優待ナビ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    {/* Amazon 画像など外部画像のリファラ漏れを防ぐ */}
     <meta name="referrer" content="no-referrer" />
-
-    {/* Open Graph */}
     <meta property="og:type" content="article" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -34,7 +31,7 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
     <header class="bg-slate-900 text-white shadow-md py-4">
       <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold tracking-wider hover:text-blue-300 transition-colors">
+        <a href="/" class="text-2xl font-bold hover:text-blue-300 transition-colors">
           配当＆優待ナビ 💸
         </a>
         <a href="/" class="text-sm text-slate-300 hover:text-blue-300 transition-colors">
@@ -53,7 +50,9 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
               </span>
             )}
             <p class="text-sm text-blue-600 font-bold">
-              {new Date(pubDate).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })}
+              {new Date(pubDate).toLocaleDateString('ja-JP', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}
             </p>
           </div>
           <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
@@ -89,97 +88,11 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     <footer class="bg-slate-900 text-slate-400 text-center py-8 mt-auto">
       <p class="text-sm">&copy; 2026 配当＆優待ナビ. All rights reserved.</p>
     </footer>
-
-    {/* 書影フォールバック: Open Library → Google Books (Books API) → openBD → SVGプレースホルダー */}
-    <script is:inline>
-      (function () {
-        // 書影URLが取得できなかった場合の多段フォールバック
-        // ステップ: 0=Open Library(初期表示済) / 1=Google Books / 2=openBD / 3=SVG placeholder
-        function svgPlaceholder(label) {
-          var svg =
-            '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="170" viewBox="0 0 120 170">' +
-            '<rect width="120" height="170" fill="#e2e8f0"/>' +
-            '<text x="60" y="92" font-family="sans-serif" font-size="13" fill="#64748b" text-anchor="middle">' +
-            (label || 'No Cover') +
-            '</text></svg>';
-          return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-        }
-
-        window.__bookCoverFallback = function (img) {
-          var step = parseInt(img.dataset.fallbackStep || '0', 10);
-          var isbn = img.dataset.isbn;
-          if (!isbn) {
-            img.onerror = null;
-            img.src = svgPlaceholder('No ISBN');
-            return;
-          }
-
-          step += 1;
-          img.dataset.fallbackStep = String(step);
-
-          if (step === 1) {
-            // Step 1: Google Books API（JSONP不可なので fetch でメタデータ取得）
-            fetch('https://www.googleapis.com/books/v1/volumes?q=isbn:' + encodeURIComponent(isbn))
-              .then(function (r) { return r.ok ? r.json() : null; })
-              .then(function (data) {
-                if (!data || !data.items || !data.items.length) {
-                  img.dispatchEvent(new Event('error'));
-                  return;
-                }
-                var links = (data.items[0].volumeInfo || {}).imageLinks || {};
-                var url =
-                  links.large ||
-                  links.medium ||
-                  links.small ||
-                  links.thumbnail ||
-                  links.smallThumbnail;
-                if (!url) {
-                  img.dispatchEvent(new Event('error'));
-                  return;
-                }
-                img.src = url.replace('http://', 'https://');
-              })
-              .catch(function () {
-                img.dispatchEvent(new Event('error'));
-              });
-            return;
-          }
-
-          if (step === 2) {
-            // Step 2: openBD API（日本書籍に強い）
-            fetch('https://api.openbd.jp/v1/get?isbn=' + encodeURIComponent(isbn))
-              .then(function (r) { return r.ok ? r.json() : null; })
-              .then(function (data) {
-                if (!Array.isArray(data) || !data[0]) {
-                  img.dispatchEvent(new Event('error'));
-                  return;
-                }
-                var cover = (data[0].summary || {}).cover;
-                if (!cover) {
-                  img.dispatchEvent(new Event('error'));
-                  return;
-                }
-                img.src = cover;
-              })
-              .catch(function () {
-                img.dispatchEvent(new Event('error'));
-              });
-            return;
-          }
-
-          // Final: SVG placeholder
-          img.onerror = null;
-          img.src = svgPlaceholder('No Cover');
-        };
-      })();
-    </script>
   </body>
 </html>
 
 <style is:global>
-  /* =====================================================
-     導入文（リード／アイスブレイク）
-     ===================================================== */
+  /* ===== 導入文 ===== */
   .markdown-content .lead-text {
     font-size: 1.05rem;
     line-height: 1.9;
@@ -189,12 +102,9 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     border-radius: 0.75rem;
     border-left: 4px solid #3b82f6;
-    font-style: normal;
   }
 
-  /* =====================================================
-     見出し
-     ===================================================== */
+  /* ===== 見出し ===== */
   .markdown-content h2 {
     font-size: 1.5rem;
     font-weight: 800;
@@ -204,7 +114,6 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     border-bottom: 3px solid #3b82f6;
   }
   .markdown-content h2:first-child { margin-top: 0; }
-
   .markdown-content h3 {
     font-size: 1.15rem;
     font-weight: 700;
@@ -213,7 +122,6 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     padding-left: 0.75rem;
     border-left: 4px solid #60a5fa;
   }
-
   .markdown-content p {
     font-size: 1rem;
     line-height: 1.85;
@@ -221,75 +129,113 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     margin: 0.75rem 0 1.25rem;
   }
 
-  /* =====================================================
-     ランキングテーブル
-     ===================================================== */
+  /* ===== ニューストピック ===== */
+  .markdown-content .news-list {
+    display: flex;
+    flex-direction: column;
+    margin: 1.5rem 0 2rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #fff;
+  }
+  .markdown-content .news-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem 1rem;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    text-decoration: none;
+    transition: background-color 0.15s;
+    align-items: center;
+  }
+  .markdown-content .news-item:last-child { border-bottom: none; }
+  .markdown-content .news-item:hover { background: #f8fafc; }
+  .markdown-content .news-item .news-date {
+    font-size: 0.78rem;
+    color: #64748b;
+    white-space: nowrap;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .markdown-content .news-item .news-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e293b;
+    line-height: 1.5;
+  }
+  .markdown-content .news-item:hover .news-title {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+  .markdown-content .news-item .news-source {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 0.15rem 0.6rem;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .markdown-content .news-item {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+  }
+
+  /* ===== ランキングテーブル ===== */
   .markdown-content .table-wrapper {
     overflow-x: auto;
     margin: 2rem 0;
     border-radius: 0.5rem;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
   }
-
   .markdown-content table.stock-table {
     width: 100% !important;
     border-collapse: collapse !important;
-    background-color: #ffffff !important;
+    background: #fff !important;
     font-size: 0.875rem !important;
     margin: 0 !important;
   }
-
   .markdown-content table.stock-table thead th {
-    background-color: #1e293b !important;
-    color: #ffffff !important;
+    background: #1e293b !important;
+    color: #fff !important;
     padding: 0.85rem 0.75rem !important;
     font-weight: 700 !important;
     text-align: center !important;
     border-bottom: 2px solid #0f172a !important;
     white-space: nowrap;
   }
-
   .markdown-content table.stock-table tbody td {
     padding: 0.75rem !important;
     border-bottom: 1px solid #f1f5f9 !important;
     vertical-align: middle !important;
   }
-
-  .markdown-content table.stock-table tbody tr:hover {
-    background-color: #f8fafc !important;
-  }
-
-  /* --- 行の色分け（条件付き） --- */
-  /* 前日比プラス → 赤色 (#ef4444) */
+  .markdown-content table.stock-table tbody tr:hover { background: #f8fafc !important; }
+  /* 前日比プラス → 赤 */
   .markdown-content table.stock-table tbody tr.red-row td {
     color: #ef4444 !important;
     font-weight: 500 !important;
   }
-  /* 前日比マイナス → 視認性の高いダークグリーン (#064e3b) */
+  /* 前日比マイナス → ダークグリーン */
   .markdown-content table.stock-table tbody tr.green-row td {
     color: #064e3b !important;
     font-weight: 700 !important;
   }
-  /* 行の色を継承しつつ、コード・銘柄名は太字を維持 */
   .markdown-content table.stock-table tbody tr.red-row td strong,
   .markdown-content table.stock-table tbody tr.green-row td strong {
     color: inherit !important;
     font-weight: 800 !important;
   }
-  /* 通常行のコード・銘柄名も太字 */
   .markdown-content table.stock-table tbody td strong {
     font-weight: 700 !important;
     color: #0f172a;
   }
-
-  /* セル内ユーティリティ */
   .markdown-content table.stock-table .text-center { text-align: center !important; }
   .markdown-content table.stock-table .text-right  { text-align: right  !important; }
 
-  /* =====================================================
-     書籍紹介セクション
-     ===================================================== */
+  /* ===== 書籍紹介 ===== */
   .markdown-content .book-item {
     display: flex;
     flex-direction: column;
@@ -299,35 +245,33 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     padding: 1.5rem;
     border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
-    background-color: #f8fafc;
+    background: #f8fafc;
     transition: all 0.2s ease;
   }
-  @media (min-width: 768px) {
-    .markdown-content .book-item {
-      flex-direction: row;
-      align-items: flex-start;
-    }
+  @media (min-width: 640px) {
+    .markdown-content .book-item { flex-direction: row; align-items: flex-start; }
   }
   .markdown-content .book-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
     transform: translateY(-2px);
   }
   .markdown-content .book-item img {
     width: 110px;
-    height: 160px;
+    height: 155px;
     object-fit: contain;
-    background-color: #ffffff;
+    background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 0.375rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
     flex-shrink: 0;
     margin: 0;
-  }
-  .markdown-content .book-info { flex: 1; }
-  .markdown-content .book-item strong {
-    font-size: 1.05rem;
     display: block;
-    margin-bottom: 0.5rem;
+  }
+  .markdown-content .book-info { flex: 1; min-width: 0; }
+  .markdown-content .book-item strong {
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.3rem;
     color: #0f172a;
     font-weight: 700;
     line-height: 1.5;
@@ -335,11 +279,14 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
   .markdown-content .book-item strong a {
     color: #0f172a;
     text-decoration: none;
-    transition: color 0.15s ease;
+    transition: color 0.15s;
   }
-  .markdown-content .book-item strong a:hover {
-    color: #2563eb;
-    text-decoration: underline;
+  .markdown-content .book-item strong a:hover { color: #2563eb; text-decoration: underline; }
+  .markdown-content .book-item .book-author {
+    font-size: 0.8rem !important;
+    color: #64748b !important;
+    margin: 0 0 0.4rem !important;
+    line-height: 1.4 !important;
   }
   .markdown-content .book-item p {
     font-size: 0.9rem;
@@ -348,72 +295,17 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     line-height: 1.7;
   }
 
-  /* =====================================================
-     ニュースセクション
-     ===================================================== */
-  .markdown-content .news-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin: 1.5rem 0 2.25rem;
-  }
-  @media (min-width: 768px) {
-    .markdown-content .news-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  .markdown-content .news-card {
-    padding: 1.25rem;
-    border: 1px solid #dbeafe;
-    border-radius: 0.875rem;
-    background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-  }
-  .markdown-content .news-kicker {
-    margin: 0 0 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #2563eb;
-    text-transform: uppercase;
-  }
-  .markdown-content .news-title {
-    margin: 0 0 0.75rem;
-    font-size: 1rem;
-    font-weight: 800;
-    line-height: 1.55;
-    color: #0f172a;
-  }
-  .markdown-content .news-card p {
-    margin: 0;
-    font-size: 0.92rem;
-    line-height: 1.8;
-    color: #334155;
-  }
-  .markdown-content .news-card a {
-    color: #2563eb;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-
-  /* =====================================================
-     免責事項
-     ===================================================== */
+  /* ===== 免責 ===== */
   .markdown-content .disclaimer-note {
     margin-top: 2rem;
     padding: 1rem 1.25rem;
-    background-color: #fef3c7;
+    background: #fef3c7;
     border-left: 4px solid #f59e0b;
     border-radius: 0 0.375rem 0.375rem 0;
     font-size: 0.85rem;
     line-height: 1.7;
     color: #78350f;
   }
-
-  /* =====================================================
-     水平線
-     ===================================================== */
   .markdown-content hr {
     border: none;
     border-top: 1px solid #e2e8f0;
