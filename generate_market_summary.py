@@ -24,13 +24,13 @@ TICKER_POOL: Dict[str, str] = {
     "4063.T": "信越化学工業", "9020.T": "JR東日本", "2802.T": "味の素", "3382.T": "セブン＆アイHD", "7453.T": "良品計画",
 }
 
-# 関川さんのコンソールで確認できた有効なモデル名
+# 関川さんのコンソールで有効だったモデルID
 CLAUDE_MODEL = "claude-sonnet-4-6" 
 TZ = ZoneInfo("Asia/Tokyo")
 OUTPUT_DIR = Path("src/content/blog")
 
 def get_amazon_img(asin: str) -> str:
-    # Amazonの画像を表示させるための標準パス
+    # Amazonの画像制限を回避しやすいURL形式
     return f"https://m.media-amazon.com/images/P/{asin}.01.LZZZZZZZ.jpg"
 
 BOOK_POOL = [
@@ -69,16 +69,19 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     system_prompt = """あなたは投資メンターです。
 1行目：【導入文】経済概況と投資家へのメッセージ（200文字程度）。
 2行目：おすすめ20銘柄のコードをカンマ区切りで。
-3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "好配当利回り", "9432.T": "買い増し圏内"}
-4行目以降：各銘柄の詳細解説。"""
+3行目：各銘柄の「備考」をJSONで。例: {"1489.T": "高水準の配当利回り", "9432.T": "安定した還元姿勢"}
+4行目以降：各銘柄の詳細解説（### [順位]位 形式）。"""
     
-    response = client.messages.create(model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
-                                     messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}])
+    response = client.messages.create(
+        model=CLAUDE_MODEL, max_tokens=3500, system=system_prompt,
+        messages=[{"role": "user", "content": f"日付: {report_date}\n\n{data_str}"}]
+    )
+    
+    # 【重要】リストの最初の要素から text を取り出す
     full_text = response.content.text.strip()
     lines = [l.strip() for l in full_text.split('\n') if l.strip()]
     
     intro = lines
-    # 解析を文字列として確実に行う
     ranking_raw = str(lines).replace('[','').replace(']','').replace("'","").replace('"','')
     ranking_tickers = [t.strip() for t in ranking_raw.split(',') if t.strip()]
     
@@ -86,7 +89,6 @@ def generate_summary(prices: List[PriceInfo], report_date: str):
     for l in lines[2:6]:
         if '{' in l and '}' in l:
             try:
-                # JSON部分のみを抽出する試み
                 start = l.find('{')
                 end = l.rfind('}') + 1
                 remarks = json.loads(l[start:end])
@@ -100,15 +102,17 @@ def build_markdown(intro, prices, ranking_tickers, remarks, body, report_date):
     fm = f'---\ntitle: "{report_date} 投資レポート：不労所得を育てる本日の注目銘柄ベスト20"\npubDate: {report_date}\ntags: ["高配当株", "不労所得"]\n---\n\n'
     content = f'<div class="lead-text">{intro}</div>\n\n## 📊 本日の注目銘柄ベスト20\n\n'
     content += '<div class="table-wrapper"><table class="stock-table">\n<thead><tr><th>順位</th><th>コード</th><th>銘柄名</th><th>配当率</th><th>終値</th><th>前日比</th><th>変化率</th><th>備考</th></tr></thead>\n<tbody>\n'
+    
     for i, p in enumerate(final_list, 1):
+        # プラスなら red-row, マイナスなら green-row クラスを付与
         cls = "red-row" if p.change > 0 else ("green-row" if p.change < 0 else "")
         content += f'<tr class="{cls}"><td class="text-center">{i}</td><td class="text-center font-bold">{p.ticker}</td><td class="font-bold">{p.name}</td><td class="text-right">{p.yield_pc:.2f}%</td><td class="text-right">{p.close:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change:,.1f}</td><td class="text-right">{"+" if p.change > 0 else ""}{p.change_pct:.2f}%</td><td>{remarks.get(p.ticker, "-")}</td></tr>\n'
-    content += '</tbody></table></div>\n\n'
     
+    content += '</tbody></table></div>\n\n'
     books = "\n## 📚 本日の注目・おすすめ投資書籍\n\n"
     for b in random.sample(BOOK_POOL, 3):
         img_url = get_amazon_img(b['asin'])
-        # referrerpolicy="no-referrer" を追加してAmazonの制限を回避
+        # referrerpolicy="no-referrer" でAmazon側のチェックを回避
         books += f'<div class="book-item"><img src="{img_url}" alt="{b["title"]}" referrerpolicy="no-referrer" loading="lazy"><div class="book-info"><strong><a href="{b["url"]}">{b["title"]}</a></strong><p>{b["desc"]}</p></div></div>\n'
     return fm + content + body + books
 
