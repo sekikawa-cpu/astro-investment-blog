@@ -58,8 +58,9 @@ MAX_RETRIES = 3
 INITIAL_BACKOFF = 2.0
 FETCH_PERIOD = "5d"
 
+# 修正箇所1：最新のClaudeモデルを指定
 CLAUDE_MODEL = "claude-opus-4-7"
-CLAUDE_MAX_TOKENS = 1500 # 銘柄が増えたので出力上限を少し増やしました
+CLAUDE_MAX_TOKENS = 1500 
 CLAUDE_MAX_RETRIES = 3
 CLAUDE_INITIAL_BACKOFF = 3.0
 
@@ -68,14 +69,14 @@ TZ = ZoneInfo("Asia/Tokyo")
 
 # ---------- 📚 おすすめ書籍のプール ----------
 BOOK_POOL = [
-    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/example1", "desc": "資産形成の基本が網羅された一冊。"},
-    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/example2", "desc": "日本の高配当株投資のバイブル。"},
-    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/example3", "desc": "富と幸福に関する深い洞察が得られます。"},
-    {"title": "敗者のゲーム", "url": "https://amzn.to/example4", "desc": "インデックス投資の重要性を説く不朽の名著。"},
-    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/example5", "desc": "シンプルで力強い投資哲学が学べます。"},
-    {"title": "ほったらかし投資術", "url": "https://amzn.to/example6", "desc": "手間をかけずに資産を築く具体的な手法。"},
-    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/example7", "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
-    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/example8", "desc": "投資の本質を突いた感動的な一冊。"},
+    {"title": "本当の自由を手に入れる お金の大学", "url": "https://amzn.to/4vOVqrt", "desc": "資産形成の基本が網羅された一冊。"},
+    {"title": "オートモードで月に18.5万円が入ってくる「高配当」株投資", "url": "https://amzn.to/4cvqRzx", "desc": "日本の高配当株投資のバイブル。"},
+    {"title": "サイコロジー・オブ・マネー", "url": "https://amzn.to/4d9ozFx", "desc": "富と幸福に関する深い洞察が得られます。"},
+    {"title": "敗者のゲーム", "url": "https://amzn.to/3QvojJd", "desc": "インデックス投資の重要性を説く不朽の名著。"},
+    {"title": "ジェイソン流お金の増やし方", "url": "https://amzn.to/4d587XL", "desc": "シンプルで力強い投資哲学が学べます。"},
+    {"title": "ほったらかし投資術", "url": "https://amzn.to/3OAYhUh", "desc": "手間をかけずに資産を築く具体的な手法。"},
+    {"title": "バカでも稼げる 「米国株」高配当投資", "url": "https://amzn.to/4e3igFr", "desc": "米国高配当株の魅力が分かりやすく解説されています。"},
+    {"title": "父が娘に伝える 自由に生きるための30の投資の教え", "url": "https://amzn.to/4cQ85lp", "desc": "投資の本質を突いた感動的な一冊。"},
 ]
 
 def get_dynamic_affiliate_section() -> str:
@@ -177,7 +178,19 @@ def generate_summary(prices: list[PriceInfo], report_date: str) -> str:
         model=CLAUDE_MODEL, max_tokens=CLAUDE_MAX_TOKENS, system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}]
     )
-    return response.content.text
+    
+    # 修正箇所2：安全なテキスト抽出処理
+    text_parts = []
+    for block in response.content:
+        if getattr(block, "type", None) == "text":
+            text_parts.append(block.text)
+        elif isinstance(block, dict) and block.get("type") == "text":
+            text_parts.append(block.get("text", ""))
+            
+    if not text_parts:
+        raise ValueError("Claudeからの応答にテキストが含まれていませんでした。")
+        
+    return "\n".join(text_parts).strip()
 
 def build_markdown(prices: list[PriceInfo], summary_body: str, report_date: str) -> str:
     title = f"{report_date} 市場サマリー: 高配当ETFと優待銘柄の動向"
