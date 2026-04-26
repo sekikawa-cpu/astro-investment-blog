@@ -164,8 +164,25 @@ def resolve_cover_src(book: Dict) -> str:
 
 
 def _try_remote_cover(isbn13: str) -> Optional[str]:
-    """openBD → Google Books の順で書影URLを取得（ネット環境必須）"""
-    # openBD
+    """Google Books API → openBD の順で書影URLを取得（APIキー不要・安定）"""
+    import re as _re
+    # 1. Google Books API（最も安定・APIキー不要）
+    try:
+        api = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{urllib.parse.quote(isbn13)}&country=JP"
+        req = urllib.request.Request(api, headers={"User-Agent": "astro-investment-blog/4.0"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        if data and data.get("items"):
+            links = (data["items"][0].get("volumeInfo") or {}).get("imageLinks", {}) or {}
+            for k in ("extraLarge", "large", "medium", "small", "thumbnail", "smallThumbnail"):
+                url = links.get(k)
+                if url:
+                    url = url.replace("http://", "https://")
+                    url = _re.sub(r"zoom=\d+", "zoom=1", url)
+                    return url
+    except Exception:
+        pass
+    # 2. openBD（日本書籍に強い）
     try:
         api = f"https://api.openbd.jp/v1/get?isbn={urllib.parse.quote(isbn13)}"
         req = urllib.request.Request(api, headers={"User-Agent": "astro-investment-blog/4.0"})
@@ -174,20 +191,7 @@ def _try_remote_cover(isbn13: str) -> Optional[str]:
         if data and isinstance(data, list) and data[0]:
             cover = (data[0].get("summary") or {}).get("cover")
             if cover:
-                return cover
-    except Exception:
-        pass
-    # Google Books
-    try:
-        api = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{urllib.parse.quote(isbn13)}"
-        req = urllib.request.Request(api, headers={"User-Agent": "astro-investment-blog/4.0"})
-        with urllib.request.urlopen(req, timeout=8) as r:
-            data = json.loads(r.read().decode("utf-8"))
-        if data and data.get("items"):
-            links = (data["items"][0].get("volumeInfo") or {}).get("imageLinks", {}) or {}
-            for k in ("large", "medium", "small", "thumbnail"):
-                if links.get(k):
-                    return links[k].replace("http://", "https://")
+                return cover.replace("http://", "https://")
     except Exception:
         pass
     return None
@@ -280,6 +284,34 @@ class PriceInfo:
     @property
     def change_pct(self) -> float:
         return (self.change / self.prev_close) * 100 if self.prev_close != 0 else 0.0
+
+
+# ---------------------------------------------------------------------------
+# 通貨ユーティリティ
+# ---------------------------------------------------------------------------
+# .T で終わる銘柄は東証 → 円、それ以外は USD
+# インデックス（^で始まる）も USD 扱いにする
+def get_currency(ticker: str) -> str:
+    """ティッカーから通貨記号を返す。東証(.T)は円、それ以外はUSD。"""
+    if ticker.endswith(".T"):
+        return "円"
+    return "USD"
+
+
+def fmt_price(value: float, ticker: str) -> str:
+    """通貨に応じた価格フォーマット。円は小数不要、USDは2桁。"""
+    if ticker.endswith(".T"):
+        return f"{value:,.1f}"
+    return f"${value:,.2f}"
+
+
+def fmt_change(value: float, ticker: str) -> str:
+    """通貨に応じた前日比フォーマット。符号は $ の前に付ける。"""
+    sign = "+" if value > 0 else ("-" if value < 0 else "")
+    abs_val = abs(value)
+    if ticker.endswith(".T"):
+        return f"{sign}{abs_val:,.1f}"
+    return f"{sign}${abs_val:,.2f}"
 
 
 def collect_prices() -> List[PriceInfo]:
@@ -543,8 +575,8 @@ def build_markdown(
             f'<td class="text-center"><strong>{p.ticker}</strong></td>'
             f"<td><strong>{p.name}</strong></td>"
             f'<td class="text-right">{p.yield_pc:.2f}%</td>'
-            f'<td class="text-right">{p.close:,.1f}</td>'
-            f'<td class="text-right">{sign}{p.change:,.1f}</td>'
+            f'<td class="text-right">{fmt_price(p.close, p.ticker)}</td>'
+            f'<td class="text-right">{fmt_change(p.change, p.ticker)}</td>'
             f'<td class="text-right">{sign}{p.change_pct:.2f}%</td>'
             f"<td>{remark}</td>"
             f"</tr>\n"
@@ -578,8 +610,8 @@ def build_markdown(
     disclaimer = (
         "\n---\n\n"
         '<div class="disclaimer-note">'
-        "※ 本記事はAIによる自動生成です。投資判断はご自身の責任で行ってください。<br>"
-        "※ 書籍リンクはAmazonアソシエイトプログラムを利用しています（StoreID: investinsight-22）。"
+        "※ 本記事の情報は投資判断の参考を目的としており、特定銘柄の売買を推奨するものではありません。投資はご自身の判断と責任で行ってください。<br>"
+        "※ 書籍リンクはAmazonアソシエイトプログラムを利用しています。"
         "</div>\n"
     )
 
@@ -833,8 +865,8 @@ def generate_column(
     disclaimer = (
         "\n---\n\n"
         '<div class="disclaimer-note">'
-        "※ 本記事はAIによる自動生成です。投資判断はご自身の責任で行ってください。<br>"
-        "※ 書籍リンクはAmazonアソシエイトプログラムを利用しています（StoreID: investinsight-22）。"
+        "※ 本記事の情報は投資判断の参考を目的としており、特定銘柄の売買を推奨するものではありません。投資はご自身の判断と責任で行ってください。<br>"
+        "※ 書籍リンクはAmazonアソシエイトプログラムを利用しています。"
         "</div>\n"
     )
 

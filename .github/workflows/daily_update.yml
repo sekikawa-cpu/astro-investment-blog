@@ -110,8 +110,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # コミット対象は記事ディレクトリのみに限定(ログファイル等を巻き込まない)
-          git add src/content/blog/ public/images/books/ || true
+          # コミット対象: 記事 + 書影（存在する場合のみ）+ books_data.json（cover_url更新分）
+          git add src/content/blog/
+          # public/images/books/ はファイルが存在する場合のみ追加（空ディレクトリは git add 不可）
+          if [ -d "public/images/books" ] && [ -n "$(ls -A public/images/books 2>/dev/null)" ]; then
+            git add public/images/books/
+          fi
+          # books_data.json の cover_url 更新分も追加
+          git add books_data.json 2>/dev/null || true
 
           # 今日の日付をコミットメッセージに入れる
           REPORT_DATE=$(date +%Y-%m-%d)
