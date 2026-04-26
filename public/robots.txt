@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://astro-investment-blog-1gwd.vercel.app/sitemap-index.xml
