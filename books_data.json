@@ -9,8 +9,13 @@
       "asin": "4023323780",
       "isbn13": "9784023323780",
       "rakuten_id": "18041936",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/3780/9784023323780_1_5.jpg",
-      "themes": ["foundation", "household", "savings", "nisa"],
+      "cover_url": "https://books.google.com/books/content?id=Rgjx0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "foundation",
+        "household",
+        "savings",
+        "nisa"
+      ],
       "desc": "資産形成の基本（貯める・増やす・稼ぐ・守る・使う）を網羅。新NISA完全対応の決定版。",
       "image_local": "/images/books/9784023323780.jpg"
     },
@@ -21,8 +26,12 @@
       "asin": "4046055472",
       "isbn13": "9784046055477",
       "rakuten_id": "16988099",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/5477/9784046055477_1_18.jpg",
-      "themes": ["high_dividend_jp", "passive_income", "fire"],
+      "cover_url": "https://books.google.com/books/content?id=6Z_GzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "high_dividend_jp",
+        "passive_income",
+        "fire"
+      ],
       "desc": "日本の高配当株投資のバイブル。永久保有銘柄17の選定基準まで丁寧に解説。",
       "image_local": "/images/books/9784046055477.jpg"
     },
@@ -34,7 +43,11 @@
       "isbn13": "9784478114131",
       "rakuten_id": "16915229",
       "cover_url": "https://shop.r10s.jp/book/cabinet/4131/9784478114131_1_8.jpg",
-      "themes": ["psychology", "behavior", "mindset"],
+      "themes": [
+        "psychology",
+        "behavior",
+        "mindset"
+      ],
       "desc": "全世界70万部の世界的ベストセラー。富と幸福に関する深い洞察が得られる名著。",
       "image_local": "/images/books/9784478114131.jpg"
     },
@@ -45,8 +58,12 @@
       "asin": "4532359112",
       "isbn13": "9784532359119",
       "rakuten_id": "16973485",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/9119/9784532359119_1_6.jpg",
-      "themes": ["index", "long_term", "passive_investing"],
+      "cover_url": "https://books.google.com/books/content?id=aWW9zgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "index",
+        "long_term",
+        "passive_investing"
+      ],
       "desc": "インデックス投資の重要性を説く不朽の名著。世界100万部の超ロングセラー。",
       "image_local": "/images/books/9784532359119.jpg"
     },
@@ -58,7 +75,11 @@
       "isbn13": "9784835650012",
       "rakuten_id": "17873541",
       "cover_url": "https://shop.r10s.jp/book/cabinet/0012/9784835650012_1_4.jpg",
-      "themes": ["index_us", "beginner", "nisa"],
+      "themes": [
+        "index_us",
+        "beginner",
+        "nisa"
+      ],
       "desc": "シンプルで力強い投資哲学。新NISA対応の改訂版。長期・分散・積立の基本がわかる。",
       "image_local": "/images/books/9784835650012.jpg"
     },
@@ -69,8 +90,13 @@
       "asin": "4022951672",
       "isbn13": "9784022951670",
       "rakuten_id": "17040271",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/1670/9784022951670_1_7.jpg",
-      "themes": ["nisa", "index", "passive_investing", "beginner"],
+      "cover_url": "https://books.google.com/books/content?id=affuzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "nisa",
+        "index",
+        "passive_investing",
+        "beginner"
+      ],
       "desc": "手間をかけずに資産を築く具体的な手法。新NISA対応の最新版。",
       "image_local": "/images/books/9784022951670.jpg"
     },
@@ -81,8 +107,12 @@
       "asin": "4827211191",
       "isbn13": "9784827211191",
       "rakuten_id": "15406036",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/1191/9784827211191_1_3.jpg",
-      "themes": ["high_dividend_us", "us_stocks", "long_term"],
+      "cover_url": "https://books.google.com/books/content?id=1wXdtgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "high_dividend_us",
+        "us_stocks",
+        "long_term"
+      ],
       "desc": "米国高配当株の魅力が分かりやすく解説。連続増配株10社に均等分散の手法。",
       "image_local": "/images/books/9784827211191.jpg"
     },
@@ -93,8 +123,12 @@
       "asin": "4478122970",
       "isbn13": "9784478122976",
       "rakuten_id": "18098113",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/2976/9784478122976_1_5.jpg",
-      "themes": ["fire", "philosophy", "long_term"],
+      "cover_url": "https://books.google.com/books/content?id=bfRv0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "fire",
+        "philosophy",
+        "long_term"
+      ],
       "desc": "投資の本質を突いた感動的な一冊。世界累計100万部突破。FIRE先駆者の知恵。",
       "image_local": "/images/books/9784478122976.jpg"
     },
@@ -106,7 +140,12 @@
       "isbn13": "9784478116982",
       "rakuten_id": "17490187",
       "cover_url": "https://shop.r10s.jp/book/cabinet/6982/9784478116982_1_10.jpg",
-      "themes": ["dca", "data_driven", "long_term", "psychology"],
+      "themes": [
+        "dca",
+        "data_driven",
+        "long_term",
+        "psychology"
+      ],
       "desc": "データサイエンティストが100年超の統計で語る、ただ買い続ける戦略の科学的根拠。",
       "image_local": "/images/books/9784478116982.jpg"
     },
@@ -117,20 +156,39 @@
       "asin": "4478109133",
       "isbn13": "9784478109137",
       "rakuten_id": "16659755",
-      "cover_url": "https://shop.r10s.jp/book/cabinet/9137/9784478109137_1_6.jpg",
-      "themes": ["lifestyle", "philosophy", "fire", "spending"],
+      "cover_url": "https://books.google.com/books/content?id=YqL7zQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      "themes": [
+        "lifestyle",
+        "philosophy",
+        "fire",
+        "spending"
+      ],
       "desc": "ゼロで死ぬ。お金を貯めるだけでなく、人生を最大化する使い方を説く話題作。",
       "image_local": "/images/books/9784478109137.jpg"
     }
   ],
   "themes": {
-    "foundation": "資産形成の基本", "household": "家計管理・節約", "savings": "貯蓄",
-    "nisa": "新NISA", "high_dividend_jp": "日本高配当株", "high_dividend_us": "米国高配当株",
-    "us_stocks": "米国株式", "passive_income": "不労所得", "psychology": "投資心理",
-    "behavior": "行動経済学", "mindset": "マインドセット", "index": "インデックス投資",
-    "index_us": "米国インデックス", "long_term": "長期投資", "passive_investing": "パッシブ投資",
-    "fire": "FIRE・早期リタイア", "beginner": "初心者向け", "dca": "ドルコスト平均法",
-    "data_driven": "データドリブン", "philosophy": "投資哲学", "lifestyle": "ライフスタイル",
+    "foundation": "資産形成の基本",
+    "household": "家計管理・節約",
+    "savings": "貯蓄",
+    "nisa": "新NISA",
+    "high_dividend_jp": "日本高配当株",
+    "high_dividend_us": "米国高配当株",
+    "us_stocks": "米国株式",
+    "passive_income": "不労所得",
+    "psychology": "投資心理",
+    "behavior": "行動経済学",
+    "mindset": "マインドセット",
+    "index": "インデックス投資",
+    "index_us": "米国インデックス",
+    "long_term": "長期投資",
+    "passive_investing": "パッシブ投資",
+    "fire": "FIRE・早期リタイア",
+    "beginner": "初心者向け",
+    "dca": "ドルコスト平均法",
+    "data_driven": "データドリブン",
+    "philosophy": "投資哲学",
+    "lifestyle": "ライフスタイル",
     "spending": "お金の使い方"
   }
 }
