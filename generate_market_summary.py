@@ -589,29 +589,311 @@ def build_markdown(
 # ---------------------------------------------------------------------------
 # main
 # ---------------------------------------------------------------------------
-def main() -> int:
-    report_date = datetime.now(TZ).strftime("%Y-%m-%d")
-    try:
-        prices = collect_prices()
-        if not prices:
-            print("Error: 株価データ取得失敗", file=sys.stderr)
-            return 1
 
-        news = collect_news(max_items=5)
-        books = load_books()
+# ---------------------------------------------------------------------------
+# 土日コラム：テーマ定義
+# ---------------------------------------------------------------------------
 
-        intro, ranking, remarks, body, themes = generate_summary(prices, report_date)
-        print(f"[info] AI themes: {themes}", file=sys.stderr)
+# 土曜：投資初心者向けテーマ（ローテーション）
+SATURDAY_TOPICS = [
+    {
+        "title": "「複利」の力を知れば投資が変わる――お金が雪だるま式に増える仕組み",
+        "theme_keys": ["foundation", "long_term", "beginner"],
+        "prompt": (
+            "投資初心者向けに「複利」について解説する投資コラムを書いてください。"
+            "\n・複利とはどういう仕組みか"
+            "\n・単利との違いを具体的な数字で示す"
+            "\n・新NISAで複利効果を最大化するコツ"
+            "\n・長期投資への行動を促す前向きなまとめ"
+            "\n文字数: 1,000〜1,500字。親しみやすく初心者が読んで実践できる内容にしてください。"
+        ),
+    },
+    {
+        "title": "高配当株とインデックス、どちらを選ぶべき？あなたのスタイルで選ぼう",
+        "theme_keys": ["high_dividend_jp", "index", "beginner"],
+        "prompt": (
+            "投資初心者向けに「高配当株投資」と「インデックス投資」の違いと選び方を解説するコラムを書いてください。"
+            "\n・それぞれの特徴とメリット・デメリット"
+            "\n・どんな人に向いているか"
+            "\n・両方組み合わせる方法"
+            "\n文字数: 1,000〜1,500字。難しい用語は避け、具体例を交えて。"
+        ),
+    },
+    {
+        "title": "新NISAを今すぐ始めるべき理由――非課税のメリットを最大化する方法",
+        "theme_keys": ["nisa", "beginner", "index"],
+        "prompt": (
+            "投資初心者向けに新NISAのメリットと始め方を解説するコラムを書いてください。"
+            "\n・旧NISAとの違い"
+            "\n・成長投資枠と積立投資枠の使い分け"
+            "\n・初心者におすすめの銘柄・ETFの選び方"
+            "\n文字数: 1,000〜1,500字。今すぐ行動できるよう背中を押す内容に。"
+        ),
+    },
+    {
+        "title": "投資で失敗しないために知っておくべき「分散投資」の基本",
+        "theme_keys": ["beginner", "index", "psychology"],
+        "prompt": (
+            "投資初心者向けに分散投資の重要性と実践方法を解説するコラムを書いてください。"
+            "\n・なぜ一点集中はリスクが高いのか"
+            "\n・業種・地域・資産クラスの分散"
+            "\n・少額から始められる分散投資の方法"
+            "\n文字数: 1,000〜1,500字。身近な例えで分かりやすく。"
+        ),
+    },
+    {
+        "title": "配当金生活への第一歩――月3万円の不労所得を作るロードマップ",
+        "theme_keys": ["high_dividend_jp", "passive_income", "beginner"],
+        "prompt": (
+            "投資初心者向けに「配当金で月3万円の不労所得を作る」ための具体的なロードマップを解説するコラムを書いてください。"
+            "\n・必要な投資額の目安"
+            "\n・おすすめの高配当ETFや銘柄タイプ"
+            "\n・配当再投資で加速させる方法"
+            "\n文字数: 1,000〜1,500字。数字を交えて具体的に。"
+        ),
+    },
+    {
+        "title": "株価が下がっても慌てない！長期投資家のメンタル管理術",
+        "theme_keys": ["psychology", "mindset", "long_term"],
+        "prompt": (
+            "投資初心者向けに「株価暴落時のメンタル管理」について解説するコラムを書いてください。"
+            "\n・暴落は必ず来ると知っておく重要性"
+            "\n・過去の暴落から学ぶ（リーマンショック・コロナショック等）"
+            "\n・感情的な売却を防ぐ具体的な習慣"
+            "\n文字数: 1,000〜1,500字。不安を和らげ、長期投資を続ける力が出る内容に。"
+        ),
+    },
+    {
+        "title": "ETFって何？投資信託との違いをわかりやすく解説",
+        "theme_keys": ["beginner", "index", "nisa"],
+        "prompt": (
+            "投資初心者向けにETF（上場投資信託）の基本と投資信託との違いを解説するコラムを書いてください。"
+            "\n・ETFの仕組みとメリット"
+            "\n・投資信託との違い（コスト・流動性・分配金など）"
+            "\n・初心者におすすめのETF選びのポイント"
+            "\n文字数: 1,000〜1,500字。図解できない分、言葉で丁寧に。"
+        ),
+    },
+]
 
-        selected_books = select_books_by_theme(books, themes, count=3)
-        print(f"[info] Selected books: {[b['id'] for b in selected_books]}", file=sys.stderr)
+# 日曜：FIRE・ライフスタイルテーマ（ローテーション）
+SUNDAY_TOPICS = [
+    {
+        "title": "FIREを目指す前に知っておきたい「4%ルール」の真実",
+        "theme_keys": ["fire", "philosophy", "long_term"],
+        "prompt": (
+            "FIRE（経済的独立・早期リタイア）を目指す読者向けに「4%ルール」について深掘りするコラムを書いてください。"
+            "\n・4%ルールとは何か（トリニティスタディの解説）"
+            "\n・日本でFIREする場合の注意点（税制・社会保険）"
+            "\n・4%ルールの限界と補完する考え方"
+            "\n文字数: 1,000〜1,500字。現実的かつ希望が持てる内容に。"
+        ),
+    },
+    {
+        "title": "お金を使い切って死ぬ――DIE WITH ZEROが教える豊かな人生設計",
+        "theme_keys": ["lifestyle", "fire", "spending"],
+        "prompt": (
+            "「DIE WITH ZERO」の考え方をベースに、お金の使い方と人生設計について深掘りするコラムを書いてください。"
+            "\n・お金を使わずに死ぬことの機会損失"
+            "\n・経験にお金を使うことの価値"
+            "\n・資産形成と人生の楽しみのバランス"
+            "\n文字数: 1,000〜1,500字。投資と人生を両立する視点で。"
+        ),
+    },
+    {
+        "title": "サイドFIREという選択――完全リタイアしない「半リタイア」のすすめ",
+        "theme_keys": ["fire", "lifestyle", "passive_income"],
+        "prompt": (
+            "サイドFIRE（半リタイア）という生き方について解説するコラムを書いてください。"
+            "\n・完全FIREとサイドFIREの違い"
+            "\n・サイドFIREのメリット（精神的安定・社会との接続）"
+            "\n・サイドFIREに必要な資産と配当収入の目安"
+            "\n文字数: 1,000〜1,500字。現実的に実現できる道を示す内容に。"
+        ),
+    },
+    {
+        "title": "高配当株で作る「給料日が毎月来る」ポートフォリオの設計法",
+        "theme_keys": ["high_dividend_jp", "passive_income", "fire"],
+        "prompt": (
+            "高配当株を使って「毎月配当金が受け取れる」ポートフォリオを設計する方法を解説するコラムを書いてください。"
+            "\n・日本株・米国株の配当月の違いを活用する"
+            "\n・毎月分配の仕組みを作るポートフォリオ例"
+            "\n・配当金を生活費の一部に組み込む考え方"
+            "\n文字数: 1,000〜1,500字。具体的なイメージが持てる内容に。"
+        ),
+    },
+    {
+        "title": "投資家の「感情」がパフォーマンスを決める――行動経済学から学ぶお金の心理",
+        "theme_keys": ["psychology", "behavior", "mindset"],
+        "prompt": (
+            "行動経済学の観点から「投資家の感情とパフォーマンスの関係」を解説するコラムを書いてください。"
+            "\n・損失回避バイアスとは（損の痛みは得の喜びの2倍）"
+            "\n・ホームカントリーバイアス・群衆心理の危険性"
+            "\n・感情に左右されない投資習慣の作り方"
+            "\n文字数: 1,000〜1,500字。自分の行動を振り返れる内容に。"
+        ),
+    },
+    {
+        "title": "ドルコスト平均法が最強の理由――「タイミング投資」との徹底比較",
+        "theme_keys": ["dca", "data_driven", "long_term"],
+        "prompt": (
+            "ドルコスト平均法（定額積立投資）について、タイミング投資と比較しながら解説するコラムを書いてください。"
+            "\n・ドルコスト平均法の仕組みと歴史的な実績"
+            "\n・タイミング投資が失敗しやすい理由（統計的根拠）"
+            "\n・新NISAの積立投資枠で実践する方法"
+            "\n文字数: 1,000〜1,500字。データを使って説得力ある内容に。"
+        ),
+    },
+    {
+        "title": "老後2,000万円問題を冷静に考える――配当収入で「逃げ切り」は可能か",
+        "theme_keys": ["fire", "foundation", "passive_income"],
+        "prompt": (
+            "「老後2,000万円問題」をテーマに、高配当投資で老後資金を作る現実的な方法を解説するコラムを書いてください。"
+            "\n・2,000万円問題の本質（不足額の根拠を整理）"
+            "\n・配当収入で不足分をカバーする試算"
+            "\n・40代・50代から始めても間に合う積立戦略"
+            "\n文字数: 1,000〜1,500字。不安を解消し前向きになれる内容に。"
+        ),
+    },
+]
 
-        md = build_markdown(
-            intro, prices, ranking, remarks, body, news, selected_books, report_date
+
+# ---------------------------------------------------------------------------
+# 土日コラム生成
+# ---------------------------------------------------------------------------
+def generate_column(
+    topic: Dict, books: List[Dict], report_date: str, day_label: str
+) -> str:
+    """Claude API でコラム本文を生成し Markdown を返す"""
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+
+    system_prompt = """あなたは投資・お金・ライフスタイルの専門ライターです。
+読者は20〜40代の社会人で、投資に興味があるが忙しくてじっくり勉強できない方々です。
+以下のルールで読みやすいコラムを書いてください:
+- 親しみやすい文体（です・ます調）
+- 難しい用語は平易な言葉で言い換える
+- 具体的な数字や例えを使う
+- 各段落は3〜5文程度でテンポよく
+- 小見出し（##）を2〜3個入れて読みやすくする
+- 冒頭で読者の共感を引く問いかけをする
+- 末尾は行動を促す前向きなまとめで締める
+- 文字数: 1,000〜1,500字"""
+
+    response = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=2048,
+        system=system_prompt,
+        messages=[{"role": "user", "content": topic["prompt"]}],
+    )
+    body = _extract_text(response).strip()
+
+    # 書籍選定
+    selected_books = select_books_by_theme(books, topic["theme_keys"], count=3)
+
+    # タイトル
+    title = topic["title"]
+    description = title[:80] + "…" if len(title) > 80 else title
+
+    # frontmatter
+    fm = (
+        "---\n"
+        f'title: "{title}"\n'
+        f'description: "{description}"\n'
+        f"pubDate: {report_date}\n"
+        f'category: "{day_label}"\n'
+        'tags: ["投資コラム", "高配当株", "不労所得"]\n'
+        'author: "配当＆優待ナビ 編集部"\n'
+        "draft: false\n"
+        "---\n\n"
+    )
+
+    content = f'<div class="lead-text">{body.split(chr(10))[0]}</div>\n\n'
+    content += "\n".join(body.split("\n")[1:]) + "\n\n"
+
+    # 書籍紹介
+    books_html = "\n## 📚 このコラムに合わせたおすすめ投資書籍\n\n"
+    for b in selected_books:
+        cover_src = b.get("cover_url") or resolve_cover_src(b)
+        aff_url = amazon_url(b["asin"])
+        title_esc = b["title"].replace('"', "&quot;")
+        books_html += (
+            '<div class="book-item">'
+            f'<a href="{aff_url}" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link">'
+            f'<img src="{cover_src}" alt="{title_esc}" '
+            'referrerpolicy="no-referrer" loading="lazy" '
+            'onerror="this.onerror=null;this.style.opacity=\'0.25\';">'
+            '</a>'
+            '<div class="book-info">'
+            f'<strong><a href="{aff_url}" target="_blank" rel="noopener noreferrer sponsored">{b["title"]}</a></strong>'
+            f'<p class="book-author">著者: {b.get("author", "")}</p>'
+            f'<p>{b["desc"]}</p>'
+            "</div></div>\n\n"
         )
 
+    disclaimer = (
+        "\n---\n\n"
+        '<div class="disclaimer-note">'
+        "※ 本記事はAIによる自動生成です。投資判断はご自身の責任で行ってください。<br>"
+        "※ 書籍リンクはAmazonアソシエイトプログラムを利用しています（StoreID: investinsight-22）。"
+        "</div>\n"
+    )
+
+    return fm + content + books_html + disclaimer
+
+
+def get_column_topic(weekday: int, report_date: str) -> tuple[Dict, str]:
+    """
+    weekday: 5=土曜, 6=日曜
+    report_date: YYYY-MM-DD（週番号でローテーション）
+    Returns: (topic, day_label)
+    """
+    # 週番号でローテーション（同じ週なら同じテーマ）
+    week_num = datetime.strptime(report_date, "%Y-%m-%d").isocalendar()[1]
+
+    if weekday == 5:  # 土曜
+        topic = SATURDAY_TOPICS[week_num % len(SATURDAY_TOPICS)]
+        return topic, "初心者ガイド"
+    else:  # 日曜
+        topic = SUNDAY_TOPICS[week_num % len(SUNDAY_TOPICS)]
+        return topic, "投資戦略"
+
+def main() -> int:
+    now = datetime.now(TZ)
+    report_date = now.strftime("%Y-%m-%d")
+    weekday = now.weekday()  # 0=月, 1=火, ..., 5=土, 6=日
+
+    try:
+        books = load_books()
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         out_path = OUTPUT_DIR / f"{report_date}.md"
+
+        if weekday in (5, 6):
+            # ── 土日：コラム記事を生成 ──────────────────────────────
+            day_name = "土曜" if weekday == 5 else "日曜"
+            print(f"[info] {day_name}コラムモードで生成します", file=sys.stderr)
+
+            topic, day_label = get_column_topic(weekday, report_date)
+            print(f"[info] Topic: {topic['title']}", file=sys.stderr)
+
+            md = generate_column(topic, books, report_date, day_label)
+        else:
+            # ── 月〜金：株価レポートを生成 ──────────────────────────
+            prices = collect_prices()
+            if not prices:
+                print("Error: 株価データ取得失敗", file=sys.stderr)
+                return 1
+
+            news = collect_news(max_items=5)
+            intro, ranking, remarks, body, themes = generate_summary(prices, report_date)
+            print(f"[info] AI themes: {themes}", file=sys.stderr)
+
+            selected_books = select_books_by_theme(books, themes, count=3)
+            print(f"[info] Selected books: {[b['id'] for b in selected_books]}", file=sys.stderr)
+
+            md = build_markdown(
+                intro, prices, ranking, remarks, body, news, selected_books, report_date
+            )
+
         out_path.write_text(md, encoding="utf-8")
         print(f"Success: {out_path}")
     except Exception as e:

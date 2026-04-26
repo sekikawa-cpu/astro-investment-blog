@@ -5,7 +5,8 @@ name: Daily Market Summary
 on:
   schedule:
     # cron は UTC で指定する必要がある: JST 17:00 = UTC 08:00
-    - cron: '0 8 * * 1-5'  # 月〜金(東京市場の営業日に限定)
+    - cron: '0 8 * * 1-5'  # 月〜金: 株価レポート
+    - cron: '0 8 * * 6,0'  # 土・日: 投資コラム（6=土曜, 0=日曜）
   workflow_dispatch:
     inputs:
       force_commit:
