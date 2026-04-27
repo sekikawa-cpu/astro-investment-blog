@@ -1,0 +1,134 @@
+---
+import { getCollection } from 'astro:content';
+const posts = await getCollection('blog');
+posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+// 全記事データをJSONとしてクライアントに渡す
+const postsJson = JSON.stringify(posts.map(p => ({
+  slug: p.slug,
+  title: p.data.title,
+  description: p.data.description || '',
+  category: p.data.category || 'マーケット分析',
+  pubDate: new Date(p.data.pubDate).toLocaleDateString('ja-JP'),
+})));
+---
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>検索結果 | 配当＆優待ナビ</title>
+    <script>document.addEventListener('DOMContentLoaded',()=>{const q=new URLSearchParams(location.search).get('q');if(q)document.title=`「${q}」の検索結果 | 配当＆優待ナビ`});</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+    <header class="bg-slate-900 text-white shadow-md py-3 sticky top-0 z-30">
+      <div class="max-w-4xl mx-auto px-4 flex items-center gap-4">
+        <a href="/" class="text-xl font-bold hover:text-blue-300 transition-colors whitespace-nowrap">
+          配当＆優待ナビ 💸
+        </a>
+        <form id="searchForm" class="flex flex-1 gap-2">
+          <input id="searchInput" type="text" placeholder="キーワードを入力..."
+            class="flex-1 bg-white text-slate-900 border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <button type="submit"
+            class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-sm font-bold transition-colors">
+            検索
+          </button>
+        </form>
+        <a href="/" class="text-sm text-slate-300 hover:text-blue-300 whitespace-nowrap hidden md:block">← トップ</a>
+      </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto px-4 py-8 w-full">
+      <div id="resultHeader" class="mb-6">
+        <p id="resultMsg" class="text-slate-500 text-sm"></p>
+      </div>
+      <div id="resultGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+      <div id="noResult" class="hidden text-center py-16">
+        <p class="text-4xl mb-4">🔍</p>
+        <p class="text-slate-500">「<span id="noResultQuery"></span>」に一致する記事が見つかりませんでした。</p>
+        <a href="/" class="mt-4 inline-block text-blue-600 hover:underline text-sm">← トップに戻る</a>
+      </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
+      <p class="text-sm">&copy; 2026 配当＆優待ナビ. All rights reserved.</p>
+    </footer>
+
+    <script define:vars={{ postsJson }}>
+      const ALL_POSTS = JSON.parse(postsJson);
+
+      function renderResults(q) {
+        const query = q.trim().toLowerCase();
+        const grid = document.getElementById('resultGrid');
+        const noResult = document.getElementById('noResult');
+        const msg = document.getElementById('resultMsg');
+
+        // フィルタリング
+        const filtered = query
+          ? ALL_POSTS.filter(p =>
+              p.category.toLowerCase() === query ||          // カテゴリー完全一致（優先）
+              p.category.toLowerCase().includes(query) ||   // カテゴリー部分一致
+              p.title.toLowerCase().includes(query) ||
+              p.description.toLowerCase().includes(query)
+            )
+          : ALL_POSTS;
+
+        // メッセージ
+        if (query) {
+          // カテゴリー完全一致の場合は「#カテゴリー名」表示
+          const isCat = ALL_POSTS.some(p => p.category.toLowerCase() === query);
+          if (isCat) {
+            msg.textContent = `# ${q} の記事：${filtered.length}件`;
+          } else {
+            msg.textContent = `「${q}」の検索結果：${filtered.length}件`;
+          }
+        } else {
+          msg.textContent = `全記事：${filtered.length}件`;
+        }
+
+        // 結果表示
+        grid.innerHTML = '';
+        if (filtered.length === 0) {
+          noResult.classList.remove('hidden');
+          document.getElementById('noResultQuery').textContent = q;
+          return;
+        }
+        noResult.classList.add('hidden');
+
+        filtered.forEach(p => {
+          grid.innerHTML += `
+            <a href="/blog/${p.slug}"
+              class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">${p.category}</span>
+                <p class="text-xs text-slate-400">${p.pubDate}</p>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mb-2 leading-snug">${p.title}</h3>
+              <p class="text-slate-500 text-xs line-clamp-2 mb-3">${p.description}</p>
+              <div class="flex items-center text-blue-600 text-xs font-semibold">記事を読む →</div>
+            </a>`;
+        });
+      }
+
+      // URLパラメータから検索クエリ取得
+      const params = new URLSearchParams(window.location.search);
+      const initialQ = params.get('q') || '';
+      const input = document.getElementById('searchInput');
+      input.value = initialQ;
+      renderResults(initialQ);
+
+      // フォーム送信
+      document.getElementById('searchForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const q = input.value;
+        // URLを更新
+        const url = new URL(window.location.href);
+        url.searchParams.set('q', q);
+        window.history.pushState({}, '', url);
+        renderResults(q);
+      });
+
+      // 入力のたびにリアルタイム検索
+      input.addEventListener('input', () => renderResults(input.value));
+    </script>
+  </body>
+</html>
