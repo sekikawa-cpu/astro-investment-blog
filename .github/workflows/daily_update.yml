@@ -5,8 +5,9 @@ name: Daily Market Summary
 on:
   schedule:
     # cron は UTC で指定する必要がある: JST 17:00 = UTC 08:00
-    - cron: '0 8 * * 1-5'  # 月〜金: 株価レポート
-    - cron: '0 8 * * 6,0'  # 土・日: 投資コラム（6=土曜, 0=日曜）
+    # GitHubの遅延対策として8:00と8:15の2重設定（重複実行は has_changes チェックで防止）
+    - cron: '0 8 * * *'   # 毎日 UTC 08:00 (JST 17:00)
+    - cron: '15 8 * * *'  # 毎日 UTC 08:15 (JST 17:15) ← 遅延フォールバック
   workflow_dispatch:
     inputs:
       force_commit:

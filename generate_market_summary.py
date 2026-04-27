@@ -125,32 +125,100 @@ def select_books_by_theme(books: List[Dict], themes: List[str], count: int = 3) 
 # ---------------------------------------------------------------------------
 # 書影パス解決
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# 書影URLキャッシュ（プロセス内メモリキャッシュ・APIコール削減）
+# ---------------------------------------------------------------------------
+_COVER_CACHE: Dict[str, str] = {}
+
+
 def resolve_cover_src(book: Dict) -> str:
     """
-    書影URLを以下の優先順で解決する:
-    1. public/images/books/{ISBN13}.jpg (download_covers.py でDL済みのローカルファイル)
-    2. books_data.json の cover_url フィールド（楽天ブックスCDN確認済みURL）
-    3. openBD / Google Books API（フォールバック）
-    4. SVG プレースホルダー（最終手段）
+    書影URLを以下の優先順で解決する（毎回APIを叩かずメモリキャッシュを使用）:
+    1. メモリキャッシュ（同一プロセス内の重複解決を防止）
+    2. Google Books API（最も安定・APIキー不要・HTTPS）
+    3. openBD API（日本書籍に強い）
+    4. books_data.json の cover_url（楽天CDNは外部参照ブロックがあるため最後）
+    5. SVG プレースホルダー（最終手段）
     """
     isbn13 = book.get("isbn13", "")
+    if not isbn13:
+        return _svg_placeholder(book)
 
-    # 1. ローカルファイルが存在する場合は最優先
-    local_path = PUBLIC_BOOKS_DIR / f"{isbn13}.jpg"
-    if local_path.exists() and local_path.stat().st_size > 1024:
-        return book["image_local"]  # /images/books/... → Astro が static ファイルとして配信
+    # キャッシュ確認
+    if isbn13 in _COVER_CACHE:
+        return _COVER_CACHE[isbn13]
 
-    # 2. books_data.json に登録済みの cover_url（楽天ブックスCDN）
-    cover_url = book.get("cover_url", "")
-    if cover_url:
-        return cover_url
-
-    # 3. openBD / Google Books API（ネット環境必須）
-    url = _try_remote_cover(isbn13)
+    # 1. Google Books API
+    url = _cover_google_books(isbn13)
     if url:
+        _COVER_CACHE[isbn13] = url
         return url
 
+    # 2. openBD
+    url = _cover_openbd(isbn13)
+    if url:
+        _COVER_CACHE[isbn13] = url
+        return url
+
+    # 3. books_data.json の cover_url（フォールバック）
+    stored = book.get("cover_url", "")
+    if stored and "r10s.jp" not in stored:  # 楽天CDN以外のURLなら使用
+        _COVER_CACHE[isbn13] = stored
+        return stored
+
     # 4. SVG プレースホルダー
+    placeholder = _svg_placeholder(book)
+    _COVER_CACHE[isbn13] = placeholder
+    return placeholder
+
+
+def _cover_google_books(isbn13: str) -> Optional[str]:
+    """Google Books Volumes API で書影URL取得（APIキー不要）"""
+    try:
+        api = (
+            "https://www.googleapis.com/books/v1/volumes"
+            f"?q=isbn:{urllib.parse.quote(isbn13)}&country=JP&maxResults=1"
+        )
+        req = urllib.request.Request(
+            api, headers={"User-Agent": "astro-investment-blog/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        if not data.get("items"):
+            return None
+        links = (data["items"][0].get("volumeInfo") or {}).get("imageLinks") or {}
+        for k in ("extraLarge", "large", "medium", "small", "thumbnail", "smallThumbnail"):
+            url = links.get(k)
+            if url:
+                # http→https、zoom=1で大きい画像を取得
+                url = url.replace("http://", "https://")
+                url = re.sub(r"zoom=\d+", "zoom=1", url)
+                return url
+    except Exception as e:
+        print(f"[cover] google books fail {isbn13}: {e}", file=sys.stderr)
+    return None
+
+
+def _cover_openbd(isbn13: str) -> Optional[str]:
+    """openBD API で書影URL取得"""
+    try:
+        api = f"https://api.openbd.jp/v1/get?isbn={urllib.parse.quote(isbn13)}"
+        req = urllib.request.Request(
+            api, headers={"User-Agent": "astro-investment-blog/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        if data and isinstance(data, list) and data[0]:
+            cover = (data[0].get("summary") or {}).get("cover")
+            if cover:
+                return cover.replace("http://", "https://")
+    except Exception as e:
+        print(f"[cover] openbd fail {isbn13}: {e}", file=sys.stderr)
+    return None
+
+
+def _svg_placeholder(book: Dict) -> str:
+    """テキストベースのSVGプレースホルダー"""
     title_short = (book.get("title", "Book") or "")[:8]
     safe = title_short.replace('"', "").replace("'", "")
     svg = (
@@ -1179,7 +1247,7 @@ def generate_column(
     # 書籍紹介
     books_html = "\n## 📚 あわせて読みたいおすすめ投資書籍\n\n"
     for b in selected_books:
-        cover_src = b.get("cover_url") or resolve_cover_src(b)
+        cover_src = resolve_cover_src(b)
         aff_url = amazon_url(b["asin"])
         title_esc = b["title"].replace('"', "&quot;")
         books_html += (
