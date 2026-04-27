@@ -3,6 +3,19 @@ import { getCollection } from 'astro:content';
 
 const posts = await getCollection('blog');
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+
+// カテゴリー別記事数
+const categoryCount: Record<string, number> = {};
+posts.forEach(p => {
+  const cat = p.data.category || 'マーケット分析';
+  categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+});
+
+// 人気記事（最新5本をPVの代わりに使用）
+const popularPosts = posts.slice(0, 5);
+
+// 検索キーワードカラム記事（キーワード解説カテゴリ）
+const keywordPosts = posts.filter(p => p.data.category === 'キーワード解説').slice(0, 5);
 ---
 <html lang="ja">
   <head>
@@ -20,37 +33,302 @@ posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDat
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="配当＆優待ナビ | 高配当株・株主優待で不労所得を育てる">
     <meta name="twitter:description" content="高配当ETFや株主優待銘柄の最新動向を毎日お届け。新NISAや配当投資で不労所得を育てるためのヒントをわかりやすく解説します。">
+    <style>
+      /* ハンバーガーメニュー */
+      .drawer-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 40;
+      }
+      .drawer-overlay.open { display: block; }
+      .drawer {
+        position: fixed; top: 0; right: -320px;
+        width: 300px; height: 100vh;
+        background: #fff; z-index: 50;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      }
+      .drawer.open { right: 0; }
+      /* サイト内検索 */
+      .search-input:focus { outline: 2px solid #3b82f6; outline-offset: 0; }
+      /* サイドバーウィジェット */
+      .sidebar-widget {
+        background: #fff;
+        border-radius: 0.5rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+      .sidebar-widget-title {
+        background: #1e293b;
+        color: #fff;
+        padding: 0.6rem 1rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .sidebar-widget-body { padding: 0.75rem 1rem; }
+      /* 人気記事 */
+      .popular-item {
+        display: flex; align-items: flex-start;
+        gap: 0.75rem; padding: 0.6rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        text-decoration: none; color: inherit;
+      }
+      .popular-item:last-child { border-bottom: none; }
+      .popular-item:hover .popular-title { color: #2563eb; }
+      .popular-rank {
+        min-width: 1.6rem; height: 1.6rem;
+        background: #3b82f6; color: #fff;
+        border-radius: 0.25rem;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 0.8rem;
+        flex-shrink: 0;
+      }
+      .popular-rank.rank-1 { background: #f59e0b; }
+      .popular-rank.rank-2 { background: #94a3b8; }
+      .popular-rank.rank-3 { background: #b45309; }
+      .popular-title {
+        font-size: 0.82rem; line-height: 1.4;
+        color: #334155; font-weight: 500;
+        transition: color 0.15s;
+      }
+      /* カテゴリー */
+      .cat-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        text-decoration: none; color: #334155;
+        font-size: 0.875rem;
+        transition: color 0.15s;
+      }
+      .cat-item:last-child { border-bottom: none; }
+      .cat-item:hover { color: #2563eb; }
+      .cat-badge {
+        background: #dbeafe; color: #1d4ed8;
+        font-size: 0.75rem; font-weight: 700;
+        padding: 0.1rem 0.5rem; border-radius: 9999px;
+      }
+      /* ドロワー内カテゴリー */
+      .drawer-cat-item {
+        display: flex; justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        text-decoration: none; color: #1e293b;
+        font-size: 0.9rem; font-weight: 500;
+        transition: background 0.15s;
+      }
+      .drawer-cat-item:hover { background: #eff6ff; color: #2563eb; }
+    </style>
   </head>
+
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white shadow-md py-4">
-      <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold tracking-wider hover:text-blue-300 transition-colors">配当＆優待ナビ 💸</a>
-        <span class="text-sm text-slate-300 hidden md:inline">高配当株・株主優待で不労所得を育てる</span>
+
+    <!-- ドロワーオーバーレイ -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+    <!-- ドロワーメニュー -->
+    <div class="drawer" id="drawer">
+      <div class="flex items-center justify-between px-5 py-4 bg-slate-900 text-white">
+        <span class="font-bold text-lg">メニュー</span>
+        <button onclick="closeDrawer()" class="text-white hover:text-blue-300 font-bold text-lg">
+          ✕ CLOSE
+        </button>
+      </div>
+
+      <!-- ドロワー内検索 -->
+      <div class="px-5 py-4 border-b border-slate-100">
+        <form onsubmit="doSearch(event)" class="flex gap-2">
+          <input id="drawerSearchInput" type="text" placeholder="キーワードを入力"
+            class="search-input flex-1 border border-slate-200 rounded px-3 py-2 text-sm" />
+          <button type="submit"
+            class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm font-bold">
+            🔍
+          </button>
+        </form>
+      </div>
+
+      <!-- カテゴリー -->
+      <div class="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">カテゴリー</div>
+      {Object.entries(categoryCount).map(([cat, count]) => (
+        <a href={`/category/${cat}`} class="drawer-cat-item">
+          <span>● {cat}</span>
+          <span class="cat-badge">{count}</span>
+        </a>
+      ))}
+
+      <!-- サイト情報 -->
+      <div class="px-5 py-3 mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">このサイトについて</div>
+      <a href="/profile" class="drawer-cat-item">○ 運営者プロフィール</a>
+      <a href="/privacy" class="drawer-cat-item">○ プライバシーポリシー</a>
+      <a href="/contact" class="drawer-cat-item">○ お問い合わせ</a>
+    </div>
+
+    <!-- ヘッダー -->
+    <header class="bg-slate-900 text-white shadow-md py-3 sticky top-0 z-30">
+      <div class="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
+        <!-- ロゴ -->
+        <a href="/" class="text-xl font-bold tracking-wider hover:text-blue-300 transition-colors whitespace-nowrap">
+          配当＆優待ナビ 💸
+        </a>
+
+        <!-- デスクトップ検索 -->
+        <form onsubmit="doSearch(event)" class="hidden md:flex flex-1 max-w-sm gap-2 mx-4">
+          <input id="headerSearchInput" type="text" placeholder="サイト内検索..."
+            class="search-input flex-1 bg-slate-700 text-white placeholder-slate-400 border border-slate-600 rounded-lg px-3 py-1.5 text-sm" />
+          <button type="submit"
+            class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition-colors">
+            🔍
+          </button>
+        </form>
+
+        <!-- 右側ボタン群 -->
+        <div class="flex items-center gap-3">
+          <!-- モバイル検索 -->
+          <button onclick="toggleMobileSearch()" class="md:hidden text-white hover:text-blue-300 text-xl">🔍</button>
+          <!-- ハンバーガー -->
+          <button onclick="openDrawer()"
+            class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded font-bold text-lg transition-colors"
+            aria-label="メニューを開く">
+            ≡
+          </button>
+        </div>
+      </div>
+
+      <!-- モバイル検索バー（トグル） -->
+      <div id="mobileSearchBar" class="hidden px-4 pt-2 pb-1 md:hidden">
+        <form onsubmit="doSearch(event)" class="flex gap-2">
+          <input id="mobileSearchInput" type="text" placeholder="キーワードを入力"
+            class="search-input flex-1 bg-slate-700 text-white placeholder-slate-400 border border-slate-600 rounded-lg px-3 py-2 text-sm" />
+          <button type="submit"
+            class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-bold">検索</button>
+        </form>
       </div>
     </header>
 
-    <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full">
-      <div class="mb-12 text-center">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">「お金に働いてもらう」仕組みを作ろう。</h1>
-        <p class="text-slate-600 leading-relaxed">
+    <!-- メインコンテンツ -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+      <!-- ヒーロー -->
+      <div class="mb-8 text-center py-8 bg-gradient-to-r from-slate-800 to-blue-900 rounded-xl text-white">
+        <h1 class="text-2xl md:text-3xl font-extrabold mb-3">「お金に働いてもらう」仕組みを作ろう。</h1>
+        <p class="text-slate-300 text-sm md:text-base leading-relaxed">
           高配当ETFや株主優待銘柄の最新動向を毎日チェック。<br class="hidden md:block" />
-          「不労所得」を増やし、経済的なゆとりを作るためのヒントをお届けします。
+          不労所得を増やし、経済的なゆとりを作るためのヒントをお届けします。
         </p>
       </div>
 
-      <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">最新のレポート</h2>
+      <!-- 2カラムレイアウト -->
+      <div class="flex flex-col lg:flex-row gap-8">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {posts.map((post) => (
-          <a href={`/blog/${post.slug}`} class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-blue-400 hover:-translate-y-1 transition-all duration-300 p-6">
-            <p class="text-sm text-blue-600 font-bold mb-2">{new Date(post.data.pubDate).toLocaleDateString('ja-JP')}</p>
-            <h3 class="text-xl font-bold text-slate-900 mb-3 leading-tight">{post.data.title}</h3>
-            <p class="text-slate-600 text-sm line-clamp-3 mb-4">{post.data.description}</p>
-            <div class="flex items-center text-blue-600 text-sm font-semibold">
-              記事を読む <span class="ml-1">→</span>
+        <!-- メイン：記事一覧 -->
+        <div class="flex-1 min-w-0">
+          <h2 class="text-xl font-bold border-b-2 border-blue-500 pb-2 mb-5 flex items-center gap-2">
+            <span class="text-blue-600">📋</span> 最新の記事
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {posts.map((post) => (
+              <a href={`/blog/${post.slug}`}
+                class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">
+                    {post.data.category || 'マーケット分析'}
+                  </span>
+                  <p class="text-xs text-slate-400">
+                    {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
+                  </p>
+                </div>
+                <h3 class="text-base font-bold text-slate-900 mb-2 leading-snug line-clamp-2">
+                  {post.data.title}
+                </h3>
+                <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
+                <div class="flex items-center text-blue-600 text-xs font-semibold">
+                  記事を読む <span class="ml-1">→</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- サイドバー -->
+        <aside class="lg:w-72 flex-shrink-0">
+
+          <!-- 運営者プロフィール -->
+          <div class="sidebar-widget">
+            <div class="sidebar-widget-title">📝 投稿者</div>
+            <div class="sidebar-widget-body text-center py-4">
+              <img src="/images/profile.png" alt="悠人（ゆうと）"
+                class="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-blue-100 shadow-sm" />
+              <p class="font-bold text-slate-900 mb-2">悠人（ゆうと）</p>
+              <p class="text-xs text-slate-500 leading-relaxed text-left">
+                高配当株・株主優待への長期投資で不労所得を育て中。新NISAをフル活用しながら、日本株・米国ETFを組み合わせたポートフォリオを運用しています。
+              </p>
+              <a href="/profile"
+                class="mt-3 inline-block text-xs text-blue-600 hover:text-blue-800 font-semibold">
+                プロフィール詳細 →
+              </a>
             </div>
-          </a>
-        ))}
+          </div>
+
+          <!-- サイト内検索（サイドバー） -->
+          <div class="sidebar-widget">
+            <div class="sidebar-widget-title">🔍 サイト内検索</div>
+            <div class="sidebar-widget-body">
+              <form onsubmit="doSearch(event)" class="flex gap-2">
+                <input id="sidebarSearchInput" type="text" placeholder="キーワードを入力"
+                  class="search-input flex-1 border border-slate-200 rounded px-2 py-2 text-sm" />
+                <button type="submit"
+                  class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm font-bold">
+                  検索
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- 人気記事 -->
+          <div class="sidebar-widget">
+            <div class="sidebar-widget-title">🏆 人気記事</div>
+            <div class="sidebar-widget-body">
+              {popularPosts.map((post, i) => (
+                <a href={`/blog/${post.slug}`} class="popular-item">
+                  <span class={`popular-rank ${i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : ''}`}>
+                    {i + 1}
+                  </span>
+                  <span class="popular-title">{post.data.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <!-- カテゴリー -->
+          <div class="sidebar-widget">
+            <div class="sidebar-widget-title">📂 カテゴリー</div>
+            <div class="sidebar-widget-body">
+              {Object.entries(categoryCount).map(([cat, count]) => (
+                <a href={`/category/${cat}`} class="cat-item">
+                  <span>📌 {cat}</span>
+                  <span class="cat-badge">{count}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <!-- キーワード解説記事 -->
+          {keywordPosts.length > 0 && (
+            <div class="sidebar-widget">
+              <div class="sidebar-widget-title">🔑 キーワード解説</div>
+              <div class="sidebar-widget-body">
+                {keywordPosts.map((post) => (
+                  <a href={`/blog/${post.slug}`}
+                    class="block text-xs text-slate-600 hover:text-blue-600 py-1.5 border-b border-slate-100 last:border-0 leading-snug">
+                    → {post.data.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </aside>
       </div>
     </main>
 
@@ -62,5 +340,66 @@ posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDat
         <a href="/privacy" class="hover:text-blue-300 transition-colors">プライバシーポリシー</a>
       </nav>
     </footer>
+
+    <script>
+      // ドロワー開閉
+      function openDrawer() {
+        document.getElementById('drawer').classList.add('open');
+        document.getElementById('drawerOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        document.getElementById('drawer').classList.remove('open');
+        document.getElementById('drawerOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      // モバイル検索トグル
+      function toggleMobileSearch() {
+        const bar = document.getElementById('mobileSearchBar');
+        bar.classList.toggle('hidden');
+        if (!bar.classList.contains('hidden')) {
+          document.getElementById('mobileSearchInput').focus();
+        }
+      }
+
+      // 検索（記事一覧ページ内でフィルタリング）
+      function doSearch(e) {
+        e.preventDefault();
+        const inputs = ['headerSearchInput', 'sidebarSearchInput', 'drawerSearchInput', 'mobileSearchInput'];
+        let q = '';
+        for (const id of inputs) {
+          const el = document.getElementById(id);
+          if (el && el.value.trim()) { q = el.value.trim(); break; }
+        }
+        if (!q) return;
+        // 全記事を検索（簡易：タイトルにキーワードが含まれるものをハイライト）
+        const cards = document.querySelectorAll('main a[href^="/blog/"]');
+        let found = 0;
+        cards.forEach(card => {
+          const title = card.querySelector('h3')?.textContent || '';
+          const desc  = card.querySelector('p:last-of-type')?.textContent || '';
+          const match = title.toLowerCase().includes(q.toLowerCase()) ||
+                        desc.toLowerCase().includes(q.toLowerCase());
+          card.style.display = match ? '' : 'none';
+          if (match) found++;
+        });
+        // 検索結果メッセージ
+        let msg = document.getElementById('searchMsg');
+        if (!msg) {
+          msg = document.createElement('p');
+          msg.id = 'searchMsg';
+          msg.className = 'text-sm text-slate-500 mb-4 col-span-2';
+          const grid = document.querySelector('main .grid');
+          grid?.parentNode?.insertBefore(msg, grid);
+        }
+        msg.textContent = q ? `「${q}」の検索結果：${found}件` : '';
+
+        closeDrawer();
+        document.getElementById('mobileSearchBar')?.classList.add('hidden');
+        // メイン記事エリアまでスクロール
+        document.querySelector('main .grid')?.scrollIntoView({ behavior: 'smooth' });
+      }
+    </script>
   </body>
 </html>
