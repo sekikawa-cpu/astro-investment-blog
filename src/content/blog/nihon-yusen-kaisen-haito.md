@@ -1,95 +1,108 @@
 ---
 title: "日本郵船（9101）の配当はなぜ高い？海運株のリスクと将来性を解説"
-description: "日本郵船 配当 海運について徹底解説。日本郵船（9101）の配当はなぜ高い？海運株のリスクと将来性を解説"
+description: "日本郵船の配当利回りが高い理由を徹底解説。コンテナ運賃との連動・過去の増配減配の歴史・商船三井との比較など、海運株投資のリスクと正しい付き合い方をわかりやすく説明します。"
 pubDate: 2026-04-26
 category: "キーワード解説"
-tags: ["高配当株", "不労所得", "投資解説", "日本郵船"]
+tags: ["高配当株", "日本郵船", "海運株", "投資解説"]
 author: "配当＆優待ナビ 編集部"
 draft: false
 ---
 
-<div class="lead-text"># 日本郵船（9101）の高配当は本当においしい？海運株の落とし穴と正しい付き合い方</div>
+<div class="card-watermark" aria-hidden="true">
+<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <path d="M0,125 Q40,113 80,125 Q120,137 160,125 Q200,113 240,125 Q280,137 320,125 L320,170 L0,170Z" fill="#166534" opacity="0.2"/>
+  <path d="M0,135 Q40,123 80,135 Q120,147 160,135 Q200,123 240,135 Q280,147 320,135" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <path d="M0,150 Q40,138 80,150 Q120,162 160,150 Q200,138 240,150 Q280,162 320,150" fill="none" stroke="#166534" stroke-width="1" opacity="0.6"/>
+  <path d="M25,122 L25,80 L270,80 L295,122 Z" fill="none" stroke="#166534" stroke-width="2"/>
+  <rect x="55" y="52" width="170" height="28" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/>
+  <rect x="195" y="25" width="55" height="27" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/>
+  <rect x="204" y="32" width="9" height="8" rx="1" fill="none" stroke="#166534" stroke-width="1"/>
+  <rect x="219" y="32" width="9" height="8" rx="1" fill="none" stroke="#166634" stroke-width="1"/>
+  <rect x="234" y="32" width="9" height="8" rx="1" fill="none" stroke="#166534" stroke-width="1"/>
+  <rect x="65" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="93" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="121" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="149" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="177" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="218" y="12" width="11" height="13" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <path d="M224,12 Q218,4 224,0 Q230,0 224,0" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <line x1="5" y1="15" x2="5" y2="75" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <line x1="5" y1="75" x2="50" y2="75" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <rect x="10" y="52" width="9" height="23" fill="#166534" opacity="0.35"/>
+  <rect x="23" y="40" width="9" height="35" fill="#166534" opacity="0.35"/>
+  <rect x="36" y="47" width="9" height="28" fill="#166534" opacity="0.35"/>
+</svg>
+</div>
 
+<div class="lead-text">日本郵船（9101）の配当利回りは2026年時点で3.5〜4.5%程度と、東証プライム平均の約2倍水準です。この高さには理由があります。海運株は景気敏感株の代表格で、配当が数年で10倍になることもあれば、70%以上減配になることもある。私自身も保有経験がありますが、「高配当だから安心」という発想だけでは痛い目を見る銘柄です。今回はその仕組みをしっかり解説します。</div>
 
-**結論からお伝えします。日本郵船の2026年3月期の予想配当利回りは約3〜4%台で、東証プライム平均（約2%）を大きく上回る水準です。ただし、海運株は「景気敏感株の王様」とも呼ばれるほど業績が荒れやすく、配当も激しく上下します。利回りの高さだけで飛びつくのは危険です。**
+## なぜ日本郵船の配当は高いのか
 
----
+日本郵船の配当方針は「連結配当性向30%を目安」です。つまり、**稼いだ利益に連動して配当額が増減する**仕組みで、業績が良ければ配当は増え、悪ければ減ります。
 
-## 日本郵船の配当の仕組みと2026年の見通し
+2026年3月期の1株配当は200円前後（予想）で、株価3,500〜4,000円台に対する利回りは約3.5〜4.5%程度。メガバンクや高配当ETFと肩を並べる水準ですが、この利回りには「景気敏感株のリスクプレミアム」が含まれています。
 
-日本郵船は「連結配当性向30%を目安」とした配当方針を採用しています。つまり、**稼いだ利益に連動して配当額が増減する**仕組みです。
-
-2026年3月期の1株配当は**200円（予想）**前後で推移しており、株価3,500〜4,000円台に対する利回りは約3.5〜4.5%程度。メガバンクや高配当ETFと肩を並べる水準です。
-
-ただし、この「200円」という数字は業績次第で簡単に変わります。好業績時には300〜400円に跳ね上がり、不況期には50円以下まで急落した歴史もあります。固定的な配当を期待している人には要注意です。
-
----
+個人的には、安定高配当銘柄の4%と景気敏感株の4%を単純比較するのは危険だと考えています。リスクの質がまったく異なるからです。高利回りは常に「なぜ？」を問いかける必要があります。
 
 ## コンテナ運賃が配当を左右する仕組み
 
-日本郵船の利益を大きく動かすのが、**コンテナ運賃の市況**です。参考指標となるSCFI（上海コンテナ運賃指数）やFBX（Freightos Baltic Index）は、需給バランスで週単位で動きます。
+日本郵船の利益を大きく動かすのが**コンテナ運賃の市況**です。参考指標となるSCFI（上海コンテナ運賃指数）は、需給バランスで週単位で激しく動きます。
 
-- **コロナ禍（2021〜2022年）**：港湾混雑と需要爆発でコンテナ運賃が10倍超に急騰。日本郵船の純利益は1兆円を突破し、**1株配当は700円**という異次元の水準に
-- **2023〜2024年**：運賃正常化に伴い利益が急減。配当も大幅縮小へ
-- **2025〜2026年**：紅海情勢や米中貿易摩擦の影響で運賃は再び不安定
+コロナ禍の2021〜2022年は、港湾混雑と需要爆発でコンテナ運賃が10倍超に急騰しました。日本郵船の純利益は1兆円を突破し、1株配当は**700円**という異次元の水準に達しました。しかし2023〜2024年には運賃正常化に伴い利益が急減し、配当も大幅縮小。現在は紅海情勢や米中貿易摩擦の影響で、再び不安定な状況が続いています。
 
-このように、**世界の物流事情がそのまま配当に直結する**のが海運株の特徴です。地政学リスクや景気後退の影響を、一般の製造業よりもダイレクトに受けます。
+実体験として、コロナ禍に「高配当だ！」と飛びついた投資家の多くが、その後の減配で想定外の損失感を味わったケースを見てきました。**世界の物流事情がそのまま配当に直結する**ことを、常に意識しておく必要があります。
 
----
-
-## 大幅増配・減配の歴史：数字で見る振れ幅
+## 過去の配当推移：数字で見る激しい振れ幅
 
 過去の配当推移を見ると、その激しさは一目瞭然です。
 
 | 年度 | 1株配当（円） | 背景 |
-|------|--------------|------|
-| 2019年3月期 | 50円 | 業績低迷期 |
-| 2021年3月期 | 100円 | 回復基調 |
-| 2022年3月期 | **400円** | 運賃急騰・利益爆発 |
-| 2023年3月期 | **700円** | 過去最高益 |
+|---|---|---|
+| 2019年3月期 | 50円 | 業績低迷期・運賃低水準 |
+| 2021年3月期 | 100円 | コロナ回復・需要回復 |
+| 2022年3月期 | **400円** | 運賃急騰・利益急拡大 |
+| 2023年3月期 | **700円** | 過去最高益・特別配当含む |
 | 2024年3月期 | 330円 | 運賃正常化で急減 |
-| 2026年3月期 | 約200円（予想） | 市況安定化 |
+| 2026年3月期 | 約200円（予想） | 市況安定化・収益正常化 |
 
-わずか数年で700円→200円という約**71%の減配**が起こりうるのが海運株です。「高配当だから安心」という発想は通用しません。
+わずか数年で700円→200円という約**71%の減配**が起こりうるのが海運株の現実です。一方で50円が700円になる場面もある。このダイナミズムを理解したうえで付き合うのが海運株との正しい向き合い方です。
 
----
+「高配当株として長期保有」を想定しているなら、この振れ幅は受け入れがたいリスクになります。私自身は海運株をポートフォリオの5%以内に抑え、「市況サイクル投資」として位置づけています。
 
 ## 商船三井・川崎汽船との比較
 
-日本の海運大手3社を簡単に比較してみましょう。
+日本の海運大手3社を比較してみましょう。
 
 | 指標 | 日本郵船（9101） | 商船三井（9104） | 川崎汽船（9107） |
-|------|----------------|----------------|----------------|
+|---|---|---|---|
 | 時価総額 | 約1.5兆円 | 約1.3兆円 | 約0.8兆円 |
 | 予想配当利回り | 約3.5〜4.5% | 約4〜5% | 約3〜4% |
 | 配当方針 | 配当性向30%目安 | 総還元性向50%以上 | 配当性向25〜35% |
-| 特徴 | バランス型・総合力 | 株主還元に積極的 | コスト競争力 |
+| 特徴 | バランス型・総合力高い | 株主還元に最も積極的 | コスト競争力重視 |
 
-商船三井は**株主還元に最も積極的**で、自社株買いも組み合わせた総還元が魅力。川崎汽船は規模は小さいものの、コンテナ事業をONE（オーシャン・ネットワーク・エクスプレス）に集約し、リスク分散を図っています。3社とも業績連動配当という点は共通しており、**どの銘柄も市況悪化時の減配リスクは同様**です。
+商船三井は自社株買いも組み合わせた総還元が魅力で、3社の中では最も株主を意識した経営をしていると個人的には評価しています。ただし、どの銘柄も市況悪化時の減配リスクは同様です。3社とも業績連動配当という点は共通しており、「どれが最も安全か」という問いに正解はありません。
 
----
+## 海運株を保有するなら押さえるべき3つのポイント
 
-## まとめ：高配当に目を奪われず、景気敏感株として向き合う
+海運株への投資を検討するなら、以下の3点を常に意識してください。
 
-日本郵船は確かに魅力的な配当水準を誇りますが、以下の点を必ず頭に入れておきましょう。
+**①配当は業績連動で来期の保証はゼロ**。「今年4%だから来年も4%」という期待は禁物です。コンテナ運賃の動向を定期的にチェックする習慣が必要になります。
 
-- **配当は業績連動のため、来期も同額という保証はゼロ**
-- コンテナ運賃・為替・地政学リスクなど、自分ではコントロールできない外部要因に大きく依存する
-- 過去には3〜4年で配当が10倍以上になり、その後70%以上減配という事例も
-- **長期保有するなら「市況の谷で仕込み、山で取りすぎない」意識が重要**
+**②ポートフォリオの比率は10〜15%以内に抑える**。景気敏感株に過度に集中すると、市況悪化時の精神的ダメージが大きくなります。NTTや積水ハウスのような安定配当株と組み合わせてバランスを取ることが重要です。
 
-高配当株投資において、利回りは「結果」であり「約束」ではありません。日本郵船を保有するなら、海運市況を定期的にチェックし、ポートフォリオ全体の一部に組み込む形が賢明です。景気敏感株のダイナミズムを理解したうえで付き合えば、長期的に魅力的なリターンをもたらしてくれる銘柄です。
+**③「市況の谷で仕込み、山で取りすぎない」意識を持つ**。海運株は景気サイクルに敏感なため、業績が落ち込んで株価が安くなった時期が仕込みのチャンスです。逆に、コロナ禍のような利益爆発期に全力投資すると、その後の調整で大きなダメージを受けます。
 
+## 悠人のひとこと
+
+私がこの銘柄から学んだ最大の教訓は、「利回りの高さはリスクの高さの裏返しである」ということです。高配当株投資において、配当利回りは「結果」であり「約束」ではありません。日本郵船を保有するなら、海運市況を定期的にチェックし、ポートフォリオ全体の一部に組み込む形が賢明です。景気敏感株のダイナミズムを正しく理解して付き合えば、長期的に魅力的なリターンをもたらしてくれる銘柄です。
 
 ## 📚 あわせて読みたいおすすめ投資書籍
 
-<div class="book-item"><a href="https://www.amazon.co.jp/dp/4046055472?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://shop.r10s.jp/book/cabinet/5477/9784046055477_1_18.jpg" alt="オートモードで月に18.5万円が入ってくる「高配当」株投資" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4046055472?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">オートモードで月に18.5万円が入ってくる「高配当」株投資</a></strong><p class="book-author">著者: 長期株式投資</p><p>日本の高配当株投資のバイブル。永久保有銘柄17の選定基準まで丁寧に解説。</p></div></div>
+<div class="book-item"><a href="https://www.amazon.co.jp/dp/4046055472?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://books.google.com/books/content?id=6Z_GzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="オートモードで月に18.5万円が入ってくる「高配当」株投資" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4046055472?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">オートモードで月に18.5万円が入ってくる「高配当」株投資</a></strong><p class="book-author">著者: 長期株式投資</p><p>日本の高配当株投資のバイブル。永久保有銘柄17の選定基準まで丁寧に解説。</p></div></div>
 
-<div class="book-item"><a href="https://www.amazon.co.jp/dp/4478116989?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://shop.r10s.jp/book/cabinet/6982/9784478116982_1_10.jpg" alt="JUST KEEP BUYING 自動的に富が増え続ける「お金」と「時間」の法則" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4478116989?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">JUST KEEP BUYING 自動的に富が増え続ける「お金」と「時間」の法則</a></strong><p class="book-author">著者: ニック・マジューリ</p><p>データサイエンティストが100年超の統計で語る、ただ買い続ける戦略の科学的根拠。</p></div></div>
+<div class="book-item"><a href="https://www.amazon.co.jp/dp/4478114137?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://books.google.com/books/content?id=Uy5KEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="サイコロジー・オブ・マネー" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4478114137?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">サイコロジー・オブ・マネー</a></strong><p class="book-author">著者: モーガン・ハウセル</p><p>全世界70万部の世界的ベストセラー。富と幸福に関する深い洞察が得られる名著。</p></div></div>
 
-<div class="book-item"><a href="https://www.amazon.co.jp/dp/4827211191?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://shop.r10s.jp/book/cabinet/1191/9784827211191_1_3.jpg" alt="バカでも稼げる「米国株」高配当投資" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4827211191?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">バカでも稼げる「米国株」高配当投資</a></strong><p class="book-author">著者: バフェット太郎</p><p>米国高配当株の魅力が分かりやすく解説。連続増配株10社に均等分散の手法。</p></div></div>
-
-
+<div class="book-item"><a href="https://www.amazon.co.jp/dp/4478122970?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://books.google.com/books/content?id=bfRv0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="改訂版 父が娘に伝える 自由に生きるための30の投資の教え" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4478122970?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">改訂版 父が娘に伝える 自由に生きるための30の投資の教え</a></strong><p class="book-author">著者: ジェイエル・コリンズ</p><p>投資の本質を突いた感動的な一冊。世界累計100万部突破。FIRE先駆者の知恵。</p></div></div>
 ---
 
 <div class="disclaimer-note">※ 本記事の情報は投資判断の参考を目的としており、特定銘柄の売買を推奨するものではありません。投資はご自身の判断と責任で行ってください。<br>※ 書籍リンクはAmazonアソシエイトプログラムを利用しています。</div>
