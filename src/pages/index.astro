@@ -235,23 +235,24 @@ const popularPosts = posts.slice(0, 5);
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             {posts.map((post) => (
               <a href={`/blog/${post.slug}`}
-                class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5"
-                data-category={post.data.category || 'マーケット分析'}
-                data-title={post.data.title}>
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">
-                    {post.data.category || 'マーケット分析'}
-                  </span>
-                  <p class="text-xs text-slate-400">
-                    {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
-                  </p>
-                </div>
-                <h3 class="text-base font-bold text-slate-900 mb-2 leading-snug line-clamp-2">
-                  {post.data.title}
-                </h3>
-                <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
-                <div class="flex items-center text-blue-600 text-xs font-semibold">
-                  記事を読む <span class="ml-1">→</span>
+                class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5">
+                <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
+                <div class="post-card-content">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">
+                      {post.data.category || 'マーケット分析'}
+                    </span>
+                    <p class="text-xs text-slate-400">
+                      {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
+                    </p>
+                  </div>
+                  <h3 class="text-base font-bold text-slate-900 mb-2 leading-snug line-clamp-2">
+                    {post.data.title}
+                  </h3>
+                  <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
+                  <div class="flex items-center text-blue-600 text-xs font-semibold">
+                    記事を読む <span class="ml-1">→</span>
+                  </div>
                 </div>
               </a>
             ))}
@@ -351,37 +352,6 @@ const popularPosts = posts.slice(0, 5);
           [['海運','郵船','船'], 'ship'],
           [['銀行','メガバンク','金利','日銀'], 'bank'],
           [['NISA','nisa','非課税','積立'], 'nisa'],
-          [['複利','再投資'], 'compound'],
-          [['ポートフォリオ','毎月','給料'], 'portfolio'],
-        ];
-        const WM_EXTRA = {
-          ship: `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><path d="M0,125 Q40,113 80,125 Q120,137 160,125 Q200,113 240,125 Q280,137 320,125 L320,170 L0,170Z" fill="#166534" opacity="0.2"/><path d="M0,135 Q40,123 80,135 Q120,147 160,135 Q200,123 240,135 Q280,147 320,135" fill="none" stroke="#166534" stroke-width="1.5"/><path d="M25,122 L25,80 L270,80 L295,122 Z" fill="none" stroke="#166534" stroke-width="2"/><rect x="55" y="52" width="170" height="28" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/><rect x="195" y="25" width="55" height="27" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/><rect x="65" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/><rect x="93" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/><rect x="121" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/><rect x="149" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/><rect x="177" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/></svg>`,
-          bank: `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect x="55" y="72" width="210" height="90" fill="none" stroke="#1d4ed8" stroke-width="2"/><path d="M45,72 L160,18 L275,72 Z" fill="none" stroke="#1d4ed8" stroke-width="2"/><rect x="75" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><rect x="105" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><rect x="135" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><rect x="165" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><rect x="195" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><rect x="225" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><rect x="140" y="122" width="40" height="40" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><polyline points="270,30 288,20 305,10 320,2" fill="none" stroke="#1d4ed8" stroke-width="2"/><polygon points="320,2 312,10 322,12" fill="#1d4ed8"/></svg>`,
-          nisa: `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><line x1="18" y1="8" x2="18" y2="158" stroke="#6b21a8" stroke-width="1.5"/><line x1="18" y1="158" x2="225" y2="158" stroke="#6b21a8" stroke-width="1.5"/><rect x="28" y="132" width="24" height="26" fill="#6b21a8" opacity="0.3" rx="2"/><rect x="58" y="115" width="24" height="43" fill="#6b21a8" opacity="0.35" rx="2"/><rect x="88" y="96" width="24" height="62" fill="#6b21a8" opacity="0.4" rx="2"/><rect x="118" y="74" width="24" height="84" fill="#6b21a8" opacity="0.45" rx="2"/><rect x="148" y="50" width="24" height="108" fill="#6b21a8" opacity="0.5" rx="2"/><rect x="178" y="24" width="24" height="134" fill="#6b21a8" opacity="0.6" rx="2"/><polyline points="40,132 70,115 100,96 130,74 160,50 190,24" fill="none" stroke="#6b21a8" stroke-width="1.5" stroke-dasharray="3,2"/><rect x="232" y="12" width="82" height="30" rx="15" fill="none" stroke="#6b21a8" stroke-width="1.5"/></svg>`,
-          compound: `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10 L320,170 L0,170Z" fill="#166534" opacity="0.25"/><path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10" fill="none" stroke="#166534" stroke-width="2.5"/><circle cx="60" cy="148" r="10" fill="none" stroke="#166534" stroke-width="1.5"/><circle cx="100" cy="138" r="15" fill="none" stroke="#166534" stroke-width="1.5"/><circle cx="150" cy="120" r="22" fill="none" stroke="#166534" stroke-width="1.8"/><circle cx="215" cy="90" r="30" fill="none" stroke="#166534" stroke-width="2"/><circle cx="290" cy="48" r="40" fill="none" stroke="#166534" stroke-width="2"/></svg>`,
-          portfolio: `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><circle cx="95" cy="88" r="70" fill="none" stroke="#92400e" stroke-width="1"/><path d="M95,88 L95,18 A70,70 0 0,1 156,123 Z" fill="#92400e" opacity="0.5"/><path d="M95,88 L156,123 A70,70 0 0,1 34,123 Z" fill="#92400e" opacity="0.3"/><path d="M95,88 L34,123 A70,70 0 0,1 34,53 Z" fill="#92400e" opacity="0.15"/><path d="M95,88 L34,53 A70,70 0 0,1 95,18 Z" fill="#92400e" opacity="0.08"/><circle cx="95" cy="88" r="30" fill="white"/><rect x="185" y="15" width="120" height="145" fill="none" stroke="#92400e" stroke-width="1" rx="4"/><line x1="185" y1="35" x2="305" y2="35" stroke="#92400e" stroke-width="1"/><rect x="192" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="223" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/><rect x="254" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/></svg>`,
-        };
-
-        document.querySelectorAll('.post-card').forEach(card => {
-          const cat = card.dataset.category || 'マーケット分析';
-          const title = (card.dataset.title || '').toLowerCase();
-          let svg = null;
-
-          // キーワードで詳細パターン選択
-          for (const [kws, key] of KEYWORD_MAP) {
-            if (kws.some(k => title.includes(k))) {
-              svg = WM_EXTRA[key]; break;
-            }
-          }
-          // カテゴリーフォールバック
-          if (!svg) svg = WM[cat] || WM['マーケット分析'];
-
-          const el = document.createElement('div');
-          el.className = 'card-wm';
-          el.innerHTML = svg;
-          card.appendChild(el);
-        });
-      })();
 
       // ── ドロワー開閉
       function openDrawer() {
