@@ -699,8 +699,9 @@ def build_markdown(
         cover_src = resolve_cover_src(b)
         aff_url = amazon_url(b["asin"])
         title_esc = b["title"].replace('"', "&quot;")
+        isbn13 = b.get('isbn13', '')
         books_html += (
-            '<div class="book-item">'
+            f'<div class="book-item" data-isbn="{isbn13}">'
             f'<a href="{aff_url}" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link">'
             f'<img src="{cover_src}" alt="{title_esc}" '
             'referrerpolicy="no-referrer" loading="lazy" '
@@ -1630,8 +1631,9 @@ def generate_column(
         cover_src = resolve_cover_src(b)
         aff_url = amazon_url(b["asin"])
         title_esc = b["title"].replace('"', "&quot;")
+        isbn13 = b.get('isbn13', '')
         books_html += (
-            '<div class="book-item">'
+            f'<div class="book-item" data-isbn="{isbn13}">'
             f'<a href="{aff_url}" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link">'
             f'<img src="{cover_src}" alt="{title_esc}" '
             'referrerpolicy="no-referrer" loading="lazy" '

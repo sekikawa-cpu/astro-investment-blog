@@ -373,3 +373,31 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     -webkit-overflow-scrolling: touch;
   }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.book-item img').forEach(img => {
+    // Google Books IDを取得
+    const gbMatch = (img.src || '').match(/books\.google\.com.*?id=([^&]+)/);
+    if (!gbMatch) return;
+
+    img.addEventListener('error', function onErr() {
+      img.removeEventListener('error', onErr);
+      // openBD cover API (ISBNをaltから推測できないのでdata-isbn属性で対応)
+      const isbn = img.closest('[data-isbn]')?.dataset?.isbn
+                || img.closest('.book-item')?.dataset?.isbn;
+      if (isbn) {
+        const fallback = `https://cover.openbd.jp/${isbn}.jpg`;
+        img.addEventListener('error', function onErr2() {
+          img.removeEventListener('error', onErr2);
+          // 最終: テキストSVG
+          const short = (img.alt || 'Book').slice(0, 8);
+          const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="110" height="155" viewBox="0 0 110 155"><rect width="110" height="155" fill="#1e293b"/><rect x="4" y="4" width="102" height="147" fill="none" stroke="#475569" stroke-width="1"/><text x="55" y="82" font-family="sans-serif" font-size="9" fill="#e2e8f0" text-anchor="middle" dominant-baseline="middle">' + short + '</text></svg>';
+          img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+          img.style.opacity = '0.7';
+        });
+        img.src = fallback;
+      }
+    });
+  });
+});
+</script>
