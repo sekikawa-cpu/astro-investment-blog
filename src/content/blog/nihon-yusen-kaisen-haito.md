@@ -8,31 +8,6 @@ author: "配当＆優待ナビ 編集部"
 draft: false
 ---
 
-<div class="card-watermark" aria-hidden="true">
-<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-  <path d="M0,125 Q40,113 80,125 Q120,137 160,125 Q200,113 240,125 Q280,137 320,125 L320,170 L0,170Z" fill="#166534" opacity="0.2"/>
-  <path d="M0,135 Q40,123 80,135 Q120,147 160,135 Q200,123 240,135 Q280,147 320,135" fill="none" stroke="#166534" stroke-width="1.5"/>
-  <path d="M0,150 Q40,138 80,150 Q120,162 160,150 Q200,138 240,150 Q280,162 320,150" fill="none" stroke="#166534" stroke-width="1" opacity="0.6"/>
-  <path d="M25,122 L25,80 L270,80 L295,122 Z" fill="none" stroke="#166534" stroke-width="2"/>
-  <rect x="55" y="52" width="170" height="28" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/>
-  <rect x="195" y="25" width="55" height="27" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/>
-  <rect x="204" y="32" width="9" height="8" rx="1" fill="none" stroke="#166534" stroke-width="1"/>
-  <rect x="219" y="32" width="9" height="8" rx="1" fill="none" stroke="#166634" stroke-width="1"/>
-  <rect x="234" y="32" width="9" height="8" rx="1" fill="none" stroke="#166534" stroke-width="1"/>
-  <rect x="65" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
-  <rect x="93" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
-  <rect x="121" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
-  <rect x="149" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
-  <rect x="177" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
-  <rect x="218" y="12" width="11" height="13" fill="none" stroke="#166534" stroke-width="1.5"/>
-  <path d="M224,12 Q218,4 224,0 Q230,0 224,0" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/>
-  <line x1="5" y1="15" x2="5" y2="75" stroke="#166534" stroke-width="1" opacity="0.5"/>
-  <line x1="5" y1="75" x2="50" y2="75" stroke="#166534" stroke-width="1" opacity="0.5"/>
-  <rect x="10" y="52" width="9" height="23" fill="#166534" opacity="0.35"/>
-  <rect x="23" y="40" width="9" height="35" fill="#166534" opacity="0.35"/>
-  <rect x="36" y="47" width="9" height="28" fill="#166534" opacity="0.35"/>
-</svg>
-</div>
 
 <div class="lead-text">日本郵船（9101）の配当利回りは2026年時点で3.5〜4.5%程度と、東証プライム平均の約2倍水準です。この高さには理由があります。海運株は景気敏感株の代表格で、配当が数年で10倍になることもあれば、70%以上減配になることもある。私自身も保有経験がありますが、「高配当だから安心」という発想だけでは痛い目を見る銘柄です。今回はその仕組みをしっかり解説します。</div>
 

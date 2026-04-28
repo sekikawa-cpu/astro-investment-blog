@@ -43,9 +43,30 @@ OUTPUT_DIR = Path("src/content/blog")
 BOOKS_JSON = Path("books_data.json")
 PUBLIC_BOOKS_DIR = Path("public/images/books")
 
+# ニュースRSS（複数媒体）
 NEWS_RSS_URLS = [
     "https://news.yahoo.co.jp/rss/categories/business.xml",
+    "https://diamond.jp/feed/diamond",
+    "https://toyokeizai.net/list/feed/rss",
+    "https://www.nikkei.com/rss/news.rss",
+    "https://www.bloomberg.co.jp/rss/all.rss",
+    "https://jp.reuters.com/tools/rss/business.xml",
 ]
+
+_MEDIA_NAMES: dict = {
+    "yahoo.co.jp":      "Yahoo!ニュース",
+    "diamond.jp":       "ダイヤモンド・オンライン",
+    "toyokeizai.net":   "東洋経済オンライン",
+    "nikkei.com":       "日本経済新聞",
+    "bloomberg.co.jp":  "Bloomberg",
+    "reuters.com":      "ロイター",
+}
+
+def _media_name_from_url(url: str) -> str:
+    for domain, name in _MEDIA_NAMES.items():
+        if domain in url:
+            return name
+    return "経済メディア"
 
 TICKER_POOL: Dict[str, str] = {
     "1489.T": "日経高配当50ETF",
@@ -298,38 +319,54 @@ class NewsItem:
 
 def collect_news(max_items: int = 5) -> List[NewsItem]:
     items: List[NewsItem] = []
-    for url in NEWS_RSS_URLS:
-        body = _http_get(url, accept="application/rss+xml,application/xml,text/xml")
+    seen_titles: set = set()
+
+    for feed_url in NEWS_RSS_URLS:
+        body = _http_get(feed_url, accept="application/rss+xml,application/xml,text/xml")
         if body is None:
             continue
         try:
-            root = ET.fromstring(body)
-            for it in root.iter("item"):
-                title_el = it.find("title")
-                link_el = it.find("link")
-                date_el = it.find("pubDate")
-                src_el = it.find("source")
-                if title_el is None or link_el is None:
-                    continue
-                title = (title_el.text or "").strip()
-                link = (link_el.text or "").strip()
-                raw_date = (date_el.text or "").strip() if date_el is not None else ""
-                source = (src_el.text or "Yahoo!ニュース").strip() if src_el is not None else "Yahoo!ニュース"
-                try:
-                    from email.utils import parsedate_to_datetime
-                    dt = parsedate_to_datetime(raw_date).astimezone(TZ)
-                    pub_date = dt.strftime("%Y-%m-%d %H:%M")
-                except Exception:
-                    pub_date = raw_date[:16]
-                if title and link:
-                    items.append(NewsItem(title=title, link=link, pub_date=pub_date, source=source))
-                if len(items) >= max_items * 3:
-                    break
+            text = body.decode("utf-8", errors="replace").lstrip("\ufeff")
+            root = ET.fromstring(text)
         except Exception as e:
-            print(f"[news] RSS parse fail: {e}", file=sys.stderr)
+            print(f"[news] parse fail {feed_url}: {e}", file=sys.stderr)
+            continue
+
+        default_source = _media_name_from_url(feed_url)
+
+        for it in root.iter("item"):
+            title_el = it.find("title")
+            link_el  = it.find("link")
+            date_el  = it.find("pubDate")
+            src_el   = it.find("source")
+            if title_el is None or link_el is None:
+                continue
+            title = (title_el.text or "").strip()
+            link  = (link_el.text  or "").strip()
+            if not title or not link or title in seen_titles:
+                continue
+            seen_titles.add(title)
+
+            raw_date = (date_el.text or "").strip() if date_el is not None else ""
+            source   = (src_el.text  or "").strip() if src_el is not None else ""
+            if not source:
+                source = default_source
+
+            try:
+                from email.utils import parsedate_to_datetime
+                dt = parsedate_to_datetime(raw_date).astimezone(TZ)
+                pub_date = dt.strftime("%Y-%m-%d %H:%M")
+            except Exception:
+                pub_date = raw_date[:16] if raw_date else ""
+
+            items.append(NewsItem(title=title, link=link, pub_date=pub_date, source=source))
+
+        if len(items) >= max_items * 4:
+            break
 
     keywords = ["株", "市場", "投資", "配当", "金利", "FRB", "日銀", "為替", "ドル",
-                "円安", "円高", "決算", "業績", "増配", "NISA", "ETF", "国債", "原油"]
+                "円安", "円高", "決算", "業績", "増配", "NISA", "ETF", "国債", "原油",
+                "インフレ", "利上げ", "利下げ", "景気", "経済", "東証", "日経"]
     items.sort(key=lambda it: sum(1 for k in keywords if k in it.title), reverse=True)
     return items[:max_items]
 
@@ -448,9 +485,9 @@ def generate_summary(
         "lifestyle, spending"
     )
 
-    system_prompt = f"""あなたは経験豊富な投資メンターです。以下の厳密なフォーマットで日次の投資レポートを生成してください。
+    system_prompt = f"""あなたは高配当株・新NISA・株主優待への長期投資を実践している個人投資家ブロガー「悠人（ゆうと）」です。以下の厳密なフォーマットで日次の投資レポートを生成してください。
 
-【1行目】経済全体の概況（アイスブレイク）を約200文字で記述。日本市場・米国市場・為替・金利動向に軽く触れ、長期投資家への前向きなメッセージで締める。改行を入れず必ず1行で。
+【1行目】経済全体の概況（アイスブレイク）を約300文字で記述。日本市場・米国市場・為替・金利動向に軽く触れ、長期投資家への前向きなメッセージで締める。改行を入れず必ず1行で。
 
 【2行目】注目銘柄ベスト20のティッカーコードのみをカンマ区切りで列挙。例: 1489.T,9432.T,8306.T,...
 
@@ -461,7 +498,7 @@ def generate_summary(
 候補: {theme_list}
 例: high_dividend_jp,nisa,long_term,passive_income,index
 
-【5行目以降】各銘柄の詳細解説を「### [順位]位 [銘柄名]（[ティッカー]）」の見出し形式で20件分。各解説は2〜3文。
+【5行目以降】各銘柄の詳細解説を「### [順位]位 [銘柄名]（[ティッカー]）」の見出し形式で20件分。各解説は3〜4文。「私も実際に保有しており〜」など一人称コメントを各銘柄に1文ずつ入れる。
 
 重要: 1〜4行目は必ず1行で出力し、途中改行しないこと。"""
 
@@ -581,6 +618,7 @@ def build_markdown(
     news: List[NewsItem],
     selected_books: List[Dict],
     report_date: str,
+    themes: Optional[List[str]] = None,
 ) -> str:
     price_map = {p.ticker: p for p in prices}
     final_list = [price_map[t] for t in ranking_tickers if t in price_map][:20]
@@ -713,7 +751,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・セクター別の特徴（金融・通信・商社・資源・生活必需品）"
             "\n・高利回りだけで選ぶ危険性（減配リスクの確認方法）"
             "\n・新NISAでの活用方法"
-            "\n文字数: 1,200〜1,500字。具体的な銘柄名と数字を使ってランキング形式で。"
+            "\n文字数: 1,500〜2,000字。具体的な銘柄名と数字を使ってランキング形式で。"
         ),
     },
     {
@@ -729,7 +767,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・減配リスクを避けるための財務チェック（自己資本比率・フリーCF）"
             "\n・業種分散の重要性"
             "\n・新NISAでの購入ステップ"
-            "\n文字数: 1,200〜1,500字。初心者が迷わず行動できる内容に。"
+            "\n文字数: 1,500〜2,000字。初心者が迷わず行動できる内容に。"
         ),
     },
     {
@@ -745,7 +783,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・高配当株投資のメリット・向いている人"
             "\n・両方を組み合わせる理想的な配分例"
             "\n・年齢・目的別のおすすめ戦略"
-            "\n文字数: 1,200〜1,500字。明確な結論を出す内容に。"
+            "\n文字数: 1,500〜2,000字。明確な結論を出す内容に。"
         ),
     },
     {
@@ -761,7 +799,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・三菱商事・三井物産との比較（利回り・成長性・安定性）"
             "\n・株価の割安・割高判断（PER・PBRの目安）"
             "\n・長期保有で期待できるリターンのシミュレーション"
-            "\n文字数: 1,200〜1,500字。3大商社の比較を含めて客観的に。"
+            "\n文字数: 1,500〜2,000字。3大商社の比較を含めて客観的に。"
         ),
     },
     {
@@ -777,7 +815,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・金利上昇局面での収益改善メカニズム"
             "\n・自社株買いと配当の組み合わせによる総還元利回り"
             "\n・三菱UFJ・みずほとの比較"
-            "\n文字数: 1,200〜1,500字。ROEの数字を使って具体的に。"
+            "\n文字数: 1,500〜2,000字。ROEの数字を使って具体的に。"
         ),
     },
     {
@@ -793,7 +831,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・再投資なし vs 再投資ありの資産差（具体的な数字）"
             "\n・新NISAで配当再投資する際の注意点（課税タイミング）"
             "\n・実践的な再投資の方法（自動・手動）"
-            "\n文字数: 1,200〜1,500字。数字で複利の威力を実感させる内容に。"
+            "\n文字数: 1,500〜2,000字。数字で複利の威力を実感させる内容に。"
         ),
     },
     {
@@ -809,7 +847,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・世界販売台数トップの安定性と財務の強さ"
             "\n・自動車セクターのリスク（円高・関税・EV競争）"
             "\n・長期保有の投資判断（配当目的 vs 成長目的）"
-            "\n文字数: 1,200〜1,500字。EV転換期というタイムリーな視点を軸に。"
+            "\n文字数: 1,500〜2,000字。EV転換期というタイムリーな視点を軸に。"
         ),
     },
     {
@@ -825,7 +863,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・組み入れ銘柄の違い（重複・セクター比率）"
             "\n・どちらを選ぶべきか（目的別の結論）"
             "\n・新NISAでの購入方法と注意点"
-            "\n文字数: 1,200〜1,500字。比較表を含めて決断しやすい内容に。"
+            "\n文字数: 1,500〜2,000字。比較表を含めて決断しやすい内容に。"
         ),
     },
     {
@@ -841,7 +879,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・日本マクドナルドHD（2702）：利回り・優待・フランチャイズモデル"
             "\n・食品セクターがディフェンシブな理由（景気に左右されにくい）"
             "\n・3銘柄の比較と選び方のポイント"
-            "\n文字数: 1,200〜1,500字。生活に身近な銘柄で親しみやすく。"
+            "\n文字数: 1,500〜2,000字。生活に身近な銘柄で親しみやすく。"
         ),
     },
     {
@@ -857,7 +895,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・各銘柄の配当利回り・優待内容・実質利回り"
             "\n・新NISAで優待株を保有する際の注意点"
             "\n・優待廃止リスクへの備え方"
-            "\n文字数: 1,200〜1,500字。実質利回りの計算を丁寧に示す。"
+            "\n文字数: 1,500〜2,000字。実質利回りの計算を丁寧に示す。"
         ),
     },
     {
@@ -873,7 +911,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・40代から始めた場合のシミュレーション（毎月5万円積立）"
             "\n・50代からでも間に合う集中投資戦略"
             "\n・新NISAを最大活用した具体的なプラン"
-            "\n文字数: 1,200〜1,500字。不安を希望に変える前向きな内容に。"
+            "\n文字数: 1,500〜2,000字。不安を希望に変える前向きな内容に。"
         ),
     },
     {
@@ -889,7 +927,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・景気敏感株特有のリスク（コロナ・リーマンショック時の減配実績）"
             "\n・ポートフォリオに景気敏感株を組み込む比率の考え方"
             "\n・ディフェンシブ株とのバランス戦略"
-            "\n文字数: 1,200〜1,500字。リスクを正直に伝えながら活用法も示す。"
+            "\n文字数: 1,500〜2,000字。リスクを正直に伝えながら活用法も示す。"
         ),
     },
     {
@@ -905,7 +943,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・3月・9月・12月決算の違いと受け取りタイミング"
             "\n・毎月配当を受け取るポートフォリオの作り方"
             "\n・新NISAで受け取る配当金の課税関係"
-            "\n文字数: 1,200〜1,500字。初心者が混乱しやすいスケジュールを図解するように説明。"
+            "\n文字数: 1,500〜2,000字。初心者が混乱しやすいスケジュールを図解するように説明。"
         ),
     },
     {
@@ -921,7 +959,7 @@ WEEKDAY_KEYWORD_TOPICS = [
             "\n・松井証券：特徴・手数料・サポート体制"
             "\n・高配当株投資で重視すべきポイント（手数料・銘柄数・NISA対応）"
             "\n・初心者に最もおすすめの証券口座と開設手順"
-            "\n文字数: 1,200〜1,500字。具体的な結論を出す内容に。"
+            "\n文字数: 1,500〜2,000字。具体的な結論を出す内容に。"
         ),
     },
 ]
@@ -953,7 +991,7 @@ SATURDAY_TOPICS = [
             "\n・NTTの配当が安定している理由（通信インフラ・独占的地位）"
             "\n・新NISAでNTT株を保有するメリット"
             "\n・配当金の実際の受け取り方（支払い月）"
-            "\n文字数: 1,200〜1,500字。具体的な数字を多用し、検索意図に直接答える内容に。"
+            "\n文字数: 1,500〜2,000字。具体的な数字を多用し、検索意図に直接答える内容に。"
         ),
     },
     {
@@ -969,7 +1007,7 @@ SATURDAY_TOPICS = [
             "\n・VYM（バンガード米国高配当）：特徴・利回り・安定性"
             "\n・どのETFをどんな人が選ぶべきか（初心者・中級者・分散したい人）"
             "\n・新NISAの成長投資枠との組み合わせ方"
-            "\n文字数: 1,200〜1,500字。比較表も含め、決断を助ける内容に。"
+            "\n文字数: 1,500〜2,000字。比較表も含め、決断を助ける内容に。"
         ),
     },
     {
@@ -985,7 +1023,7 @@ SATURDAY_TOPICS = [
             "\n・商社セクターが注目される理由（資源・インフラ・食料）"
             "\n・配当の推移と累進配当方針"
             "\n・長期保有する場合のリスクと注意点"
-            "\n文字数: 1,200〜1,500字。投資判断の参考になる客観的な分析を。"
+            "\n文字数: 1,500〜2,000字。投資判断の参考になる客観的な分析を。"
         ),
     },
     {
@@ -1001,7 +1039,7 @@ SATURDAY_TOPICS = [
             "\n・過去5年の配当推移と増配見通し"
             "\n・株主還元（自社株買い）との組み合わせ効果"
             "\n・メガバンク3社（三菱UFJ・三井住友・みずほ）の比較"
-            "\n文字数: 1,200〜1,500字。数字中心で分かりやすく。"
+            "\n文字数: 1,500〜2,000字。数字中心で分かりやすく。"
         ),
     },
     {
@@ -1017,7 +1055,7 @@ SATURDAY_TOPICS = [
             "\n・配当性向と継続性（グローバル製薬大手として安定した理由）"
             "\n・新NISAでの保有メリット"
             "\n・株価の注意点（円安・パイプラインリスク）"
-            "\n文字数: 1,200〜1,500字。配当スケジュールを明確に示して。"
+            "\n文字数: 1,500〜2,000字。配当スケジュールを明確に示して。"
         ),
     },
     {
@@ -1033,7 +1071,7 @@ SATURDAY_TOPICS = [
             "\n・配当＋優待の合計利回り計算"
             "\n・長期保有特典（3年以上でギフトアップ）の詳細"
             "\n・NTTとの比較（通信2社どちらを選ぶか）"
-            "\n文字数: 1,200〜1,500字。配当と優待の両面から魅力を伝える内容に。"
+            "\n文字数: 1,500〜2,000字。配当と優待の両面から魅力を伝える内容に。"
         ),
     },
     {
@@ -1049,7 +1087,7 @@ SATURDAY_TOPICS = [
             "\n・住宅大手として安定している理由（ストック型ビジネス）"
             "\n・米国事業の拡大による成長期待"
             "\n・NISAで長期保有する場合のシミュレーション"
-            "\n文字数: 1,200〜1,500字。累進配当の価値を丁寧に説明する内容に。"
+            "\n文字数: 1,500〜2,000字。累進配当の価値を丁寧に説明する内容に。"
         ),
     },
 ]
@@ -1068,7 +1106,7 @@ SUNDAY_TOPICS = [
             "\n・利回り4%超を維持できる理由（海外事業・稼ぐ力）"
             "\n・たばこ株特有のリスク（規制・ESG問題）"
             "\n・新NISAでの保有是非（非課税の恩恵 vs リスク）"
-            "\n文字数: 1,200〜1,500字。メリット・デメリットをフラットに。"
+            "\n文字数: 1,500〜2,000字。メリット・デメリットをフラットに。"
         ),
     },
     {
@@ -1084,7 +1122,7 @@ SUNDAY_TOPICS = [
             "\n・資源株特有のリスク（原油価格下落時の減配リスク）"
             "\n・配当性向と株主還元の方針"
             "\n・ポートフォリオに資源株を入れる意味（分散効果）"
-            "\n文字数: 1,200〜1,500字。リスクを正直に伝えながら魅力も示す。"
+            "\n文字数: 1,500〜2,000字。リスクを正直に伝えながら魅力も示す。"
         ),
     },
     {
@@ -1100,7 +1138,7 @@ SUNDAY_TOPICS = [
             "\n・利回り重視ならSPYD、安定重視ならVYMの理由"
             "\n・新NISAでどちらを選ぶべきか（目的別の結論）"
             "\n・為替リスクへの対処法"
-            "\n文字数: 1,200〜1,500字。明確な結論を出すことを意識して。"
+            "\n文字数: 1,500〜2,000字。明確な結論を出すことを意識して。"
         ),
     },
     {
@@ -1116,7 +1154,7 @@ SUNDAY_TOPICS = [
             "\n・過去の大幅増配・減配の歴史（景気敏感株の特性）"
             "\n・商船三井・川崎汽船との比較"
             "\n・高配当だけで判断する危険性と長期保有の考え方"
-            "\n文字数: 1,200〜1,500字。景気敏感株のリスクをしっかり伝える。"
+            "\n文字数: 1,500〜2,000字。景気敏感株のリスクをしっかり伝える。"
         ),
     },
     {
@@ -1132,7 +1170,7 @@ SUNDAY_TOPICS = [
             "\n・セクター分散の考え方（金融・通信・商社・資源・生活必需品）"
             "\n・配当金の受け取りシミュレーション（年間・月換算）"
             "\n・定期的なリバランスの方法"
-            "\n文字数: 1,200〜1,500字。具体的な数字と銘柄名を使って実践的に。"
+            "\n文字数: 1,500〜2,000字。具体的な数字と銘柄名を使って実践的に。"
         ),
     },
     {
@@ -1148,7 +1186,7 @@ SUNDAY_TOPICS = [
             "\n・配当利回りと配当性向（持続可能性の確認）"
             "\n・同じく連続増配の花王・三菱商事との比較"
             "\n・長期保有でどれだけ配当が増えるかシミュレーション"
-            "\n文字数: 1,200〜1,500字。連続増配の価値を数字で実感させる内容に。"
+            "\n文字数: 1,500〜2,000字。連続増配の価値を数字で実感させる内容に。"
         ),
     },
     {
@@ -1164,7 +1202,7 @@ SUNDAY_TOPICS = [
             "\n・信託報酬とコストの透明性"
             "\n・個別株との比較（分散効果 vs 利回り）"
             "\n・新NISAの成長投資枠で購入する方法と注意点"
-            "\n文字数: 1,200〜1,500字。初心者でも分かるようにETFの基本から丁寧に。"
+            "\n文字数: 1,500〜2,000字。初心者でも分かるようにETFの基本から丁寧に。"
         ),
     },
 ]
@@ -1173,6 +1211,341 @@ SUNDAY_TOPICS = [
 # ---------------------------------------------------------------------------
 # 土日コラム生成
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# 記事カード SVG 透かしライブラリ
+# ---------------------------------------------------------------------------
+
+def _svg_watermark(title: str, category: str, themes: list) -> str:
+    """
+    記事タイトル・カテゴリー・テーマから最適なSVG透かしを返す。
+    MDのHTMLブロックとして埋め込む。
+    """
+    t = title.lower()
+    th = " ".join(themes).lower()
+
+    # ── パターン選択（キーワード優先マッチ） ──
+    if any(k in t for k in ["海運", "郵船", "船", "コンテナ"]):
+        svg = _wm_ship()
+    elif any(k in t for k in ["銀行", "メガバンク", "mufg", "三菱uf", "三井住友", "みずほ", "金利", "日銀"]):
+        svg = _wm_bank()
+    elif any(k in t for k in ["nisa", "新nisa", "積立", "非課税"]):
+        svg = _wm_nisa()
+    elif any(k in t for k in ["複利", "再投資", "雪だるま", "指数"]):
+        svg = _wm_compound()
+    elif any(k in t for k in ["ポートフォリオ", "毎月", "分散", "配分", "給料"]):
+        svg = _wm_portfolio()
+    elif any(k in t for k in ["商社", "三菱商事", "伊藤忠", "資源", "inpex", "原油"]):
+        svg = _wm_trading_company()
+    elif any(k in t for k in ["etf", "インデックス", "1489", "spyd", "vym", "積立"]):
+        svg = _wm_etf()
+    elif any(k in t for k in ["配当利回り", "利回り", "配当金", "配当率", "高配当"]):
+        svg = _wm_dividend()
+    elif any(k in t for k in ["最高値", "上昇", "ベスト20", "注目銘柄", "レポート"]):
+        svg = _wm_chart_up()
+    elif any(k in t for k in ["初心者", "始め", "選び方", "証券口座", "開設"]):
+        svg = _wm_beginner()
+    elif any(k in t for k in ["fire", "リタイア", "老後", "セミリタイア"]):
+        svg = _wm_fire()
+    elif any(k in t for k in ["優待", "株主優待"]):
+        svg = _wm_yutai()
+    elif category == "キーワード解説":
+        svg = _wm_search()
+    elif category == "マーケット分析":
+        svg = _wm_chart_up()
+    else:
+        svg = _wm_chart_up()
+
+    return (
+        '<div class="card-watermark" aria-hidden="true">\n'
+        + svg + "\n</div>\n"
+    )
+
+
+# ── 個別SVGパターン ──────────────────────────────────────────────
+
+def _wm_chart_up() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <line x1="0" y1="140" x2="320" y2="140" stroke="#1d4ed8" stroke-width="0.8"/>
+  <line x1="0" y1="105" x2="320" y2="105" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="0" y1="70" x2="320" y2="70" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="0" y1="35" x2="320" y2="35" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="64" y1="20" x2="64" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/>
+  <line x1="128" y1="20" x2="128" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/>
+  <line x1="192" y1="20" x2="192" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/>
+  <line x1="256" y1="20" x2="256" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/>
+  <path d="M0,130 L40,120 L80,108 L120,95 L160,80 L200,55 L240,40 L280,25 L320,15 L320,150 L0,150Z" fill="#1d4ed8" opacity="0.3"/>
+  <polyline points="0,130 40,120 80,108 120,95 160,80 200,55 240,40 280,25 320,15" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="40" y1="112" x2="40" y2="128" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="34" y="116" width="12" height="8" fill="none" stroke="#1d4ed8" stroke-width="1.5" rx="1"/>
+  <line x1="120" y1="88" x2="120" y2="102" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="114" y="91" width="12" height="8" fill="#1d4ed8" rx="1"/>
+  <line x1="200" y1="48" x2="200" y2="62" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="194" y="51" width="12" height="8" fill="none" stroke="#1d4ed8" stroke-width="1.5" rx="1"/>
+  <line x1="280" y1="18" x2="280" y2="32" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="274" y="21" width="12" height="8" fill="#1d4ed8" rx="1"/>
+  <path d="M270,110 L295,80 L310,85 L295,60 L280,65 L295,45" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <polygon points="295,38 287,52 303,52" fill="#1d4ed8"/>
+</svg>"""
+
+def _wm_compound() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10 L320,170 L0,170Z" fill="#166534" opacity="0.25"/>
+  <path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10" fill="none" stroke="#166534" stroke-width="2.5"/>
+  <circle cx="60" cy="148" r="10" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="100" cy="138" r="15" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="150" cy="120" r="22" fill="none" stroke="#166534" stroke-width="1.8"/>
+  <circle cx="215" cy="90" r="30" fill="none" stroke="#166534" stroke-width="2"/>
+  <circle cx="290" cy="48" r="40" fill="none" stroke="#166534" stroke-width="2"/>
+  <line x1="60" y1="158" x2="60" y2="168" stroke="#166534" stroke-width="1"/>
+  <line x1="150" y1="142" x2="150" y2="168" stroke="#166534" stroke-width="1"/>
+  <line x1="290" y1="88" x2="290" y2="168" stroke="#166534" stroke-width="1"/>
+  <ellipse cx="55" cy="30" rx="12" ry="5" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <line x1="43" y1="30" x2="43" y2="42" stroke="#166534" stroke-width="1.5"/>
+  <line x1="67" y1="30" x2="67" y2="42" stroke="#166534" stroke-width="1.5"/>
+  <ellipse cx="55" cy="42" rx="12" ry="5" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <path d="M80,35 Q110,15 130,38" fill="none" stroke="#166534" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <polygon points="130,38 122,30 126,42" fill="#166534"/>
+</svg>"""
+
+def _wm_portfolio() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <circle cx="95" cy="88" r="70" fill="none" stroke="#92400e" stroke-width="1"/>
+  <path d="M95,88 L95,18 A70,70 0 0,1 156,123 Z" fill="#92400e" opacity="0.5"/>
+  <path d="M95,88 L156,123 A70,70 0 0,1 34,123 Z" fill="#92400e" opacity="0.3"/>
+  <path d="M95,88 L34,123 A70,70 0 0,1 34,53 Z" fill="#92400e" opacity="0.15"/>
+  <path d="M95,88 L34,53 A70,70 0 0,1 95,18 Z" fill="#92400e" opacity="0.08"/>
+  <circle cx="95" cy="88" r="30" fill="var(--color-background-primary)"/>
+  <rect x="185" y="15" width="120" height="145" fill="none" stroke="#92400e" stroke-width="1" rx="4"/>
+  <line x1="185" y1="35" x2="305" y2="35" stroke="#92400e" stroke-width="1"/>
+  <rect x="192" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="223" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="254" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="285" y="42" width="16" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="192" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="223" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="254" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="285" y="66" width="16" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="192" y="90" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="223" y="90" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="254" y="90" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="285" y="90" width="16" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="192" y="114" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="223" y="114" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <rect x="254" y="114" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/>
+  <rect x="285" y="114" width="16" height="20" rx="2" fill="#92400e" opacity="0.4"/>
+  <circle cx="210" cy="140" r="6" fill="none" stroke="#92400e" stroke-width="1.5"/>
+  <circle cx="235" cy="148" r="7" fill="none" stroke="#92400e" stroke-width="1.5"/>
+  <circle cx="260" cy="140" r="8" fill="none" stroke="#92400e" stroke-width="1.5"/>
+</svg>"""
+
+def _wm_ship() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <path d="M0,125 Q40,113 80,125 Q120,137 160,125 Q200,113 240,125 Q280,137 320,125 L320,170 L0,170Z" fill="#166534" opacity="0.2"/>
+  <path d="M0,135 Q40,123 80,135 Q120,147 160,135 Q200,123 240,135 Q280,147 320,135" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <path d="M0,150 Q40,138 80,150 Q120,162 160,150 Q200,138 240,150 Q280,162 320,150" fill="none" stroke="#166534" stroke-width="1" opacity="0.6"/>
+  <path d="M25,122 L25,80 L270,80 L295,122 Z" fill="none" stroke="#166534" stroke-width="2"/>
+  <rect x="55" y="52" width="170" height="28" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/>
+  <rect x="195" y="25" width="55" height="27" fill="none" stroke="#166534" stroke-width="1.5" rx="2"/>
+  <rect x="204" y="32" width="9" height="8" rx="1" fill="none" stroke="#166534" stroke-width="1"/>
+  <rect x="219" y="32" width="9" height="8" rx="1" fill="none" stroke="#166634" stroke-width="1"/>
+  <rect x="234" y="32" width="9" height="8" rx="1" fill="none" stroke="#166534" stroke-width="1"/>
+  <rect x="65" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="93" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="121" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="149" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="177" y="58" width="24" height="16" fill="none" stroke="#166534" stroke-width="1" rx="1"/>
+  <rect x="218" y="12" width="11" height="13" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <path d="M224,12 Q218,4 224,0 Q230,0 224,0" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <line x1="5" y1="15" x2="5" y2="75" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <line x1="5" y1="75" x2="50" y2="75" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <rect x="10" y="52" width="9" height="23" fill="#166534" opacity="0.35"/>
+  <rect x="23" y="40" width="9" height="35" fill="#166534" opacity="0.35"/>
+  <rect x="36" y="47" width="9" height="28" fill="#166534" opacity="0.35"/>
+</svg>"""
+
+def _wm_bank() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <rect x="55" y="72" width="210" height="90" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+  <path d="M45,72 L160,18 L275,72 Z" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+  <rect x="75" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="105" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="135" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="165" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="195" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="225" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <rect x="140" y="122" width="40" height="40" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <polyline points="270,30 288,20 305,10 320,2" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+  <polygon points="320,2 312,10 322,12" fill="#1d4ed8"/>
+  <line x1="265" y1="38" x2="265" y2="2" stroke="#1d4ed8" stroke-width="1" opacity="0.5"/>
+  <line x1="265" y1="38" x2="322" y2="38" stroke="#1d4ed8" stroke-width="1" opacity="0.5"/>
+  <circle cx="22" cy="100" r="16" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+  <circle cx="22" cy="100" r="10" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+  <circle cx="22" cy="132" r="14" fill="none" stroke="#1d4ed8" stroke-width="1.5" opacity="0.7"/>
+  <circle cx="22" cy="158" r="10" fill="none" stroke="#1d4ed8" stroke-width="1.5" opacity="0.4"/>
+</svg>"""
+
+def _wm_nisa() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <line x1="18" y1="8" x2="18" y2="158" stroke="#6b21a8" stroke-width="1.5"/>
+  <line x1="18" y1="158" x2="225" y2="158" stroke="#6b21a8" stroke-width="1.5"/>
+  <rect x="28" y="132" width="24" height="26" fill="#6b21a8" opacity="0.3" rx="2"/>
+  <rect x="58" y="115" width="24" height="43" fill="#6b21a8" opacity="0.35" rx="2"/>
+  <rect x="88" y="96" width="24" height="62" fill="#6b21a8" opacity="0.4" rx="2"/>
+  <rect x="118" y="74" width="24" height="84" fill="#6b21a8" opacity="0.45" rx="2"/>
+  <rect x="148" y="50" width="24" height="108" fill="#6b21a8" opacity="0.5" rx="2"/>
+  <rect x="178" y="24" width="24" height="134" fill="#6b21a8" opacity="0.6" rx="2"/>
+  <polyline points="40,132 70,115 100,96 130,74 160,50 190,24" fill="none" stroke="#6b21a8" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <rect x="232" y="12" width="82" height="30" rx="15" fill="none" stroke="#6b21a8" stroke-width="1.5"/>
+  <path d="M248,30 L258,18 L262,22 L272,10 L276,14 L286,8" fill="none" stroke="#6b21a8" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M242,75 L262,52 L282,75 Z" fill="none" stroke="#6b21a8" stroke-width="1.5"/>
+  <rect x="250" y="75" width="24" height="32" fill="none" stroke="#6b21a8" stroke-width="1.5"/>
+  <rect x="256" y="85" width="11" height="22" fill="none" stroke="#6b21a8" stroke-width="1"/>
+  <circle cx="250" cy="135" r="9" fill="none" stroke="#6b21a8" stroke-width="1.5"/>
+  <circle cx="268" cy="142" r="11" fill="none" stroke="#6b21a8" stroke-width="1.5"/>
+  <circle cx="290" cy="135" r="14" fill="none" stroke="#6b21a8" stroke-width="1.5"/>
+  <line x1="300" y1="42" x2="318" y2="42" stroke="#6b21a8" stroke-width="2"/>
+  <line x1="309" y1="33" x2="309" y2="51" stroke="#6b21a8" stroke-width="2"/>
+</svg>"""
+
+def _wm_trading_company() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <circle cx="160" cy="85" r="65" fill="none" stroke="#92400e" stroke-width="1.5"/>
+  <ellipse cx="160" cy="85" rx="30" ry="65" fill="none" stroke="#92400e" stroke-width="1"/>
+  <line x1="95" y1="85" x2="225" y2="85" stroke="#92400e" stroke-width="1"/>
+  <line x1="100" y1="55" x2="220" y2="55" stroke="#92400e" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="100" y1="115" x2="220" y2="115" stroke="#92400e" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <path d="M100,30 Q160,22 220,30" fill="none" stroke="#92400e" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <path d="M100,140 Q160,148 220,140" fill="none" stroke="#92400e" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="160" y1="20" x2="160" y2="150" stroke="#92400e" stroke-width="1"/>
+  <rect x="10" y="60" width="60" height="50" rx="4" fill="none" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="25" y1="75" x2="55" y2="75" stroke="#92400e" stroke-width="1.2"/>
+  <line x1="25" y1="85" x2="55" y2="85" stroke="#92400e" stroke-width="1.2"/>
+  <line x1="25" y1="95" x2="45" y2="95" stroke="#92400e" stroke-width="1.2"/>
+  <rect x="250" y="60" width="60" height="50" rx="4" fill="none" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="265" y1="75" x2="295" y2="75" stroke="#92400e" stroke-width="1.2"/>
+  <line x1="265" y1="85" x2="295" y2="85" stroke="#92400e" stroke-width="1.2"/>
+  <line x1="265" y1="95" x2="285" y2="95" stroke="#92400e" stroke-width="1.2"/>
+  <path d="M70,85 L95,85" fill="none" stroke="#92400e" stroke-width="1.5" marker-end="url(#arr)"/>
+  <path d="M225,85 L250,85" fill="none" stroke="#92400e" stroke-width="1.5"/>
+</svg>"""
+
+def _wm_etf() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <line x1="15" y1="10" x2="15" y2="155" stroke="#1d4ed8" stroke-width="1.5"/>
+  <line x1="15" y1="155" x2="310" y2="155" stroke="#1d4ed8" stroke-width="1.5"/>
+  <path d="M15,130 Q80,115 130,100 Q180,85 240,60 Q280,45 305,30" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M15,140 Q80,128 130,115 Q180,100 240,78 Q280,62 305,48" fill="none" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+  <path d="M15,155 Q80,145 130,132 Q180,118 240,95 Q280,78 305,65 L305,155Z" fill="#1d4ed8" opacity="0.12"/>
+  <circle cx="130" cy="100" r="5" fill="#1d4ed8"/>
+  <circle cx="240" cy="60" r="5" fill="#1d4ed8"/>
+  <circle cx="305" cy="30" r="5" fill="#1d4ed8"/>
+  <rect x="30" y="10" width="40" height="16" rx="3" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="80" y="10" width="40" height="16" rx="3" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="130" y="10" width="40" height="16" rx="3" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="180" y="10" width="40" height="16" rx="3" fill="#1d4ed8" opacity="0.3" rx="3"/>
+  <rect x="230" y="10" width="40" height="16" rx="3" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+  <rect x="280" y="10" width="30" height="16" rx="3" fill="none" stroke="#1d4ed8" stroke-width="1"/>
+</svg>"""
+
+def _wm_dividend() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <circle cx="80" cy="70" r="55" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="80" cy="70" r="38" fill="none" stroke="#166534" stroke-width="1"/>
+  <circle cx="80" cy="70" r="22" fill="none" stroke="#166534" stroke-width="1"/>
+  <circle cx="80" cy="70" r="8" fill="#166534" opacity="0.4"/>
+  <line x1="80" y1="15" x2="80" y2="125" stroke="#166534" stroke-width="0.8" stroke-dasharray="2,3"/>
+  <line x1="25" y1="70" x2="135" y2="70" stroke="#166534" stroke-width="0.8" stroke-dasharray="2,3"/>
+  <rect x="160" y="20" width="28" height="40" fill="#166534" opacity="0.25" rx="2"/>
+  <rect x="196" y="35" width="28" height="25" fill="#166534" opacity="0.35" rx="2"/>
+  <rect x="232" y="10" width="28" height="50" fill="#166534" opacity="0.45" rx="2"/>
+  <rect x="268" y="25" width="28" height="35" fill="#166534" opacity="0.3" rx="2"/>
+  <line x1="155" y1="65" x2="300" y2="65" stroke="#166534" stroke-width="1"/>
+  <line x1="155" y1="65" x2="155" y2="10" stroke="#166534" stroke-width="1"/>
+  <path d="M160,60 L185,48 L220,22 L248,38 L282,15" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="160" cy="115" r="18" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <line x1="155" y1="115" x2="165" y2="115" stroke="#166534" stroke-width="1.5"/>
+  <line x1="160" y1="110" x2="160" y2="120" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="210" cy="130" r="14" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="255" cy="120" r="18" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="300" cy="132" r="12" fill="none" stroke="#166534" stroke-width="1.5"/>
+</svg>"""
+
+def _wm_beginner() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <path d="M160,10 C120,10 88,40 88,75 C88,100 102,120 122,130 L122,148 L198,148 L198,130 C218,120 232,100 232,75 C232,40 200,10 160,10 Z" fill="none" stroke="#6b21a8" stroke-width="2"/>
+  <line x1="122" y1="155" x2="198" y2="155" stroke="#6b21a8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="130" y1="162" x2="190" y2="162" stroke="#6b21a8" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="160" y1="40" x2="160" y2="70" stroke="#6b21a8" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="160" cy="82" r="5" fill="#6b21a8"/>
+  <line x1="20" y1="20" x2="20" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/>
+  <line x1="20" y1="160" x2="80" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/>
+  <rect x="25" y="130" width="14" height="30" fill="#6b21a8" opacity="0.25" rx="1"/>
+  <rect x="43" y="110" width="14" height="50" fill="#6b21a8" opacity="0.3" rx="1"/>
+  <rect x="61" y="90" width="14" height="70" fill="#6b21a8" opacity="0.35" rx="1"/>
+  <line x1="250" y1="20" x2="250" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/>
+  <line x1="250" y1="160" x2="310" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/>
+  <rect x="255" y="120" width="14" height="40" fill="#6b21a8" opacity="0.25" rx="1"/>
+  <rect x="273" y="100" width="14" height="60" fill="#6b21a8" opacity="0.3" rx="1"/>
+  <rect x="291" y="80" width="14" height="80" fill="#6b21a8" opacity="0.35" rx="1"/>
+</svg>"""
+
+def _wm_fire() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <path d="M160,165 C100,165 55,130 55,88 C55,60 72,40 88,28 C82,48 90,60 102,58 C88,38 105,10 130,5 C118,25 128,45 145,48 C138,32 150,15 165,12 C155,30 165,52 178,55 C170,35 185,18 200,22 C188,38 192,58 205,62 C222,50 235,30 228,10 C250,28 265,58 258,88 C265,78 268,62 265,48 C278,62 285,82 285,100 C285,135 228,165 160,165 Z" fill="none" stroke="#92400e" stroke-width="2"/>
+  <path d="M160,155 C120,155 88,132 88,105 C88,88 98,75 110,68 C106,80 112,90 122,88 C112,75 122,58 138,55 C130,68 138,82 150,82 C145,70 155,58 165,58 C158,70 165,84 175,85 C168,72 178,58 188,62 C180,75 182,90 192,92 C202,82 208,65 205,52 C218,68 222,88 218,105 C222,98 225,88 222,78 C230,90 232,105 232,115 C232,138 200,155 160,155 Z" fill="#92400e" opacity="0.2"/>
+  <line x1="10" y1="165" x2="310" y2="165" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="10" y1="10" x2="10" y2="165" stroke="#92400e" stroke-width="1" opacity="0.5"/>
+  <line x1="10" y1="90" x2="45" y2="90" stroke="#92400e" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="10" y1="40" x2="45" y2="40" stroke="#92400e" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.5"/>
+</svg>"""
+
+def _wm_yutai() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <rect x="60" y="30" width="200" height="130" rx="8" fill="none" stroke="#166534" stroke-width="2"/>
+  <rect x="60" y="30" width="200" height="35" rx="8" fill="none" stroke="#166534" stroke-width="1"/>
+  <line x1="160" y1="65" x2="160" y2="160" stroke="#166534" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="60" y1="112" x2="260" y2="112" stroke="#166534" stroke-width="1" stroke-dasharray="3,3"/>
+  <circle cx="110" cy="88" r="15" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="110" cy="135" r="12" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="210" cy="88" r="18" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <circle cx="210" cy="135" r="14" fill="none" stroke="#166534" stroke-width="1.5"/>
+  <path d="M100,43 L108,55 L120,38" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M195,43 L203,55 L215,38" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="10" y1="30" x2="40" y2="30" stroke="#166534" stroke-width="1.5"/>
+  <line x1="10" y1="60" x2="40" y2="60" stroke="#166534" stroke-width="1.5"/>
+  <line x1="10" y1="90" x2="40" y2="90" stroke="#166534" stroke-width="1.5"/>
+  <line x1="10" y1="120" x2="40" y2="120" stroke="#166534" stroke-width="1.5"/>
+  <line x1="10" y1="150" x2="40" y2="150" stroke="#166534" stroke-width="1.5"/>
+  <line x1="280" y1="30" x2="310" y2="30" stroke="#166534" stroke-width="1.5"/>
+  <line x1="280" y1="60" x2="310" y2="60" stroke="#166534" stroke-width="1.5"/>
+  <line x1="280" y1="90" x2="310" y2="90" stroke="#166534" stroke-width="1.5"/>
+  <line x1="280" y1="120" x2="310" y2="120" stroke="#166534" stroke-width="1.5"/>
+  <line x1="280" y1="150" x2="310" y2="150" stroke="#166534" stroke-width="1.5"/>
+</svg>"""
+
+def _wm_search() -> str:
+    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <circle cx="130" cy="80" r="60" fill="none" stroke="#166534" stroke-width="2"/>
+  <circle cx="130" cy="80" r="42" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/>
+  <circle cx="130" cy="80" r="24" fill="none" stroke="#166534" stroke-width="0.8" opacity="0.3"/>
+  <line x1="178" y1="128" x2="255" y2="160" stroke="#166534" stroke-width="5" stroke-linecap="round"/>
+  <line x1="100" y1="68" x2="160" y2="68" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
+  <line x1="100" y1="80" x2="160" y2="80" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
+  <line x1="100" y1="92" x2="145" y2="92" stroke="#166534" stroke-width="2" stroke-linecap="round"/>
+  <rect x="260" y="15" width="50" height="8" rx="4" fill="#166534" opacity="0.25"/>
+  <rect x="260" y="30" width="40" height="8" rx="4" fill="#166534" opacity="0.2"/>
+  <rect x="260" y="45" width="48" height="8" rx="4" fill="#166534" opacity="0.25"/>
+  <rect x="260" y="60" width="35" height="8" rx="4" fill="#166534" opacity="0.2"/>
+  <rect x="260" y="75" width="45" height="8" rx="4" fill="#166534" opacity="0.25"/>
+  <rect x="260" y="90" width="38" height="8" rx="4" fill="#166534" opacity="0.2"/>
+  <line x1="10" y1="30" x2="55" y2="30" stroke="#166534" stroke-width="1.5" opacity="0.4"/>
+  <line x1="10" y1="50" x2="45" y2="50" stroke="#166534" stroke-width="1.5" opacity="0.3"/>
+  <line x1="10" y1="70" x2="55" y2="70" stroke="#166534" stroke-width="1.5" opacity="0.4"/>
+  <line x1="10" y1="90" x2="40" y2="90" stroke="#166534" stroke-width="1.5" opacity="0.3"/>
+  <line x1="10" y1="110" x2="50" y2="110" stroke="#166534" stroke-width="1.5" opacity="0.4"/>
+</svg>"""
+
 def generate_column(
     topic: Dict, books: List[Dict], report_date: str, day_label: str
 ) -> tuple[str, str]:
@@ -1182,20 +1555,27 @@ def generate_column(
     """
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
-    system_prompt = """あなたは投資・お金の専門ライターです。
+    system_prompt = """あなたは高配当株・新NISA・株主優待への長期投資を実践している個人投資家ブロガー「悠人（ゆうと）」です。
 読者は検索エンジンで特定のキーワードを調べている20〜40代の社会人です。
-以下のルールで検索意図に直接答える記事を書いてください:
+以下のルールで、ご自身の実体験・見解を交えた記事を書いてください:
+
+【文体・トーン】
+- です・ます調。親しみやすく、友人に話しかけるような温かみのある文体
+- 「私自身も○○株を保有していますが〜」「実際に配当金を受け取ってみて感じるのは〜」など一人称の視点を随所に入れる
+- 「正直なところ〜」「個人的には〜」「これは経験から言えることですが〜」など率直な意見を述べる
+
+【構成ルール】
 - 冒頭でキーワードに直接答える（結論ファースト）
-- 親しみやすい文体（です・ます調）
+- 小見出し（##）を4〜5個使って読みやすく構成する
 - 具体的な数字・銘柄名・利回りを積極的に使う
-- 小見出し（##）を3〜4個使って読みやすく構成する
-- 比較・一覧・シミュレーションを入れると親切
-- 末尾に「まとめ」セクションを設ける
-- 文字数: 1,200〜1,500字"""
+- 比較・一覧・シミュレーションを含める
+- 自分の投資スタイル（日本高配当株＋米国ETF、新NISA活用）に触れる場面を自然に入れる
+- 末尾に「## 悠人のひとこと」として個人的な総評を2〜3文で添える
+- 文字数: 1,500〜2,000字"""
 
     response = client.messages.create(
         model=CLAUDE_MODEL,
-        max_tokens=2048,
+        max_tokens=3000,
         system=system_prompt,
         messages=[{"role": "user", "content": topic["prompt"]}],
     )
@@ -1332,7 +1712,7 @@ def main() -> int:
 
             # 1本目：株価レポート（日付スラッグ）
             md = build_markdown(
-                intro, prices, ranking, remarks, body, news, selected_books, report_date
+                intro, prices, ranking, remarks, body, news, selected_books, report_date, themes
             )
             out_path.write_text(md, encoding="utf-8")
             print(f"Success: {out_path}")

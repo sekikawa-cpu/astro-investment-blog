@@ -8,26 +8,6 @@ author: "配当＆優待ナビ 編集部"
 draft: false
 ---
 
-<div class="card-watermark" aria-hidden="true">
-<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-  <path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10 L320,170 L0,170Z" fill="#166534" opacity="0.25"/>
-  <path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10" fill="none" stroke="#166534" stroke-width="2.5"/>
-  <circle cx="60" cy="148" r="10" fill="none" stroke="#166534" stroke-width="1.5"/>
-  <circle cx="100" cy="138" r="15" fill="none" stroke="#166534" stroke-width="1.5"/>
-  <circle cx="150" cy="120" r="22" fill="none" stroke="#166534" stroke-width="1.8"/>
-  <circle cx="215" cy="90" r="30" fill="none" stroke="#166534" stroke-width="2"/>
-  <circle cx="290" cy="48" r="40" fill="none" stroke="#166534" stroke-width="2"/>
-  <line x1="60" y1="158" x2="60" y2="168" stroke="#166534" stroke-width="1"/>
-  <line x1="150" y1="142" x2="150" y2="168" stroke="#166534" stroke-width="1"/>
-  <line x1="290" y1="88" x2="290" y2="168" stroke="#166534" stroke-width="1"/>
-  <ellipse cx="55" cy="30" rx="12" ry="5" fill="none" stroke="#166534" stroke-width="1.5"/>
-  <line x1="43" y1="30" x2="43" y2="42" stroke="#166534" stroke-width="1.5"/>
-  <line x1="67" y1="30" x2="67" y2="42" stroke="#166534" stroke-width="1.5"/>
-  <ellipse cx="55" cy="42" rx="12" ry="5" fill="none" stroke="#166534" stroke-width="1.5"/>
-  <path d="M80,35 Q110,15 130,38" fill="none" stroke="#166534" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <polygon points="130,38 122,30 126,42" fill="#166534"/>
-</svg>
-</div>
 
 <div class="lead-text">配当再投資の複利効果は、長期投資家にとって最強の武器です。「配当金が出たらすぐ使う」のと「再投資し続ける」のとでは、20年後に数百万円の差が生まれます。私自身、新NISAで受け取った配当をそのまま同じ銘柄に再投資する習慣を続けていますが、この「雪だるま効果」を実際の数字で体感したとき、長期投資への確信が一気に深まりました。</div>
 
