@@ -1,0 +1,102 @@
+---
+title: "高配当ETF（1489 vs 2516）どっちがいい？特徴と利回りを徹底比較"
+description: "高配当ETF 1489 2516 比較について徹底解説。高配当ETF（1489 vs 2516）どっちがいい？特徴と利回りを徹底比較"
+pubDate: 2026-04-29
+category: "キーワード解説"
+tags: ["高配当株", "不労所得", "投資解説", "高配当ETF"]
+author: "配当＆優待ナビ 編集部"
+draft: false
+---
+
+<div class="lead-text"># 日経高配当50ETF（1489）vs JPX高配当指数ETF（2516）徹底比較！新NISAで買うならどっち？</div>
+
+
+結論からお伝えすると、**安定した高利回りを重視するなら1489、分散効果と中長期の値上がり益も狙うなら2516**が向いています。私自身は両方を保有していますが、それぞれに明確な「役割の違い」があると感じています。詳しく解説していきますね。
+
+---
+
+## 1489と2516、まずは基本スペックを比べてみよう
+
+まずは主要スペックをひと目で分かるよう表にまとめました。
+
+| 項目 | 1489（日経高配当50ETF） | 2516（JPX高配当指数ETF） |
+|------|----------------------|------------------------|
+| 運用会社 | NEXT FUNDS（野村AM） | MAXISシリーズ（三菱UFJ AM） |
+| 連動指数 | 日経平均高配当株50指数 | JPX高配当指数 |
+| 構成銘柄数 | 約50銘柄 | 約40銘柄 |
+| 分配利回り（目安） | 約3.5〜4.0% | 約3.0〜3.5% |
+| 信託報酬 | 年0.308%（税込） | 年0.209%（税込） |
+| 分配回数 | 年4回 | 年4回 |
+| 最低購入金額 | 約5,000〜6,000円前後 | 約4,000〜5,000円前後 |
+
+※利回り・価格は2024年末時点の目安です。最新情報は必ず証券会社でご確認ください。
+
+信託報酬だけを見ると2516のほうが約0.1%安く、長期保有ではじわじわ効いてきます。ただし、利回りの高さという点では1489に軍配が上がりやすいです。
+
+---
+
+## 組み入れ銘柄・セクターの違いが実は一番重要
+
+正直なところ、この2本の一番の違いは**「どんな銘柄を何の基準で選ぶか」**にあります。
+
+**1489（日経高配当50ETF）**は、日経225の構成銘柄の中から予想配当利回りが高い50銘柄を選んでいます。そのため、**金融・銀行・保険セクターの比率が高め**なのが特徴。三菱UFJフィナンシャル・グループ、日本電信電話（NTT）、三井住友フィナンシャルグループ、JT（日本たばこ産業）といった「ザ・高配当株」が上位に並びます。
+
+**2516（JPX高配当指数ETF）**は、東証プライム上場銘柄からROE・配当利回りなど複数の指標で選定します。日経225に縛られない分、**より幅広いセクターからの選出**になり、製造業や商社なども組み込まれやすいです。
+
+重複している銘柄も一定数ありますが、個人的に感じるのは「1489は高利回り純度が高い」「2516は成長性も意識した選び方をしている」という印象です。どちらかだけ買うより、両方持つことで自然と分散されるのが気に入っています。
+
+---
+
+## どちらを選ぶべき？目的別の結論
+
+**こんな人には1489がおすすめ**
+- とにかく高い配当利回りを最優先したい
+- 日経平均構成銘柄という安心感・知名度を重視したい
+- 配当金を生活費や再投資の原資として受け取りたい
+
+**こんな人には2516がおすすめ**
+- 長期保有でコストを少しでも抑えたい
+- 日経225以外の優良高配当株にも分散したい
+- 配当＋値上がり益のトータルリターンを意識している
+
+これは経験から言えることですが、「配当利回りが高い＝優れたETF」とは限りません。2516のほうが選定基準が多面的な分、銘柄の質という観点では一定の合理性があります。一方で1489の「高利回り集中型」のわかりやすさも魅力です。
+
+**個人的な結論：迷ったら1489をメインに、2516をサブで持つのがバランス良いと思います。**私のポートフォリオでは1489に6割、2516に4割という配分で保有しています。
+
+---
+
+## 新NISAでの購入方法と注意点
+
+両銘柄とも、新NISAの**成長投資枠（年間240万円まで）**で購入できます。つみたて投資枠の対象ではないので注意してください。
+
+購入できる主な証券会社は以下のとおりです。
+
+- **SBI証券**：両銘柄とも取扱あり、スマホアプリで簡単購入可
+- **楽天証券**：両銘柄とも取扱あり、楽天ポイント投資も活用可能
+- **松井証券・マネックス証券**なども対応
+
+**注意点として押さえておきたいこと**
+
+1. **ETFは指値注文が基本**：成行注文だと想定外の価格で買ってしまうことがあります。私は必ず指値で購入しています。
+2. **分配金は再投資されない**：投資信託と違い、ETFの分配金は自動再投資されません。受け取った分配金は自分で再投資するか、生活費に充てる形になります。
+3. **新NISA口座内の分配金は非課税**：通常20.315%かかる税金がゼロになるのは大きなメリットです。年間数万円規模でも、長期では無視できない差になります。
+
+---
+
+## 悠人のひとこと
+
+1489と2516、どちらも「日本株高配当ETF」という括りですが、細かく見るとキャラクターが違います。私は米国ETFの VYM や HDV と組み合わせて保有することで、日米分散＋高配当という自分なりのポートフォリオを組んでいます。まずは少額から両方買ってみて、自分の感覚に合うほうを積み増すのが一番の近道ですよ！
+
+
+## 📚 あわせて読みたいおすすめ投資書籍
+
+<div class="book-item" data-isbn="9784022951670"><a href="https://www.amazon.co.jp/dp/4022951672?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://books.google.com/books/content?id=affuzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="全面改訂 第3版 ほったらかし投資術（朝日新書）" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4022951672?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">全面改訂 第3版 ほったらかし投資術（朝日新書）</a></strong><p class="book-author">著者: 山崎元 / 水瀬ケンイチ</p><p>手間をかけずに資産を築く具体的な手法。新NISA対応の最新版。</p></div></div>
+
+<div class="book-item" data-isbn="9784046055477"><a href="https://www.amazon.co.jp/dp/4046055472?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://books.google.com/books/content?id=6Z_GzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="オートモードで月に18.5万円が入ってくる「高配当」株投資" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4046055472?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">オートモードで月に18.5万円が入ってくる「高配当」株投資</a></strong><p class="book-author">著者: 長期株式投資</p><p>日本の高配当株投資のバイブル。永久保有銘柄17の選定基準まで丁寧に解説。</p></div></div>
+
+<div class="book-item" data-isbn="9784835650012"><a href="https://www.amazon.co.jp/dp/4835650018?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link"><img src="https://books.google.com/books/content?id=BFzh0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="ジェイソン流お金の増やし方 改訂版" referrerpolicy="no-referrer" loading="lazy" onerror="this.onerror=null;this.style.opacity='0.25';"></a><div class="book-info"><strong><a href="https://www.amazon.co.jp/dp/4835650018?tag=investinsight-22" target="_blank" rel="noopener noreferrer sponsored">ジェイソン流お金の増やし方 改訂版</a></strong><p class="book-author">著者: 厚切りジェイソン</p><p>シンプルで力強い投資哲学。新NISA対応の改訂版。長期・分散・積立の基本がわかる。</p></div></div>
+
+
+---
+
+<div class="disclaimer-note">※ 本記事の情報は投資判断の参考を目的としており、特定銘柄の売買を推奨するものではありません。投資はご自身の判断と責任で行ってください。<br>※ 書籍リンクはAmazonアソシエイトプログラムを利用しています。</div>
