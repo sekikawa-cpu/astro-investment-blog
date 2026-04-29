@@ -379,19 +379,35 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.book-item img').forEach(img => {
+  // async を追加して非同期処理（API通信）ができるようにします
+  document.querySelectorAll('.book-item img').forEach(async (img) => {
     const item = img.closest('.book-item');
     const isbn = item?.dataset?.isbn || '';
 
+    // 🌟 追加：Google Books APIから画像を動的に取得して差し替える処理
+    if (isbn) {
+      try {
+        const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+        const data = await res.json();
+        // Google Booksに画像が存在した場合、そのURLに上書きする
+        if (data.items && data.items.length > 0 && data.items[0].volumeInfo.imageLinks) {
+          const googleImgUrl = data.items[0].volumeInfo.imageLinks.thumbnail.replace('http:', 'https:');
+          img.src = googleImgUrl; 
+        }
+      } catch (error) {
+        console.error('Google Books APIの取得に失敗しました:', error);
+      }
+    }
+
+    // 既存のエラーフォールバック処理（万が一Googleの画像も取得失敗した時の保険としてそのまま残します）
     img.addEventListener('error', function onErr() {
       img.removeEventListener('error', onErr);
-      // どんなURLが失敗しても openBD で再試行
       if (isbn) {
         const openBDUrl = `https://cover.openbd.jp/${isbn}.jpg`;
         if (img.src !== openBDUrl) {
           img.addEventListener('error', function onErr2() {
             img.removeEventListener('error', onErr2);
-            // 最終: テキストSVGプレースホルダー
+            // 最終手段: テキストSVGプレースホルダー
             const short = (img.alt || 'Book').slice(0, 8);
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="110" height="155" viewBox="0 0 110 155"><rect width="110" height="155" fill="#1e293b"/><rect x="4" y="4" width="102" height="147" fill="none" stroke="#475569" stroke-width="1"/><text x="55" y="82" font-family="sans-serif" font-size="9" fill="#e2e8f0" text-anchor="middle" dominant-baseline="middle">${short}</text></svg>`;
             img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);

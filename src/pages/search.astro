@@ -119,11 +119,17 @@ const postsJson = JSON.stringify(posts.map(p => ({
 
         filtered.forEach(p => {
           const wmUrl = getWmUrl(p.category, p.title);
+          
           grid.innerHTML += `
             <a href="/blog/${p.slug}"
               class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5"
-              style="position:relative;overflow:hidden;background-image:url('${wmUrl}');background-size:cover;background-position:center;background-repeat:no-repeat;">
-              <div style="position:relative;z-index:1;">
+              style="position:relative; overflow:hidden;">
+              
+              <!-- 背景画像を独立したdivとして配置 -->
+              <!-- URLのクォーテーションの使い方を調整しています -->
+              <div style="position:absolute; inset:0; width:100%; height:100%; background-image:url(&quot;${wmUrl}&quot;); background-size:cover; background-position:center; background-repeat:no-repeat; opacity:0.1; pointer-events:none;"></div>
+              
+              <div style="position:relative; z-index:10;">
                 <div class="flex items-center gap-2 mb-2">
                   <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">${p.category}</span>
                   <p class="text-xs text-slate-400">${p.pubDate}</p>
