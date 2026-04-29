@@ -45,21 +45,22 @@ PUBLIC_BOOKS_DIR = Path("public/images/books")
 
 # ニュースRSS（複数媒体）
 NEWS_RSS_URLS = [
-    "https://news.yahoo.co.jp/rss/categories/business.xml",
-    "https://diamond.jp/feed/diamond",
-    "https://toyokeizai.net/list/feed/rss",
-    "https://www.nikkei.com/rss/news.rss",
-    "https://www.bloomberg.co.jp/rss/all.rss",
-    "https://jp.reuters.com/tools/rss/business.xml",
+    "https://news.yahoo.co.jp/rss/categories/business.xml",       # Yahoo!ニュース ビジネス
+    "https://toyokeizai.net/list/feed/rss",                        # 東洋経済オンライン
+    "https://www.lifehacker.jp/feed/index.xml",                    # ライフハッカー（マネー記事あり）
+    "https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml",          # ITmedia NEWS
+    "https://feeds.feedburner.com/zaikeicom",                      # 財経新聞
+    "https://www.sankeibiz.jp/rss/news/macro.rss",                 # SankeiBiz マクロ経済
 ]
 
 _MEDIA_NAMES: dict = {
     "yahoo.co.jp":      "Yahoo!ニュース",
-    "diamond.jp":       "ダイヤモンド・オンライン",
     "toyokeizai.net":   "東洋経済オンライン",
-    "nikkei.com":       "日本経済新聞",
-    "bloomberg.co.jp":  "Bloomberg",
-    "reuters.com":      "ロイター",
+    "lifehacker.jp":    "ライフハッカー",
+    "itmedia.co.jp":    "ITmedia",
+    "zaikei.co.jp":     "財経新聞",
+    "sankeibiz.jp":     "SankeiBiz",
+    "feedburner.com":   "財経新聞",
 }
 
 def _media_name_from_url(url: str) -> str:
