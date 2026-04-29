@@ -154,12 +154,9 @@ _COVER_CACHE: Dict[str, str] = {}
 
 def resolve_cover_src(book: Dict) -> str:
     """
-    書影URLを以下の優先順で解決する（毎回APIを叩かずメモリキャッシュを使用）:
-    1. メモリキャッシュ（同一プロセス内の重複解決を防止）
-    2. Google Books API（最も安定・APIキー不要・HTTPS）
-    3. openBD API（日本書籍に強い）
-    4. books_data.json の cover_url（楽天CDNは外部参照ブロックがあるため最後）
-    5. SVG プレースホルダー（最終手段）
+    書影URLを解決する。
+    openBD Cover API (cover.openbd.jp/{isbn13}.jpg) が日本書籍に最も確実。
+    books_data.json の cover_url を優先し、なければ isbn13 から直接生成。
     """
     isbn13 = book.get("isbn13", "")
     if not isbn13:
@@ -169,28 +166,16 @@ def resolve_cover_src(book: Dict) -> str:
     if isbn13 in _COVER_CACHE:
         return _COVER_CACHE[isbn13]
 
-    # 1. Google Books API
-    url = _cover_google_books(isbn13)
-    if url:
-        _COVER_CACHE[isbn13] = url
-        return url
-
-    # 2. openBD
-    url = _cover_openbd(isbn13)
-    if url:
-        _COVER_CACHE[isbn13] = url
-        return url
-
-    # 3. books_data.json の cover_url（フォールバック）
+    # books_data.json の cover_url を優先（openBD URLが設定されているはず）
     stored = book.get("cover_url", "")
-    if stored and "r10s.jp" not in stored:  # 楽天CDN以外のURLなら使用
+    if stored and "r10s.jp" not in stored:
         _COVER_CACHE[isbn13] = stored
         return stored
 
-    # 4. SVG プレースホルダー
-    placeholder = _svg_placeholder(book)
-    _COVER_CACHE[isbn13] = placeholder
-    return placeholder
+    # isbn13 から openBD URL を直接生成（フォールバック）
+    url = f"https://cover.openbd.jp/{isbn13}.jpg"
+    _COVER_CACHE[isbn13] = url
+    return url
 
 
 def _cover_google_books(isbn13: str) -> Optional[str]:
