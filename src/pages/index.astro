@@ -14,16 +14,7 @@ posts.forEach(p => {
 // 人気記事（最新5本をPVの代わりに使用）
 const popularPosts = posts.slice(0, 5);
 
-// サーバーサイドで透かしSVGを生成する関数（追加修正）
-function getWatermarkSvg(category: string, title: string) {
-  const WM: Record<string, string> = {
-    'マーケット分析': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><line x1="0" y1="140" x2="320" y2="140" stroke="#1d4ed8" stroke-width="0.8"/><line x1="0" y1="105" x2="320" y2="105" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/><line x1="0" y1="70" x2="320" y2="70" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/><line x1="64" y1="20" x2="64" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><line x1="128" y1="20" x2="128" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><line x1="192" y1="20" x2="192" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><line x1="256" y1="20" x2="256" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><path d="M0,130 L40,120 L80,108 L120,95 L160,80 L200,55 L240,40 L280,25 L320,15 L320,150 L0,150Z" fill="#1d4ed8" opacity="0.3"/><polyline points="0,130 40,120 80,108 120,95 160,80 200,55 240,40 280,25 320,15" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="40" y1="112" x2="40" y2="128" stroke="#1d4ed8" stroke-width="1.5"/><rect x="34" y="116" width="12" height="8" fill="none" stroke="#1d4ed8" stroke-width="1.5" rx="1"/><line x1="120" y1="88" x2="120" y2="102" stroke="#1d4ed8" stroke-width="1.5"/><rect x="114" y="91" width="12" height="8" fill="#1d4ed8" rx="1"/><line x1="200" y1="48" x2="200" y2="62" stroke="#1d4ed8" stroke-width="1.5"/><rect x="194" y="51" width="12" height="8" fill="none" stroke="#1d4ed8" stroke-width="1.5" rx="1"/><line x1="280" y1="18" x2="280" y2="32" stroke="#1d4ed8" stroke-width="1.5"/><rect x="274" y="21" width="12" height="8" fill="#1d4ed8" rx="1"/><polygon points="295,38 287,52 303,52" fill="#1d4ed8"/></svg>`,
-    'キーワード解説': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><circle cx="130" cy="80" r="60" fill="none" stroke="#166534" stroke-width="2"/><circle cx="130" cy="80" r="42" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/><circle cx="130" cy="80" r="24" fill="none" stroke="#166534" stroke-width="0.8" opacity="0.3"/><line x1="178" y1="128" x2="255" y2="160" stroke="#166534" stroke-width="5" stroke-linecap="round"/><line x1="100" y1="68" x2="160" y2="68" stroke="#166534" stroke-width="2" stroke-linecap="round"/><line x1="100" y1="80" x2="160" y2="80" stroke="#166534" stroke-width="2" stroke-linecap="round"/><line x1="100" y1="92" x2="145" y2="92" stroke="#166534" stroke-width="2" stroke-linecap="round"/><rect x="260" y="15" width="50" height="8" rx="4" fill="#166534" opacity="0.25"/><rect x="260" y="30" width="40" height="8" rx="4" fill="#166534" opacity="0.2"/><rect x="260" y="45" width="48" height="8" rx="4" fill="#166534" opacity="0.25"/><rect x="260" y="60" width="35" height="8" rx="4" fill="#166534" opacity="0.2"/></svg>`,
-    '投資戦略': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><circle cx="95" cy="88" r="70" fill="none" stroke="#92400e" stroke-width="1"/><path d="M95,88 L95,18 A70,70 0 0,1 156,123 Z" fill="#92400e" opacity="0.5"/><path d="M95,88 L156,123 A70,70 0 0,1 34,123 Z" fill="#92400e" opacity="0.3"/><path d="M95,88 L34,123 A70,70 0 0,1 34,53 Z" fill="#92400e" opacity="0.15"/><path d="M95,88 L34,53 A70,70 0 0,1 95,18 Z" fill="#92400e" opacity="0.08"/><circle cx="95" cy="88" r="30" fill="white"/><rect x="185" y="15" width="120" height="145" fill="none" stroke="#92400e" stroke-width="1" rx="4"/><line x1="185" y1="35" x2="305" y2="35" stroke="#92400e" stroke-width="1"/><rect x="192" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="223" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/><rect x="254" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="192" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/><rect x="223" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="254" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/></svg>`,
-    '初心者ガイド': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><path d="M160,10 C120,10 88,40 88,75 C88,100 102,120 122,130 L122,148 L198,148 L198,130 C218,120 232,100 232,75 C232,40 200,10 160,10 Z" fill="none" stroke="#6b21a8" stroke-width="2"/><line x1="122" y1="155" x2="198" y2="155" stroke="#6b21a8" stroke-width="2" stroke-linecap="round"/><line x1="130" y1="162" x2="190" y2="162" stroke="#6b21a8" stroke-width="1.5" stroke-linecap="round"/><line x1="160" y1="40" x2="160" y2="70" stroke="#6b21a8" stroke-width="2.5" stroke-linecap="round"/><circle cx="160" cy="82" r="5" fill="#6b21a8"/><line x1="20" y1="20" x2="20" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/><line x1="20" y1="160" x2="80" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/><rect x="25" y="130" width="14" height="30" fill="#6b21a8" opacity="0.3" rx="1"/><rect x="43" y="110" width="14" height="50" fill="#6b21a8" opacity="0.35" rx="1"/><rect x="61" y="90" width="14" height="70" fill="#6b21a8" opacity="0.4" rx="1"/></svg>`,
-  };
-  return WM[category] || WM['マーケット分析'];
-}
+
 ---
 <html lang="ja">
   <head>
@@ -142,8 +133,10 @@ function getWatermarkSvg(category: string, title: string) {
 
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
+    <!-- ドロワーオーバーレイ -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 
+    <!-- ドロワーメニュー -->
     <div class="drawer" id="drawer">
       <div class="flex items-center justify-between px-5 py-4 bg-slate-900 text-white">
         <span class="font-bold text-lg">メニュー</span>
@@ -152,6 +145,7 @@ function getWatermarkSvg(category: string, title: string) {
         </button>
       </div>
 
+      <!-- ドロワー内検索 -->
       <div class="px-5 py-4 border-b border-slate-100">
         <form onsubmit="doSearch(event)" class="flex gap-0">
           <input id="drawerSearchInput" type="text" placeholder="キーワードを入力"
@@ -163,6 +157,7 @@ function getWatermarkSvg(category: string, title: string) {
         </form>
       </div>
 
+      <!-- カテゴリー -->
       <div class="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">カテゴリー</div>
       {Object.entries(categoryCount).map(([cat, count]) => (
         <a href={`/search?q=${encodeURIComponent(cat)}`} class="drawer-cat-item">
@@ -171,19 +166,23 @@ function getWatermarkSvg(category: string, title: string) {
         </a>
       ))}
 
+      <!-- サイト情報 -->
       <div class="px-5 py-3 mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">このサイトについて</div>
       <a href="/profile" class="drawer-cat-item">○ 運営者プロフィール</a>
       <a href="/privacy" class="drawer-cat-item">○ プライバシーポリシー</a>
       <a href="/contact" class="drawer-cat-item">○ お問い合わせ</a>
     </div>
 
+    <!-- ヘッダー -->
     <header class="bg-slate-900 text-white shadow-md py-3 sticky top-0 z-30">
       <div class="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
+        <!-- ロゴ -->
         <a href="/" class="text-xl font-bold tracking-wider hover:text-blue-300 transition-colors whitespace-nowrap">
           配当＆優待ナビ 💸
         </a>
 
-        <form onsubmit="doSearch(event)" class="hidden md:flex flex-1 max-w-md mx-4">
+        <!-- デスクトップ検索 -->
+        <form onsubmit="doSearch(event)" class="hidden md:flex flex-1 max-w-md gap-0 mx-4">
           <input id="headerSearchInput" type="text" placeholder="記事を検索..."
             class="search-input flex-1 bg-white text-slate-900 placeholder-slate-400 border-0 rounded-l-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
           <button type="submit"
@@ -192,20 +191,18 @@ function getWatermarkSvg(category: string, title: string) {
           </button>
         </form>
 
+        <!-- 右側ボタン群 -->
         <div class="flex items-center gap-3">
+          <!-- モバイル検索 -->
           <button onclick="toggleMobileSearch()"
             class="md:hidden bg-white text-slate-700 hover:bg-blue-50 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border border-slate-200">
             🔍 検索
           </button>
-          <button onclick="openDrawer()"
-            class="md:hidden text-white hover:text-blue-300 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+
         </div>
       </div>
 
+      <!-- モバイル検索バー（トグル） -->
       <div id="mobileSearchBar" class="hidden px-4 pt-2 pb-2 md:hidden bg-slate-800">
         <form onsubmit="doSearch(event)" class="flex gap-0">
           <input id="mobileSearchInput" type="text" placeholder="キーワードを入力"
@@ -216,7 +213,9 @@ function getWatermarkSvg(category: string, title: string) {
       </div>
     </header>
 
+    <!-- メインコンテンツ -->
     <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+      <!-- ヒーロー -->
       <div class="mb-8 text-center py-8 bg-gradient-to-r from-slate-800 to-blue-900 rounded-xl text-white">
         <h1 class="text-2xl md:text-3xl font-extrabold mb-3">「お金に働いてもらう」仕組みを作ろう。</h1>
         <p class="text-slate-300 text-sm md:text-base leading-relaxed">
@@ -225,8 +224,10 @@ function getWatermarkSvg(category: string, title: string) {
         </p>
       </div>
 
+      <!-- 2カラムレイアウト -->
       <div class="flex flex-col lg:flex-row gap-8">
 
+        <!-- メイン：記事一覧 -->
         <div class="flex-1 min-w-0">
           <h2 class="text-xl font-bold border-b-2 border-blue-500 pb-2 mb-5 flex items-center gap-2">
             <span class="text-blue-600">📋</span> 最新の記事
@@ -235,8 +236,8 @@ function getWatermarkSvg(category: string, title: string) {
             {posts.map((post) => (
               <a href={`/blog/${post.slug}`}
                 class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5">
-                <div class="card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
-                <div class="card-content">
+                <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
+                <div class="post-card-content">
                   <div class="flex items-center gap-2 mb-2">
                     <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">
                       {post.data.category || 'マーケット分析'}
@@ -258,16 +259,18 @@ function getWatermarkSvg(category: string, title: string) {
           </div>
         </div>
 
+        <!-- サイドバー -->
         <aside class="lg:w-72 flex-shrink-0">
 
+          <!-- 運営者プロフィール -->
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">📝 投稿者</div>
             <div class="sidebar-widget-body text-center py-4">
-              <img src="/images/profile.png" alt="悠人（ゆうと）"
+              <img src="/images/profile.png" alt="ただの会社員"
                 class="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-blue-100 shadow-sm" />
-              <p class="font-bold text-slate-900 mb-2">悠人（ゆうと）</p>
+              <p class="font-bold text-slate-900 mb-2">ただの会社員</p>
               <p class="text-xs text-slate-500 leading-relaxed text-left">
-                高配当株・株主優待への長期投資で不労所得を育て中。新NISAをフル活用しながら、日本株・米国ETFを組み合わせたポートフォリオを運用しています。
+                新潟市在住の45歳サラリーマン。NISA口座でイオン・NTT・三菱商事など高配当株と米国インデックスを積み立て中。サイドFIREと子供の進学費用確保が目標。
               </p>
               <a href="/profile"
                 class="mt-3 inline-block text-xs text-blue-600 hover:text-blue-800 font-semibold">
@@ -276,6 +279,7 @@ function getWatermarkSvg(category: string, title: string) {
             </div>
           </div>
 
+          <!-- サイト内検索（サイドバー） -->
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">🔍 サイト内検索</div>
             <div class="sidebar-widget-body">
@@ -290,6 +294,7 @@ function getWatermarkSvg(category: string, title: string) {
             </div>
           </div>
 
+          <!-- 人気記事 -->
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">🏆 人気記事</div>
             <div class="sidebar-widget-body">
@@ -304,6 +309,7 @@ function getWatermarkSvg(category: string, title: string) {
             </div>
           </div>
 
+          <!-- カテゴリー -->
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">📂 カテゴリー</div>
             <div class="sidebar-widget-body">
@@ -316,6 +322,8 @@ function getWatermarkSvg(category: string, title: string) {
               ))}
             </div>
           </div>
+
+
 
         </aside>
       </div>
@@ -330,8 +338,22 @@ function getWatermarkSvg(category: string, title: string) {
       </nav>
     </footer>
 
-    <script is:inline>
-      // ── ドロワー開閉 ──
+    <script>
+      // ── カード透かし生成 ──────────────────────────────────────
+      (function() {
+        const WM = {
+          'マーケット分析': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><line x1="0" y1="140" x2="320" y2="140" stroke="#1d4ed8" stroke-width="0.8"/><line x1="0" y1="105" x2="320" y2="105" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/><line x1="0" y1="70" x2="320" y2="70" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/><line x1="64" y1="20" x2="64" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><line x1="128" y1="20" x2="128" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><line x1="192" y1="20" x2="192" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><line x1="256" y1="20" x2="256" y2="150" stroke="#1d4ed8" stroke-width="0.4" stroke-dasharray="3,5"/><path d="M0,130 L40,120 L80,108 L120,95 L160,80 L200,55 L240,40 L280,25 L320,15 L320,150 L0,150Z" fill="#1d4ed8" opacity="0.3"/><polyline points="0,130 40,120 80,108 120,95 160,80 200,55 240,40 280,25 320,15" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="40" y1="112" x2="40" y2="128" stroke="#1d4ed8" stroke-width="1.5"/><rect x="34" y="116" width="12" height="8" fill="none" stroke="#1d4ed8" stroke-width="1.5" rx="1"/><line x1="120" y1="88" x2="120" y2="102" stroke="#1d4ed8" stroke-width="1.5"/><rect x="114" y="91" width="12" height="8" fill="#1d4ed8" rx="1"/><line x1="200" y1="48" x2="200" y2="62" stroke="#1d4ed8" stroke-width="1.5"/><rect x="194" y="51" width="12" height="8" fill="none" stroke="#1d4ed8" stroke-width="1.5" rx="1"/><line x1="280" y1="18" x2="280" y2="32" stroke="#1d4ed8" stroke-width="1.5"/><rect x="274" y="21" width="12" height="8" fill="#1d4ed8" rx="1"/><polygon points="295,38 287,52 303,52" fill="#1d4ed8"/></svg>`,
+          'キーワード解説': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><circle cx="130" cy="80" r="60" fill="none" stroke="#166534" stroke-width="2"/><circle cx="130" cy="80" r="42" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/><circle cx="130" cy="80" r="24" fill="none" stroke="#166534" stroke-width="0.8" opacity="0.3"/><line x1="178" y1="128" x2="255" y2="160" stroke="#166534" stroke-width="5" stroke-linecap="round"/><line x1="100" y1="68" x2="160" y2="68" stroke="#166534" stroke-width="2" stroke-linecap="round"/><line x1="100" y1="80" x2="160" y2="80" stroke="#166534" stroke-width="2" stroke-linecap="round"/><line x1="100" y1="92" x2="145" y2="92" stroke="#166534" stroke-width="2" stroke-linecap="round"/><rect x="260" y="15" width="50" height="8" rx="4" fill="#166534" opacity="0.25"/><rect x="260" y="30" width="40" height="8" rx="4" fill="#166534" opacity="0.2"/><rect x="260" y="45" width="48" height="8" rx="4" fill="#166534" opacity="0.25"/><rect x="260" y="60" width="35" height="8" rx="4" fill="#166534" opacity="0.2"/></svg>`,
+          '投資戦略': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><circle cx="95" cy="88" r="70" fill="none" stroke="#92400e" stroke-width="1"/><path d="M95,88 L95,18 A70,70 0 0,1 156,123 Z" fill="#92400e" opacity="0.5"/><path d="M95,88 L156,123 A70,70 0 0,1 34,123 Z" fill="#92400e" opacity="0.3"/><path d="M95,88 L34,123 A70,70 0 0,1 34,53 Z" fill="#92400e" opacity="0.15"/><path d="M95,88 L34,53 A70,70 0 0,1 95,18 Z" fill="#92400e" opacity="0.08"/><circle cx="95" cy="88" r="30" fill="white"/><rect x="185" y="15" width="120" height="145" fill="none" stroke="#92400e" stroke-width="1" rx="4"/><line x1="185" y1="35" x2="305" y2="35" stroke="#92400e" stroke-width="1"/><rect x="192" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="223" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/><rect x="254" y="42" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="192" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/><rect x="223" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.4"/><rect x="254" y="66" width="27" height="20" rx="2" fill="#92400e" opacity="0.2"/></svg>`,
+          '初心者ガイド': `<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><path d="M160,10 C120,10 88,40 88,75 C88,100 102,120 122,130 L122,148 L198,148 L198,130 C218,120 232,100 232,75 C232,40 200,10 160,10 Z" fill="none" stroke="#6b21a8" stroke-width="2"/><line x1="122" y1="155" x2="198" y2="155" stroke="#6b21a8" stroke-width="2" stroke-linecap="round"/><line x1="130" y1="162" x2="190" y2="162" stroke="#6b21a8" stroke-width="1.5" stroke-linecap="round"/><line x1="160" y1="40" x2="160" y2="70" stroke="#6b21a8" stroke-width="2.5" stroke-linecap="round"/><circle cx="160" cy="82" r="5" fill="#6b21a8"/><line x1="20" y1="20" x2="20" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/><line x1="20" y1="160" x2="80" y2="160" stroke="#6b21a8" stroke-width="1" opacity="0.4"/><rect x="25" y="130" width="14" height="30" fill="#6b21a8" opacity="0.3" rx="1"/><rect x="43" y="110" width="14" height="50" fill="#6b21a8" opacity="0.35" rx="1"/><rect x="61" y="90" width="14" height="70" fill="#6b21a8" opacity="0.4" rx="1"/></svg>`,
+        };
+        // タイトルキーワードで詳細パターンを上書き
+        const KEYWORD_MAP = [
+          [['海運','郵船','船'], 'ship'],
+          [['銀行','メガバンク','金利','日銀'], 'bank'],
+          [['NISA','nisa','非課税','積立'], 'nisa'],
+
+      // ── ドロワー開閉
       function openDrawer() {
         document.getElementById('drawer').classList.add('open');
         document.getElementById('drawerOverlay').classList.add('open');
@@ -343,7 +365,7 @@ function getWatermarkSvg(category: string, title: string) {
         document.body.style.overflow = '';
       }
 
-      // ── モバイル検索トグル ──
+      // モバイル検索トグル
       function toggleMobileSearch() {
         const bar = document.getElementById('mobileSearchBar');
         bar.classList.toggle('hidden');
@@ -352,7 +374,7 @@ function getWatermarkSvg(category: string, title: string) {
         }
       }
 
-      // ── 検索実行 ──
+      // 検索 → /search?q= ページに遷移
       function doSearch(e) {
         e.preventDefault();
         const inputs = ['headerSearchInput', 'sidebarSearchInput', 'drawerSearchInput', 'mobileSearchInput'];

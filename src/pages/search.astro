@@ -74,6 +74,7 @@ const postsJson = JSON.stringify(posts.map(p => ({
       if (t.includes('複利') || t.includes('再投資')) return SVG_URLS.compound;
       if (t.includes('ポートフォリオ') || t.includes('毎月')) return SVG_URLS.portfolio;
       if (cat === 'キーワード解説') return SVG_URLS.search;
+      if (cat === 'コラム') return SVG_URLS.compound;
       return SVG_URLS.chart;
     }
     // 検索結果レンダリング後にカードへ透かしを適用
