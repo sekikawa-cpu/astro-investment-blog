@@ -303,12 +303,18 @@ class NewsItem:
 
 
 def collect_news(max_items: int = 5) -> List[NewsItem]:
-    items: List[NewsItem] = []
+    """
+    各ソースから均等に取得してから投資キーワードでスコアリング。
+    Yahoo RSSが大量記事を返して他ソースが読まれない問題を解消。
+    """
+    per_source = max(2, max_items)      # 各ソースから最大 per_source 件取得
+    pool: List[NewsItem] = []
     seen_titles: set = set()
 
     for feed_url in NEWS_RSS_URLS:
         body = _http_get(feed_url, accept="application/rss+xml,application/xml,text/xml")
         if body is None:
+            print(f"[news] fetch fail: {feed_url}", file=sys.stderr)
             continue
         try:
             text = body.decode("utf-8", errors="replace").lstrip("\ufeff")
@@ -318,8 +324,11 @@ def collect_news(max_items: int = 5) -> List[NewsItem]:
             continue
 
         default_source = _media_name_from_url(feed_url)
+        source_count = 0
 
         for it in root.iter("item"):
+            if source_count >= per_source:
+                break
             title_el = it.find("title")
             link_el  = it.find("link")
             date_el  = it.find("pubDate")
@@ -344,16 +353,20 @@ def collect_news(max_items: int = 5) -> List[NewsItem]:
             except Exception:
                 pub_date = raw_date[:16] if raw_date else ""
 
-            items.append(NewsItem(title=title, link=link, pub_date=pub_date, source=source))
+            pool.append(NewsItem(title=title, link=link, pub_date=pub_date, source=source))
+            source_count += 1
 
-        if len(items) >= max_items * 4:
-            break
+        print(f"[news] {default_source}: {source_count}件取得", file=sys.stderr)
 
+    # 投資関連キーワードでスコアリング → 上位 max_items 件
     keywords = ["株", "市場", "投資", "配当", "金利", "FRB", "日銀", "為替", "ドル",
                 "円安", "円高", "決算", "業績", "増配", "NISA", "ETF", "国債", "原油",
                 "インフレ", "利上げ", "利下げ", "景気", "経済", "東証", "日経"]
-    items.sort(key=lambda it: sum(1 for k in keywords if k in it.title), reverse=True)
-    return items[:max_items]
+    pool.sort(key=lambda it: sum(1 for k in keywords if k in it.title), reverse=True)
+    result = pool[:max_items]
+    sources = [it.source for it in result]
+    print(f"[news] 採用 {len(result)}件: {sources}", file=sys.stderr)
+    return result
 
 
 # ---------------------------------------------------------------------------
