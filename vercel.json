@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "https://api.vercel.com/v1/integrations/deploy/prj_3GP8GxiJySn9vgtymC2s4QF32ucb/c8wOLg90Vi",
+      "path": "/api/cron",
       "schedule": "0 8 * * *"
     }
   ]
