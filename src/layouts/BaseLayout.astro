@@ -1,5 +1,5 @@
 ---
-import Header from '../components/Header.astro';
+// BaseLayout.astro - 堅実な動作を目指した統合レイアウト
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import '../styles/global.css';
@@ -12,39 +12,191 @@ interface Props {
 const { title, description = SITE_DESCRIPTION } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const navItems = [
+  { name: '運営者プロフィール', href: '/profile' },
+  { name: 'お問い合わせ', href: '/contact' },
+  { name: 'プライバシーポリシー', href: '/privacy-policy' },
+];
 ---
 <!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/rss.xml" />
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:site_name" content={SITE_TITLE} />
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <Header />
+    <header class="site-header">
+      <div class="header-container">
+        <!-- ロゴ -->
+        <a href="/" class="logo">
+          Astro Investment<span class="logo-dot">.</span>
+        </a>
+
+        <div class="menu-wrapper">
+          <!-- 三本線ボタン（SVGを使用して確実に表示） -->
+          <button id="menu-toggle" class="menu-button" aria-label="メニュー">
+            <svg id="icon-hamburger" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+
+          <!-- ドロップダウンメニュー -->
+          <nav id="nav-menu" class="nav-menu">
+            <ul class="nav-list">
+              {navItems.map((item) => (
+                <li><a href={item.href} class="nav-link">{item.name}</a></li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
     <main>
       <slot />
     </main>
+
     <Footer />
+
+    <style is:global>
+      :root {
+        --header-height: 70px;
+        --primary-blue: #1a365d;
+        --accent-blue: #3182ce;
+      }
+
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      }
+
+      main { flex: 1; }
+
+      .site-header {
+        height: var(--header-height);
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+      }
+
+      .header-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        text-decoration: none;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary-blue);
+      }
+      .logo-dot { color: var(--accent-blue); }
+
+      .menu-wrapper { position: relative; }
+
+      .menu-button {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 8px;
+        cursor: pointer;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .menu-button:hover { background: #edf2f7; }
+
+      .hidden { display: none; }
+
+      /* メニューのデザイン */
+      .nav-menu {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        min-width: 220px;
+        /* アニメーション用 */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+      }
+
+      .nav-menu.is-active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-list { list-style: none; padding: 8px 0; margin: 0; }
+      .nav-link {
+        display: block;
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #2d3748;
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+      .nav-link:hover {
+        background-color: #f7fafc;
+        color: var(--accent-blue);
+      }
+    </style>
+
+    <script>
+      function setupMenu() {
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('nav-menu');
+        const iconHam = document.getElementById('icon-hamburger');
+        const iconClose = document.getElementById('icon-close');
+
+        if (!toggle || !menu) return;
+
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isActive = menu.classList.toggle('is-active');
+          iconHam?.classList.toggle('hidden');
+          iconClose?.classList.toggle('hidden');
+        });
+
+        // 外側をクリックしたら閉じる
+        document.addEventListener('click', (e) => {
+          if (!menu.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
+            menu.classList.remove('is-active');
+            iconHam?.classList.remove('hidden');
+            iconClose?.classList.add('hidden');
+          }
+        });
+      }
+
+      // 初回実行
+      setupMenu();
+      // Astroの画面遷移（ViewTransitions等）を使用している場合にも対応
+      document.addEventListener('astro:page-load', setupMenu);
+    </script>
   </body>
 </html>
