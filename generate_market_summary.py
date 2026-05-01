@@ -754,13 +754,7 @@ def build_markdown(
 # ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
-# 土日コラム：テーマ定義
-# ---------------------------------------------------------------------------
-
-
-# ---------------------------------------------------------------------------
 # 平日：SEOキーワード特化記事（月〜金・ローテーション）
-# 土日の SATURDAY_TOPICS / SUNDAY_TOPICS とは別枠
 # ---------------------------------------------------------------------------
 WEEKDAY_KEYWORD_TOPICS = [
     {
@@ -989,19 +983,16 @@ WEEKDAY_KEYWORD_TOPICS = [
     },
 ]
 
-
 def get_weekday_keyword_topic(report_date: str) -> Dict:
     """平日のキーワード記事トピックを日付から決定（ローテーション）"""
     from datetime import datetime as _dt
     day_of_year = _dt.strptime(report_date, "%Y-%m-%d").timetuple().tm_yday
     return WEEKDAY_KEYWORD_TOPICS[day_of_year % len(WEEKDAY_KEYWORD_TOPICS)]
 
+
 # ---------------------------------------------------------------------------
 # 土日：SEOキーワード特化記事
 # ---------------------------------------------------------------------------
-# 各トピックに slug（URL用）・keyword（検索意図）・category を持たせる
-# slug はファイル名になるため、英小文字・ハイフンのみ使用
-
 SATURDAY_TOPICS = [
     {
         "slug": "ntt-haito-rimawari-keisan",
@@ -1232,11 +1223,6 @@ SUNDAY_TOPICS = [
     },
 ]
 
-
-# ---------------------------------------------------------------------------
-# 土日コラム生成
-# ---------------------------------------------------------------------------
-
 # ---------------------------------------------------------------------------
 # 記事カード SVG 透かしライブラリ
 # ---------------------------------------------------------------------------
@@ -1249,7 +1235,6 @@ def _svg_watermark(title: str, category: str, themes: list) -> str:
     t = title.lower()
     th = " ".join(themes).lower()
 
-    # ── パターン選択（キーワード優先マッチ） ──
     if any(k in t for k in ["海運", "郵船", "船", "コンテナ"]):
         svg = _wm_ship()
     elif any(k in t for k in ["銀行", "メガバンク", "mufg", "三菱uf", "三井住友", "みずほ", "金利", "日銀"]):
@@ -1285,9 +1270,6 @@ def _svg_watermark(title: str, category: str, themes: list) -> str:
         '<div class="card-watermark" aria-hidden="true">\n'
         + svg + "\n</div>\n"
     )
-
-
-# ── 個別SVGパターン ──────────────────────────────────────────────
 
 def _wm_chart_up() -> str:
     return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
@@ -1683,7 +1665,7 @@ def generate_column(
         "</div>\n"
     )
 
-    return fm + content + books_html + disclaimer
+    return fm + content + books_html + disclaimer, slug
 
 
 def get_column_topic(weekday: int, report_date: str) -> tuple[Dict, str]:
