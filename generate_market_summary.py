@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-配当＆優待ナビ｜日次レポート自動生成スクリプト（v4）
+配当＆優待ナビ｜日次レポート自動生成スクリプト（v4・安定出力修正版）
 
 機能:
 - yfinance で株価を取得
-- Yahoo!ファイナンス RSS からニューストピックを取得
-- Anthropic API (claude-sonnet-4-6) で導入文・ランキング・備考・解説・テーマ判定を生成
+- Yahoo!ファイナンス RSS 等からニューストピックを分散して取得
+- Anthropic API (claude-sonnet-4-6) で導入文・ランキング・備考・解説・所感・テーマ判定を生成
 - テーマに基づいて books_data.json から最適な3冊を選書
-- 書影は public/images/books/{ISBN13}.jpg（download_covers.py で事前DL済み）を使用
+- 書影は public/images/books/{ISBN13}.jpg を使用
 - Amazon アフィリエイトリンク: https://www.amazon.co.jp/dp/{ASIN}?tag=investinsight-22
 - frontmatter + 本文を src/content/blog/{YYYY-MM-DD}.md に書き出し
 """
@@ -305,8 +305,8 @@ class NewsItem:
 
 def collect_news(max_items: int = 5) -> List[NewsItem]:
     """
-    各ソースから均等に取得してから投資キーワードでスコアリング。
-    Yahoo RSSが大量記事を返して他ソースが読まれない問題を解消。
+    各ソースから均等に取得してから投資キーワードでスコアリングし、
+    メディアが分散するようにピックアップする。
     """
     per_source = max(2, max_items)      # 各ソースから最大 per_source 件取得
     pool: List[NewsItem] = []
@@ -359,12 +359,34 @@ def collect_news(max_items: int = 5) -> List[NewsItem]:
 
         print(f"[news] {default_source}: {source_count}件取得", file=sys.stderr)
 
-    # 投資関連キーワードでスコアリング → 上位 max_items 件
+    # 投資関連キーワードでスコアリング
     keywords = ["株", "市場", "投資", "配当", "金利", "FRB", "日銀", "為替", "ドル",
                 "円安", "円高", "決算", "業績", "増配", "NISA", "ETF", "国債", "原油",
                 "インフレ", "利上げ", "利下げ", "景気", "経済", "東証", "日経"]
-    pool.sort(key=lambda it: sum(1 for k in keywords if k in it.title), reverse=True)
-    result = pool[:max_items]
+    
+    # キーワードスコアを計算
+    scored_pool = [(sum(1 for k in keywords if k in it.title), it) for it in pool]
+    # スコアが高い順にソート
+    scored_pool.sort(key=lambda x: x[0], reverse=True)
+
+    result = []
+    used_sources = set()
+
+    # 1巡目: 偏りを防ぐため、各メディアから優先的に1件ずつピックアップ
+    for score, it in scored_pool:
+        if len(result) >= max_items:
+            break
+        if it.source not in used_sources:
+            result.append(it)
+            used_sources.add(it.source)
+
+    # 2巡目: もし5件に満たない場合は、スコア順に残りを補充
+    for score, it in scored_pool:
+        if len(result) >= max_items:
+            break
+        if it not in result:
+            result.append(it)
+            
     sources = [it.source for it in result]
     print(f"[news] 採用 {len(result)}件: {sources}", file=sys.stderr)
     return result
@@ -484,7 +506,7 @@ def generate_summary(
         "lifestyle, spending"
     )
 
-    system_prompt = f"""あなたは高配当株・新NISA・株主優待への長期投資を実践している個人投資家ブロガー「ただの会社員」（45歳・新潟市在住・IT企業副部長・イオン株300株やNTT株など高配当株を保有）です。以下の厳密なフォーマットで日次の投資レポートを生成してください。
+    system_prompt = f"""あなたは高配当株・新NISA・株主優待への長期投資を実践している個人投資家ブロガー「ただの会社員」（45歳・新潟市在住・IT企業AI/DX推進部副部長・イオン株300株やNTT株など高配当株を保有）です。以下の厳密なフォーマットで日次の投資レポートを生成してください。
 
 【1行目】経済全体の概況（アイスブレイク）を約300文字で記述。日本市場・米国市場・為替・金利動向に軽く触れ、長期投資家への前向きなメッセージで締める。改行を入れず必ず1行で。
 
@@ -497,7 +519,10 @@ def generate_summary(
 候補: {theme_list}
 例: high_dividend_jp,nisa,long_term,passive_income,index
 
-【5行目以降】各銘柄の詳細解説を「### [順位]位 [銘柄名]（[ティッカー]）」の見出し形式で20件分。各解説は3〜4文。「私も実際に保有しており〜」など一人称コメントを各銘柄に1文ずつ入れる。
+【5行目以降】各銘柄の詳細解説を「### [順位]位 [銘柄名]（[ティッカー]）」の見出し形式で出力すること。
+※絶対厳守事項※：途中で省略せず、必ず「1位から20位まで」すべての銘柄（計20件）を出力してください。各解説は約150文字（3〜4文）とし、「私も実際に保有しており〜」など一人称コメントを各銘柄に1文ずつ入れること。
+
+【記事の末尾】20件の解説が終わった後、必ず「### 投稿者の所感」という見出しを設けてください。新潟でのAI/DX推進業務や、心理学の知見、コア・サテライト戦略の実践などを自然に織り交ぜながら、当日の相場に対する個人的な総評を300文字程度で記述すること。
 
 重要: 1〜4行目は必ず1行で出力し、途中改行しないこと。"""
 
@@ -1265,7 +1290,7 @@ def _svg_watermark(title: str, category: str, themes: list) -> str:
 # ── 個別SVGパターン ──────────────────────────────────────────────
 
 def _wm_chart_up() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <line x1="0" y1="140" x2="320" y2="140" stroke="#1d4ed8" stroke-width="0.8"/>
   <line x1="0" y1="105" x2="320" y2="105" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/>
   <line x1="0" y1="70" x2="320" y2="70" stroke="#1d4ed8" stroke-width="0.5" stroke-dasharray="4,4"/>
@@ -1289,7 +1314,7 @@ def _wm_chart_up() -> str:
 </svg>"""
 
 def _wm_compound() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10 L320,170 L0,170Z" fill="#166534" opacity="0.25"/>
   <path d="M0,165 Q80,160 120,145 Q180,120 220,85 Q270,40 320,10" fill="none" stroke="#166534" stroke-width="2.5"/>
   <circle cx="60" cy="148" r="10" fill="none" stroke="#166534" stroke-width="1.5"/>
@@ -1309,7 +1334,7 @@ def _wm_compound() -> str:
 </svg>"""
 
 def _wm_portfolio() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <circle cx="95" cy="88" r="70" fill="none" stroke="#92400e" stroke-width="1"/>
   <path d="M95,88 L95,18 A70,70 0 0,1 156,123 Z" fill="#92400e" opacity="0.5"/>
   <path d="M95,88 L156,123 A70,70 0 0,1 34,123 Z" fill="#92400e" opacity="0.3"/>
@@ -1340,7 +1365,7 @@ def _wm_portfolio() -> str:
 </svg>"""
 
 def _wm_ship() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <path d="M0,125 Q40,113 80,125 Q120,137 160,125 Q200,113 240,125 Q280,137 320,125 L320,170 L0,170Z" fill="#166534" opacity="0.2"/>
   <path d="M0,135 Q40,123 80,135 Q120,147 160,135 Q200,123 240,135 Q280,147 320,135" fill="none" stroke="#166534" stroke-width="1.5"/>
   <path d="M0,150 Q40,138 80,150 Q120,162 160,150 Q200,138 240,150 Q280,162 320,150" fill="none" stroke="#166534" stroke-width="1" opacity="0.6"/>
@@ -1365,7 +1390,7 @@ def _wm_ship() -> str:
 </svg>"""
 
 def _wm_bank() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <rect x="55" y="72" width="210" height="90" fill="none" stroke="#1d4ed8" stroke-width="2"/>
   <path d="M45,72 L160,18 L275,72 Z" fill="none" stroke="#1d4ed8" stroke-width="2"/>
   <rect x="75" y="72" width="13" height="90" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
@@ -1386,7 +1411,7 @@ def _wm_bank() -> str:
 </svg>"""
 
 def _wm_nisa() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <line x1="18" y1="8" x2="18" y2="158" stroke="#6b21a8" stroke-width="1.5"/>
   <line x1="18" y1="158" x2="225" y2="158" stroke="#6b21a8" stroke-width="1.5"/>
   <rect x="28" y="132" width="24" height="26" fill="#6b21a8" opacity="0.3" rx="2"/>
@@ -1409,7 +1434,7 @@ def _wm_nisa() -> str:
 </svg>"""
 
 def _wm_trading_company() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <circle cx="160" cy="85" r="65" fill="none" stroke="#92400e" stroke-width="1.5"/>
   <ellipse cx="160" cy="85" rx="30" ry="65" fill="none" stroke="#92400e" stroke-width="1"/>
   <line x1="95" y1="85" x2="225" y2="85" stroke="#92400e" stroke-width="1"/>
@@ -1431,7 +1456,7 @@ def _wm_trading_company() -> str:
 </svg>"""
 
 def _wm_etf() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <line x1="15" y1="10" x2="15" y2="155" stroke="#1d4ed8" stroke-width="1.5"/>
   <line x1="15" y1="155" x2="310" y2="155" stroke="#1d4ed8" stroke-width="1.5"/>
   <path d="M15,130 Q80,115 130,100 Q180,85 240,60 Q280,45 305,30" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round"/>
@@ -1449,7 +1474,7 @@ def _wm_etf() -> str:
 </svg>"""
 
 def _wm_dividend() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <circle cx="80" cy="70" r="55" fill="none" stroke="#166534" stroke-width="1.5"/>
   <circle cx="80" cy="70" r="38" fill="none" stroke="#166534" stroke-width="1"/>
   <circle cx="80" cy="70" r="22" fill="none" stroke="#166534" stroke-width="1"/>
@@ -1472,7 +1497,7 @@ def _wm_dividend() -> str:
 </svg>"""
 
 def _wm_beginner() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <path d="M160,10 C120,10 88,40 88,75 C88,100 102,120 122,130 L122,148 L198,148 L198,130 C218,120 232,100 232,75 C232,40 200,10 160,10 Z" fill="none" stroke="#6b21a8" stroke-width="2"/>
   <line x1="122" y1="155" x2="198" y2="155" stroke="#6b21a8" stroke-width="2" stroke-linecap="round"/>
   <line x1="130" y1="162" x2="190" y2="162" stroke="#6b21a8" stroke-width="1.5" stroke-linecap="round"/>
@@ -1491,7 +1516,7 @@ def _wm_beginner() -> str:
 </svg>"""
 
 def _wm_fire() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <path d="M160,165 C100,165 55,130 55,88 C55,60 72,40 88,28 C82,48 90,60 102,58 C88,38 105,10 130,5 C118,25 128,45 145,48 C138,32 150,15 165,12 C155,30 165,52 178,55 C170,35 185,18 200,22 C188,38 192,58 205,62 C222,50 235,30 228,10 C250,28 265,58 258,88 C265,78 268,62 265,48 C278,62 285,82 285,100 C285,135 228,165 160,165 Z" fill="none" stroke="#92400e" stroke-width="2"/>
   <path d="M160,155 C120,155 88,132 88,105 C88,88 98,75 110,68 C106,80 112,90 122,88 C112,75 122,58 138,55 C130,68 138,82 150,82 C145,70 155,58 165,58 C158,70 165,84 175,85 C168,72 178,58 188,62 C180,75 182,90 192,92 C202,82 208,65 205,52 C218,68 222,88 218,105 C222,98 225,88 222,78 C230,90 232,105 232,115 C232,138 200,155 160,155 Z" fill="#92400e" opacity="0.2"/>
   <line x1="10" y1="165" x2="310" y2="165" stroke="#92400e" stroke-width="1.5"/>
@@ -1501,7 +1526,7 @@ def _wm_fire() -> str:
 </svg>"""
 
 def _wm_yutai() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <rect x="60" y="30" width="200" height="130" rx="8" fill="none" stroke="#166534" stroke-width="2"/>
   <rect x="60" y="30" width="200" height="35" rx="8" fill="none" stroke="#166534" stroke-width="1"/>
   <line x1="160" y1="65" x2="160" y2="160" stroke="#166534" stroke-width="1" stroke-dasharray="3,3"/>
@@ -1525,7 +1550,7 @@ def _wm_yutai() -> str:
 </svg>"""
 
 def _wm_search() -> str:
-    return """<svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    return """<svg viewBox="0 0 320 170" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" preserveAspectRatio="xMidYMid slice">
   <circle cx="130" cy="80" r="60" fill="none" stroke="#166534" stroke-width="2"/>
   <circle cx="130" cy="80" r="42" fill="none" stroke="#166534" stroke-width="1" opacity="0.5"/>
   <circle cx="130" cy="80" r="24" fill="none" stroke="#166534" stroke-width="0.8" opacity="0.3"/>
@@ -1658,7 +1683,7 @@ def generate_column(
         "</div>\n"
     )
 
-    return fm + content + books_html + disclaimer, slug
+    return fm + content + books_html + disclaimer
 
 
 def get_column_topic(weekday: int, report_date: str) -> tuple[Dict, str]:
@@ -1747,3 +1772,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+    
