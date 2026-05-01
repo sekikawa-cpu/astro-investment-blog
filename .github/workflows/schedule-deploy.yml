@@ -1,0 +1,13 @@
+name: Daily Deploy
+on:
+  schedule:
+    # 毎日 日本時間 17:05 (UTC 08:05) に実行
+    - cron: '5 8 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        # コピーしたDeploy HookのURLに置き換えてください
+        run: curl -X POST https://api.vercel.com/v1/integrations/deploy/prj_Q1RJ83WwXGrOihATzNZP4QP3R5Q5/PrS10fFhc2
