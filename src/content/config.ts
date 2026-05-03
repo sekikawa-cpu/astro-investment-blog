@@ -7,8 +7,18 @@ const blog = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    author: z.string().default('Invest Insights 編集部'),
-    category: z.enum(['マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説', 'コラム']).default('マーケット分析'),
+    author: z.string().default('ただの会社員'),
+    pillar: z.enum(['投資', 'AI・DX', '心理学']).default('投資'),
+    category: z.enum([
+      // 投資
+      'マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説',
+      // AI・DX
+      'AI最新情報', 'DX・業務改善', '資格・学習',
+      // 心理学
+      '心理学・メンタル', '生きづらさと回復', '書籍レビュー',
+      // 共通
+      'コラム',
+    ]).default('マーケット分析'),
     // slug: z.string().optional(),
     tags: z.array(z.string()).default([]),
     heroImage: z.string().optional(),
