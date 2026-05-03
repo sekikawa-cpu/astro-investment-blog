@@ -14,6 +14,30 @@ posts.forEach(p => {
 // 人気記事（最新5本をPVの代わりに使用）
 const popularPosts = posts.slice(0, 5);
 
+// 柱別記事（各最大4件）
+const PILLAR_KEYS = ['投資', 'AI・DX', '心理学'] as const;
+const postsByPillar: Record<string, typeof posts> = {};
+PILLAR_KEYS.forEach(p => {
+  postsByPillar[p] = posts.filter(post => (post.data.pillar ?? '投資') === p);
+});
+
+// 柱カラー定義
+const PILLAR_BORDER: Record<string, string> = {
+  '投資':   'border-blue-500',
+  'AI・DX': 'border-purple-500',
+  '心理学': 'border-teal-500',
+};
+const PILLAR_TEXT: Record<string, string> = {
+  '投資':   'text-blue-600',
+  'AI・DX': 'text-purple-600',
+  '心理学': 'text-teal-600',
+};
+const PILLAR_BG: Record<string, string> = {
+  '投資':   'bg-blue-100 text-blue-700',
+  'AI・DX': 'bg-purple-100 text-purple-700',
+  '心理学': 'bg-teal-100 text-teal-700',
+};
+
 // 3本柱のカテゴリー定義
 const PILLAR_CATEGORIES: Record<string, string[]> = {
   '投資':   ['マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説', 'コラム'],
@@ -56,18 +80,18 @@ function getWatermarkSvg(category: string, title: string) {
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>ただのノート | 投資・AI/DX・心理学を綴る会社員ブログ</title>
+    <title>会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="A8tOtO8MGTE81uwVZVGSbnvRT2F583xupmBPJzmTgKc" />
     <meta name="description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。愛着障害・発達障害からの回復体験も発信中。">
     <link rel="canonical" href="https://astro-investment-blog-1gwd.vercel.app/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://astro-investment-blog-1gwd.vercel.app/">
-    <meta property="og:title" content="ただのノート | 投資・AI/DX・心理学を綴る会社員ブログ">
+    <meta property="og:title" content="会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ">
     <meta property="og:description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。">
-    <meta property="og:site_name" content="ただのノート">
+    <meta property="og:site_name" content="会社員の生活日記">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="ただのノート | 投資・AI/DX・心理学を綴る会社員ブログ">
+    <meta name="twitter:title" content="会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ">
     <meta name="twitter:description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。">
     <style>
       /* ハンバーガーメニュー */
@@ -195,20 +219,29 @@ function getWatermarkSvg(category: string, title: string) {
         </form>
       </div>
 
-      <!-- 3本柱カテゴリー -->
-      {Object.entries(PILLAR_CATEGORIES).map(([pillar, cats]) => (
-        <>
-          <div class="px-5 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
-            {PILLAR_ICONS[pillar]} {pillar}
-          </div>
-          {cats.map(cat => (
-            <a href={`/search?q=${encodeURIComponent(cat)}`} class="drawer-cat-item">
-              <span><span class={`font-bold ${PILLAR_COLORS[pillar]}`}>#</span> {cat}</span>
-              <span class="cat-badge">{categoryCount[cat] || 0}</span>
+      <!-- カテゴリーツリー -->
+      {PILLAR_KEYS.map(pillar => {
+        const cats = PILLAR_CATEGORIES[pillar];
+        const total = cats.reduce((s, c) => s + (categoryCount[c] || 0), 0);
+        return (
+          <>
+            <a href={`/search?q=${encodeURIComponent(pillar)}`}
+              class={`flex items-center justify-between px-5 py-2.5 bg-slate-50 font-bold text-sm ${PILLAR_TEXT[pillar]}`}>
+              <span>{PILLAR_ICONS[pillar]} {pillar}</span>
+              {total > 0 && <span class="cat-badge">{total}</span>}
             </a>
-          ))}
-        </>
-      ))}
+            <div class="ml-5 border-l-2 border-slate-200">
+              {cats.map(cat => (
+                <a href={`/search?q=${encodeURIComponent(cat)}`}
+                  class="flex items-center justify-between pl-3 pr-5 py-2 border-b border-slate-50 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600">
+                  <span>{cat}</span>
+                  <span class="cat-badge">{categoryCount[cat] || 0}</span>
+                </a>
+              ))}
+            </div>
+          </>
+        );
+      })}
 
       <!-- サイト情報 -->
       <div class="px-5 py-3 mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">このサイトについて</div>
@@ -222,7 +255,7 @@ function getWatermarkSvg(category: string, title: string) {
       <div class="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4">
         <!-- ロゴ -->
         <a href="/" class="text-xl font-bold tracking-wider hover:text-blue-300 transition-colors whitespace-nowrap">
-          ただのノート
+          会社員の生活日記
         </a>
 
         <!-- デスクトップ検索 -->
@@ -267,66 +300,98 @@ function getWatermarkSvg(category: string, title: string) {
 
     <!-- メインコンテンツ -->
     <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
-      <!-- ヒーロー -->
-      <div class="mb-8 py-6 bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl text-white">
-        <div class="text-center px-4 mb-5">
-          <h1 class="text-2xl md:text-3xl font-extrabold mb-2">会社員が綴る、お金・仕事・心の記録。</h1>
-          <p class="text-slate-300 text-sm leading-relaxed">
-            投資・AI/DX・心理学。等身大の視点でリアルな情報を届けます。
-          </p>
-        </div>
-        <div class="grid grid-cols-3 gap-3 px-4 max-w-lg mx-auto">
-          <a href={`/search?q=${encodeURIComponent('投資')}`} class="text-center bg-white/10 hover:bg-white/20 rounded-lg py-3 transition-colors">
-            <div class="text-2xl mb-1">📊</div>
-            <div class="font-bold text-sm">投資</div>
-            <div class="text-xs text-slate-400 mt-0.5">高配当・NISA</div>
-          </a>
-          <a href={`/search?q=${encodeURIComponent('AI・DX')}`} class="text-center bg-white/10 hover:bg-white/20 rounded-lg py-3 transition-colors">
-            <div class="text-2xl mb-1">🤖</div>
-            <div class="font-bold text-sm">AI・DX</div>
-            <div class="text-xs text-slate-400 mt-0.5">技術・業務改善</div>
-          </a>
-          <a href={`/search?q=${encodeURIComponent('心理学')}`} class="text-center bg-white/10 hover:bg-white/20 rounded-lg py-3 transition-colors">
-            <div class="text-2xl mb-1">🧠</div>
-            <div class="font-bold text-sm">心理学</div>
-            <div class="text-xs text-slate-400 mt-0.5">愛着・回復記録</div>
-          </a>
+      <!-- ヒーロー（コンパクト横並び） -->
+      <div class="mb-6 bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl text-white overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 gap-4">
+          <div class="min-w-0">
+            <h1 class="text-base md:text-lg font-extrabold leading-tight">会社員の生活日記</h1>
+            <p class="text-slate-400 text-xs mt-1">投資・AI/DX・心理学 — 等身大の記録</p>
+          </div>
+          <div class="flex gap-2 flex-shrink-0">
+            <a href={`/search?q=${encodeURIComponent('投資')}`}
+              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
+              <span class="text-xl leading-none">📊</span>
+              <span class="text-xs font-bold mt-1">投資</span>
+            </a>
+            <a href={`/search?q=${encodeURIComponent('AI・DX')}`}
+              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
+              <span class="text-xl leading-none">🤖</span>
+              <span class="text-xs font-bold mt-1">AI・DX</span>
+            </a>
+            <a href={`/search?q=${encodeURIComponent('心理学')}`}
+              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
+              <span class="text-xl leading-none">🧠</span>
+              <span class="text-xs font-bold mt-1">心理学</span>
+            </a>
+          </div>
         </div>
       </div>
 
       <!-- 2カラムレイアウト -->
       <div class="flex flex-col lg:flex-row gap-8">
 
-        <!-- メイン：記事一覧 -->
-        <div class="flex-1 min-w-0">
-          <h2 class="text-xl font-bold border-b-2 border-blue-500 pb-2 mb-5 flex items-center gap-2">
-            <span class="text-blue-600">📋</span> 最新の記事
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {posts.map((post) => (
-              <a href={`/blog/${post.slug}`}
-                class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5">
-                <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
-                <div class="post-card-content">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">
-                      {post.data.category || 'マーケット分析'}
-                    </span>
-                    <p class="text-xs text-slate-400">
-                      {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
-                    </p>
+        <!-- メイン：3本柱別 記事一覧 -->
+        <div class="flex-1 min-w-0 space-y-8">
+          {PILLAR_KEYS.map(pillar => {
+            const pillarPosts = postsByPillar[pillar];
+            const displayPosts = pillarPosts.slice(0, 4);
+            const hasMore = pillarPosts.length > 4;
+            return (
+              <section>
+                <h2 class={`text-lg font-bold border-b-2 ${PILLAR_BORDER[pillar]} pb-2 mb-4 flex items-center justify-between`}>
+                  <span class="flex items-center gap-2">
+                    <span>{PILLAR_ICONS[pillar]}</span>
+                    <span class={PILLAR_TEXT[pillar]}>{pillar}</span>
+                  </span>
+                  <a href={`/search?q=${encodeURIComponent(pillar)}`}
+                    class={`text-xs font-normal ${PILLAR_TEXT[pillar]} hover:underline`}>
+                    すべて見る ({pillarPosts.length}件) →
+                  </a>
+                </h2>
+
+                {displayPosts.length === 0 ? (
+                  <p class="text-slate-400 text-sm py-4 text-center border border-dashed border-slate-200 rounded-lg">
+                    近日公開予定です。お楽しみに。
+                  </p>
+                ) : (
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {displayPosts.map(post => (
+                      <a href={`/blog/${post.slug}`}
+                        class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4">
+                        <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
+                        <div class="post-card-content">
+                          <div class="flex items-center gap-2 mb-2">
+                            <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${PILLAR_BG[pillar]}`}>
+                              {post.data.category || 'マーケット分析'}
+                            </span>
+                            <p class="text-xs text-slate-400">
+                              {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
+                            </p>
+                          </div>
+                          <h3 class="text-sm font-bold text-slate-900 mb-1.5 leading-snug line-clamp-2">
+                            {post.data.title}
+                          </h3>
+                          <p class="text-slate-500 text-xs line-clamp-2 mb-2">{post.data.description}</p>
+                          <div class={`flex items-center text-xs font-semibold ${PILLAR_TEXT[pillar]}`}>
+                            記事を読む <span class="ml-1">→</span>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
                   </div>
-                  <h3 class="text-base font-bold text-slate-900 mb-2 leading-snug line-clamp-2">
-                    {post.data.title}
-                  </h3>
-                  <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
-                  <div class="flex items-center text-blue-600 text-xs font-semibold">
-                    記事を読む <span class="ml-1">→</span>
+                )}
+
+                {hasMore && (
+                  <div class="mt-3 text-right">
+                    <a href={`/search?q=${encodeURIComponent(pillar)}`}
+                      class={`text-xs font-semibold ${PILLAR_TEXT[pillar]} hover:underline`}>
+                      {pillar}の記事をもっと見る（残り{pillarPosts.length - 4}件）→
+                    </a>
                   </div>
-                </div>
-              </a>
-            ))}
-          </div>
+                )}
+              </section>
+            );
+          })}
         </div>
 
         <!-- サイドバー -->
@@ -379,24 +444,32 @@ function getWatermarkSvg(category: string, title: string) {
             </div>
           </div>
 
-          <!-- カテゴリー（3本柱別） -->
+          <!-- カテゴリーツリー -->
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">📂 カテゴリー</div>
-            <div class="sidebar-widget-body">
-              {Object.entries(PILLAR_CATEGORIES).map(([pillar, cats]) => (
-                <>
-                  <div class="text-xs font-bold text-slate-500 pt-2 pb-1 border-b border-slate-100 mb-1">
-                    {PILLAR_ICONS[pillar]} {pillar}
-                  </div>
-                  {cats.filter(cat => categoryCount[cat]).map(cat => (
-                    <a href={`/search?q=${encodeURIComponent(cat)}`} class="cat-item">
-                      <span class={`font-bold ${PILLAR_COLORS[pillar]}`}>#</span>
-                      <span class="ml-1">{cat}</span>
-                      <span class="cat-badge ml-auto">{categoryCount[cat]}</span>
+            <div class="py-2">
+              {PILLAR_KEYS.map(pillar => {
+                const cats = PILLAR_CATEGORIES[pillar];
+                const total = cats.reduce((s, c) => s + (categoryCount[c] || 0), 0);
+                return (
+                  <>
+                    <a href={`/search?q=${encodeURIComponent(pillar)}`}
+                      class={`flex items-center justify-between px-3 py-2 hover:bg-slate-50 font-bold text-sm ${PILLAR_TEXT[pillar]}`}>
+                      <span>{PILLAR_ICONS[pillar]} {pillar}</span>
+                      {total > 0 && <span class="cat-badge">{total}</span>}
                     </a>
-                  ))}
-                </>
-              ))}
+                    <div class="ml-4 mb-1 border-l-2 border-slate-200 pl-2">
+                      {cats.map(cat => (
+                        <a href={`/search?q=${encodeURIComponent(cat)}`}
+                          class="flex items-center justify-between py-1 px-2 hover:bg-slate-50 rounded text-xs text-slate-600 hover:text-blue-600">
+                          <span>{cat}</span>
+                          {categoryCount[cat] ? <span class="text-slate-400">{categoryCount[cat]}</span> : null}
+                        </a>
+                      ))}
+                    </div>
+                  </>
+                );
+              })}
             </div>
           </div>
 
@@ -405,7 +478,7 @@ function getWatermarkSvg(category: string, title: string) {
     </main>
 
     <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
-      <p class="text-sm">&copy; 2026 ただのノート. All rights reserved.</p>
+      <p class="text-sm">&copy; 2026 会社員の生活日記. All rights reserved.</p>
       <nav class="flex justify-center gap-6 mt-3 text-xs">
         <a href="/profile" class="hover:text-blue-300 transition-colors">運営者プロフィール</a>
         <a href="/contact" class="hover:text-blue-300 transition-colors">お問い合わせ</a>
