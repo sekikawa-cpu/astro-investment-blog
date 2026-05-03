@@ -1,3 +1,3 @@
-export const SITE_TITLE = 'Invest Insights';
-export const SITE_DESCRIPTION = '投資に関する信頼できる情報をお届けする専門ブログ。マーケット分析、資産運用、長期投資戦略など。';
-export const SITE_AUTHOR = 'Invest Insights 編集部';
+export const SITE_TITLE = 'ただのノート';
+export const SITE_DESCRIPTION = '投資・AI/DX・心理学。会社員が綴る、お金・仕事・心のリアルな記録。';
+export const SITE_AUTHOR = 'ただの会社員';

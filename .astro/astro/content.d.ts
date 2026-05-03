@@ -183,6 +183,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
+"2026-05-01.md": {
+	id: "2026-05-01.md";
+  slug: "2026-05-01";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "etf-1489-2516-hikaku-nisa.md": {
 	id: "etf-1489-2516-hikaku-nisa.md";
   slug: "etf-1489-2516-hikaku-nisa";
@@ -204,6 +211,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
+"kabu-yutai-nisa-osusume.md": {
+	id: "kabu-yutai-nisa-osusume.md";
+  slug: "kabu-yutai-nisa-osusume";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "kirin-ajinomoto-haito-shokuhin.md": {
 	id: "kirin-ajinomoto-haito-shokuhin.md";
   slug: "kirin-ajinomoto-haito-shokuhin";
@@ -214,6 +228,13 @@ declare module 'astro:content' {
 "nihon-yusen-kaisen-haito.md": {
 	id: "nihon-yusen-kaisen-haito.md";
   slug: "nihon-yusen-kaisen-haito";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"takeda-yakuhin-haito-2026.md": {
+	id: "takeda-yakuhin-haito-2026.md";
+  slug: "takeda-yakuhin-haito-2026";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
