@@ -8,14 +8,15 @@ const postsJson = JSON.stringify(posts.map(p => ({
   title: p.data.title,
   description: p.data.description || '',
   category: p.data.category || 'マーケット分析',
+  pillar: p.data.pillar || '投資',
   pubDate: new Date(p.data.pubDate).toLocaleDateString('ja-JP'),
 })));
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>検索結果 | 配当＆優待ナビ</title>
-    <script>document.addEventListener('DOMContentLoaded',()=>{const q=new URLSearchParams(location.search).get('q');if(q)document.title=`「${q}」の検索結果 | 配当＆優待ナビ`});</script>
+    <title>検索結果 | 会社員の生活日記</title>
+    <script>document.addEventListener('DOMContentLoaded',()=>{const q=new URLSearchParams(location.search).get('q');if(q)document.title=`「${q}」の検索結果 | 会社員の生活日記`});</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
   </head>
@@ -23,7 +24,7 @@ const postsJson = JSON.stringify(posts.map(p => ({
     <header class="bg-slate-900 text-white shadow-md py-3 sticky top-0 z-30">
       <div class="max-w-4xl mx-auto px-4 flex items-center gap-4">
         <a href="/" class="text-xl font-bold hover:text-blue-300 transition-colors whitespace-nowrap">
-          配当＆優待ナビ 💸
+          会社員の生活日記
         </a>
         <form id="searchForm" class="flex flex-1 gap-2">
           <input id="searchInput" type="text" placeholder="キーワードを入力..."
@@ -50,7 +51,7 @@ const postsJson = JSON.stringify(posts.map(p => ({
     </main>
 
     <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
-      <p class="text-sm">&copy; 2026 配当＆優待ナビ. All rights reserved.</p>
+      <p class="text-sm">&copy; 2026 会社員の生活日記. All rights reserved.</p>
     </footer>
 
     <script define:vars={{ postsJson }}>
@@ -88,7 +89,8 @@ const postsJson = JSON.stringify(posts.map(p => ({
         // フィルタリング
         const filtered = query
           ? ALL_POSTS.filter(p =>
-              p.category.toLowerCase() === query ||          // カテゴリー完全一致（優先）
+              p.pillar.toLowerCase() === query ||            // 柱完全一致（最優先）
+              p.category.toLowerCase() === query ||          // カテゴリー完全一致
               p.category.toLowerCase().includes(query) ||   // カテゴリー部分一致
               p.title.toLowerCase().includes(query) ||
               p.description.toLowerCase().includes(query)
