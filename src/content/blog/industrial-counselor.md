@@ -138,11 +138,11 @@ draft: false
 
 産業カウンセラーの養成講座や試験についての詳しい情報は、以下の公式サイトをご参照ください。
 
-- **日本産業カウンセラー協会（JACA）公式サイト**
-  https://www.jacp.or.jp/
+- **一般社団法人 日本産業カウンセラー協会 公式サイト**
+  https://www.counselor.or.jp/
 
 - **産業カウンセラー養成講座について**
-  https://www.jacp.or.jp/education/
+  https://www.counselor.or.jp/course/tabid/125/Default.aspx
 
-- **試験情報・申込**
-  https://www.jacp.or.jp/exam/
+- **資格試験情報**
+  https://www.counselor.or.jp/examination/
