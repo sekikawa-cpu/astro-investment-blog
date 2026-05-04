@@ -138,8 +138,8 @@ draft: false
 
 産業カウンセラーの養成講座や試験についての詳しい情報は、以下の公式サイトをご参照ください。
 
-- <a href="https://www.counselor.or.jp/" target="_blank" rel="noopener noreferrer">**一般社団法人 日本産業カウンセラー協会 公式サイト**</a>
+- <a href="https://www.counselor.or.jp/" target="_blank" rel="noopener noreferrer"><strong>一般社団法人 日本産業カウンセラー協会 公式サイト</strong></a>
 
-- <a href="https://www.counselor.or.jp/course/tabid/125/Default.aspx" target="_blank" rel="noopener noreferrer">**産業カウンセラー養成講座について**</a>
+- <a href="https://www.counselor.or.jp/course/tabid/125/Default.aspx" target="_blank" rel="noopener noreferrer"><strong>産業カウンセラー養成講座について</strong></a>
 
-- <a href="https://www.counselor.or.jp/examination/tabid/111/Default.aspx" target="_blank" rel="noopener noreferrer">**産業カウンセラー資格試験情報**</a>
+- <a href="https://www.counselor.or.jp/examination/tabid/111/Default.aspx" target="_blank" rel="noopener noreferrer"><strong>産業カウンセラー資格試験情報</strong></a>
