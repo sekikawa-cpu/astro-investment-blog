@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://astro-investment-blog-1gwd.vercel.app/sitemap-index.xml
+Sitemap: https://tech-wealth-mind.com/sitemap-index.xml
