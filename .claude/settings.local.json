@@ -47,7 +47,11 @@
       "Bash(git restore *)",
       "Bash(git rebase *)",
       "Bash(curl -s https://api.github.com/repos/sekikawa-cpu/astro-investment-blog/actions/workflows/deploy-cloudflare.yml/runs?per_page=1)",
-      "Bash(wrangler pages *)"
+      "Bash(wrangler pages *)",
+      "Bash(chmod +x /tmp/convert_to_mdx.sh)",
+      "Bash(bash /tmp/convert_to_mdx.sh)",
+      "Bash(sed -n '123,127p' 2026-04-25.mdx)",
+      "Bash(sed -n '145,149p' 2026-05-01.mdx)"
     ]
   }
 }
