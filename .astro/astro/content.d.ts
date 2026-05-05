@@ -208,6 +208,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"book-review-business-process-dx-guide.mdx": {
+	id: "book-review-business-process-dx-guide.mdx";
+  slug: "book-review-business-process-dx-guide";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "claude-code-dx-case-study-1.mdx": {
 	id: "claude-code-dx-case-study-1.mdx";
   slug: "claude-code-dx-case-study-1";
