@@ -208,6 +208,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"claude-code-dx-case-study-1.mdx": {
+	id: "claude-code-dx-case-study-1.mdx";
+  slug: "claude-code-dx-case-study-1";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "etf-1489-2516-hikaku-nisa.mdx": {
 	id: "etf-1489-2516-hikaku-nisa.mdx";
   slug: "etf-1489-2516-hikaku-nisa";
