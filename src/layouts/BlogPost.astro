@@ -56,6 +56,14 @@ const schemaData = {
         </div>
       </header>
 
+      <div class="disclaimer disclaimer-prominent">
+        <div class="disclaimer-header">
+          <span class="disclaimer-icon">⚠️</span>
+          <strong>投資に関する免責事項</strong>
+        </div>
+        <p class="disclaimer-content">本記事は情報提供・教育目的です。<strong>特定銘柄の購入推奨ではありません。</strong>投資判断は必ずご自身の責任で行ってください。</p>
+      </div>
+
       {heroImage && (
         <div class="article-hero">
           <img src={heroImage} alt={title} />
@@ -74,8 +82,12 @@ const schemaData = {
         </div>
       )}
 
-      <div class="disclaimer">
-        <strong>免責事項:</strong> 本記事は情報提供を目的としており、特定の金融商品の購入・売却を推奨するものではありません。投資に関する最終的な判断はご自身の責任でお願いいたします。
+      <div class="disclaimer disclaimer-prominent">
+        <div class="disclaimer-header">
+          <span class="disclaimer-icon">⚠️</span>
+          <strong>重要な免責事項</strong>
+        </div>
+        <p class="disclaimer-content">本記事に掲載される投資・資産運用に関する情報は、教育・情報提供目的です。<strong>特定銘柄の購入・売却推奨ではありません。</strong>本記事の内容に基づいて投資判断を行う場合、必ずご自身の判断と責任で行ってください。投資にはリスクが伴い、損失が生じる可能性があります。詳細は<a href="/privacy" class="disclaimer-link">プライバシーポリシー</a>をご確認ください。</p>
       </div>
 
       <div class="back-link">
@@ -139,7 +151,7 @@ const schemaData = {
   }
   .disclaimer {
     margin: 2.5rem 0;
-    padding: 1rem 1.25rem;
+    padding: 1.25rem;
     background: var(--color-bg-soft);
     border-left: 3px solid var(--color-primary-500);
     border-radius: 0 var(--radius) var(--radius) 0;
@@ -148,6 +160,36 @@ const schemaData = {
     color: var(--color-muted);
   }
   .disclaimer strong { color: var(--color-primary-800); }
+  .disclaimer-prominent {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-left: 4px solid #d97706;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  .disclaimer-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    color: #b45309;
+  }
+  .disclaimer-icon {
+    font-size: 1.25rem;
+  }
+  .disclaimer-content {
+    color: #92400e;
+    margin: 0;
+    line-height: 1.6;
+  }
+  .disclaimer-link {
+    color: #b45309;
+    text-decoration: underline;
+  }
+  .disclaimer-link:hover {
+    color: #78350f;
+  }
   .back-link {
     margin-top: 3rem;
     padding-top: 1.5rem;
