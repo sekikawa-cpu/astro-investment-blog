@@ -56,7 +56,8 @@
       "Bash(curl -s http://localhost:3000/)",
       "Bash(chmod +x /tmp/add_rakuten.sh)",
       "Bash(/tmp/add_rakuten.sh)",
-      "Bash(gh workflow *)"
+      "Bash(gh workflow *)",
+      "Bash(npm ci *)"
     ]
   }
 }
