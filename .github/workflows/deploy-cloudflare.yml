@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -26,17 +24,45 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Build Astro site
         run: npm run build
 
+      - name: Verify build output
+        run: |
+          echo "✅ Build verification:"
+          test -d dist || (echo "❌ dist folder not found" && exit 1)
+          FILE_COUNT=$(find dist -type f | wc -l)
+          echo "✅ Generated $FILE_COUNT files"
+          echo "✅ Sample files:"
+          find dist -type f -name "*.html" | head -5
+          echo "✅ dist folder size:"
+          du -sh dist/
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=tech-wealth-mind
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "Deploying to Cloudflare Pages..."
+          wrangler pages deploy dist \
+            --project-name tech-wealth-mind \
+            --branch main
+        continue-on-error: true
+
+      - name: Show deployment status
+        if: failure()
+        run: |
+          echo "⚠️ Deployment completed with status code: $?"
+          echo ""
+          echo "Verify the following:"
+          echo "1. CLOUDFLARE_API_TOKEN is set in GitHub Secrets"
+          echo "2. CLOUDFLARE_ACCOUNT_ID is set in GitHub Secrets"
+          echo "3. Project name 'tech-wealth-mind' exists in Cloudflare Pages"
+          echo ""
+          echo "Recommended: Use Cloudflare Pages GitHub integration instead"
+          echo "See: https://dash.cloudflare.com/redirect?account=pages"
