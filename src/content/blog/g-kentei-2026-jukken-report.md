@@ -78,6 +78,13 @@ G検定は、この<strong>「AIを事業活動に活かすための知識の体
 
 一方で、試験範囲のすべてをカバーするには、公式テキストや問題集と組み合わせることが必要だと感じています。動画だけでは覚えきれない細かい用語や数値も多いため、繰り返しの反復が欠かせません。
 
+<CourseAffiliate
+  title="【試験対策から本質の理解まで、知識をまとめて身に付けよう！】G検定対策講座"
+  courseUrl="https://www.udemy.com/course-dashboard-redirect/?course_id=4494138"
+  imageUrl="https://img-c.udemycdn.com/course/240x135/4494138_b85f_2.jpg"
+  description="G検定の全範囲を体系的に学べる講座。試験対策だけでなく、AI技術の本質理解まで実現できる内容です。"
+/>
+
 ---
 
 ## 試験範囲の広さと「自信のなさ」の正体

@@ -134,6 +134,19 @@ draft: false
 
 ---
 
+## 参考書籍
+
+本記事で紹介した産業カウンセラー養成講座で使用される公式テキストです。カウンセリングの理論と実践を学ぶための必読書です。
+
+<BookAffiliate 
+  title="産業カウンセリング　産業カウンセラー養成講座テキスト1・2"
+  author="日本産業カウンセラー協会（JAICO）"
+  amazonUrl="https://www.amazon.co.jp/dp/B0CCMQYD8C/"
+  imageUrl="https://m.media-amazon.com/images/I/51rKPojpmuL._SY342_.jpg"
+/>
+
+---
+
 ## 参考情報
 
 産業カウンセラーの養成講座や試験についての詳しい情報は、以下の公式サイトをご参照ください。

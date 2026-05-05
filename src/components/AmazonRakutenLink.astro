@@ -1,0 +1,135 @@
+---
+interface Props {
+  title: string;
+  amazonUrl?: string;
+  rakutenUrl?: string;
+  imageUrl?: string;
+  description?: string;
+}
+
+const { title, amazonUrl, rakutenUrl, imageUrl, description } = Astro.props;
+const rakutenAffiliateId = import.meta.env.RAKUTEN_AFFILIATE_ID;
+
+// Rakuten affiliate link builder
+function buildRakutenLink(url: string): string {
+  if (!url) return '';
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}l-id=${rakutenAffiliateId}`;
+}
+---
+
+<div class="book-affiliate-link">
+  <div class="book-content">
+    {imageUrl && (
+      <img src={imageUrl} alt={title} class="book-cover" />
+    )}
+    <div class="book-info">
+      <h4>{title}</h4>
+      {description && <p>{description}</p>}
+      <div class="affiliate-buttons">
+        {amazonUrl && (
+          <a href={amazonUrl} target="_blank" rel="noopener noreferrer" class="amazon-btn">
+            Amazonで見る
+          </a>
+        )}
+        {rakutenUrl && (
+          <a href={buildRakutenLink(rakutenUrl)} target="_blank" rel="noopener noreferrer" class="rakuten-btn">
+            楽天で見る
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.book-affiliate-link {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.book-content {
+  display: flex;
+  gap: 1rem;
+}
+
+.book-cover {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.book-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.book-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.book-info p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.affiliate-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.affiliate-buttons a {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.amazon-btn {
+  background-color: #ff9900;
+  color: white;
+}
+
+.amazon-btn:hover {
+  background-color: #e68a00;
+}
+
+.rakuten-btn {
+  background-color: #bf0000;
+  color: white;
+}
+
+.rakuten-btn:hover {
+  background-color: #990000;
+}
+
+@media (max-width: 640px) {
+  .book-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .book-cover {
+    width: 80px;
+    height: 120px;
+  }
+
+  .affiliate-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+</style>

@@ -1,0 +1,182 @@
+---
+interface Props {
+  title: string;
+  author?: string;
+  amazonUrl?: string;
+  rakutenUrl?: string;
+  imageUrl?: string;
+}
+
+const { title, author, amazonUrl, rakutenUrl, imageUrl } = Astro.props;
+const rakutenAffiliateId = import.meta.env.RAKUTEN_AFFILIATE_ID;
+
+function buildRakutenLink(url: string): string {
+  if (!url) return '';
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}l-id=${rakutenAffiliateId}`;
+}
+---
+
+<div class="book-affiliate-card">
+  {imageUrl && (
+    <div class="book-cover-container">
+      <img src={imageUrl} alt={title} class="book-cover" />
+    </div>
+  )}
+  <div class="book-details">
+    <h4 class="book-title">{title}</h4>
+    {author && <p class="book-author">著者: {author}</p>}
+    <div class="affiliate-buttons-group">
+      {amazonUrl && (
+        <a href={amazonUrl} target="_blank" rel="noopener noreferrer" class="affiliate-btn amazon-btn">
+          <span class="btn-icon">🛒</span>
+          Amazonで購入
+        </a>
+      )}
+      {rakutenUrl && (
+        <a href={buildRakutenLink(rakutenUrl)} target="_blank" rel="noopener noreferrer" class="affiliate-btn rakuten-btn">
+          <span class="btn-icon">楽</span>
+          楽天で購入
+        </a>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+.book-affiliate-card {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.book-cover-container {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-cover {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.book-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  word-break: break-word;
+}
+
+.book-author {
+  margin: 0.25rem 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.affiliate-buttons-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.affiliate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.amazon-btn {
+  background: linear-gradient(135deg, #FF9900 0%, #FF7700 100%);
+}
+
+.amazon-btn:hover {
+  background: linear-gradient(135deg, #FF7700 0%, #FF5500 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.3);
+}
+
+.rakuten-btn {
+  background: linear-gradient(135deg, #E60011 0%, #B30009 100%);
+}
+
+.rakuten-btn:hover {
+  background: linear-gradient(135deg, #B30009 0%, #900007 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(230, 0, 17, 0.3);
+}
+
+.btn-icon {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .book-affiliate-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .book-cover {
+    width: 100px;
+    height: 150px;
+  }
+
+  .affiliate-buttons-group {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .affiliate-btn {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-affiliate-card {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .affiliate-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-icon {
+    font-size: 0.9rem;
+  }
+}
+</style>
