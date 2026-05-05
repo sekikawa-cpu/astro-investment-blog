@@ -6,8 +6,35 @@ import type { CollectionEntry } from 'astro:content';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, author, category, tags, heroImage } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const fullUrl = `https://tech-wealth-mind.com${currentPath}`;
+
+const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "image": heroImage ? `https://tech-wealth-mind.com${heroImage}` : undefined,
+  "datePublished": pubDate.toISOString(),
+  "dateModified": updatedDate ? updatedDate.toISOString() : pubDate.toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": author,
+    "url": "https://tech-wealth-mind.com/profile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "会社員の生活日記",
+    "url": "https://tech-wealth-mind.com"
+  },
+  "url": fullUrl,
+  "articleSection": category,
+  "keywords": tags.join(", ")
+};
 ---
 <BaseLayout title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
   <article class="article">
     <div class="container-narrow">
       <header class="article-header">
