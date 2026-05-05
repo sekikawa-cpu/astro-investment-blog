@@ -1,4 +1,15 @@
 declare module 'astro:content' {
+	interface Render {
+		'.mdx': Promise<{
+			Content: import('astro').MDXContent;
+			headings: import('astro').MarkdownHeading[];
+			remarkPluginFrontmatter: Record<string, any>;
+			components: import('astro').MDXInstance<{}>['components'];
+		}>;
+	}
+}
+
+declare module 'astro:content' {
 	interface RenderResult {
 		Content: import('astro/runtime/server/index.js').AstroComponentFactory;
 		headings: import('astro').MarkdownHeading[];
@@ -204,13 +215,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
-"g-kentei-2026-jukken-report.md": {
-	id: "g-kentei-2026-jukken-report.md";
+"g-kentei-2026-jukken-report.mdx": {
+	id: "g-kentei-2026-jukken-report.mdx";
   slug: "g-kentei-2026-jukken-report";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
+} & { render(): Render[".mdx"] };
 "haito-kin-kakutei-bi-schedule.md": {
 	id: "haito-kin-kakutei-bi-schedule.md";
   slug: "haito-kin-kakutei-bi-schedule";
@@ -225,13 +236,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
-"industrial-counselor.md": {
-	id: "industrial-counselor.md";
+"industrial-counselor.mdx": {
+	id: "industrial-counselor.mdx";
   slug: "industrial-counselor";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
+} & { render(): Render[".mdx"] };
 "ion-kabu-keii-column.md": {
 	id: "ion-kabu-keii-column.md";
   slug: "ion-kabu-keii-column";
