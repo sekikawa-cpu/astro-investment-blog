@@ -51,7 +51,11 @@
       "Bash(chmod +x /tmp/convert_to_mdx.sh)",
       "Bash(bash /tmp/convert_to_mdx.sh)",
       "Bash(sed -n '123,127p' 2026-04-25.mdx)",
-      "Bash(sed -n '145,149p' 2026-05-01.mdx)"
+      "Bash(sed -n '145,149p' 2026-05-01.mdx)",
+      "Bash(curl -s http://localhost:3000/blog/2026-04-27/)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(chmod +x /tmp/add_rakuten.sh)",
+      "Bash(/tmp/add_rakuten.sh)"
     ]
   }
 }
