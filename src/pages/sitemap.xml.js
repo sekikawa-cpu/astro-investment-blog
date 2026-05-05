@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 
 export async function GET() {
   const posts = await getCollection('blog');
-  const site = 'https://www.tech-wealth-mind.com';
+  const site = 'https://tech-wealth-mind.com';
 
   const staticPages = [
     '',
