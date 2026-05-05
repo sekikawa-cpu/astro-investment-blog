@@ -20,7 +20,7 @@ function buildRakutenLink(url: string): string {
 <div class="book-affiliate-card">
   {imageUrl && (
     <div class="book-cover-container">
-      <img src={imageUrl} alt={title} class="book-cover" />
+      <img src={imageUrl} alt={title} class="book-cover" onError="this.setAttribute('data-error', 'true')" loading="lazy" />
     </div>
   )}
   <div class="book-details">
@@ -68,6 +68,15 @@ function buildRakutenLink(url: string): string {
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #f0f0f0;
+}
+
+.book-cover[data-error="true"] {
+  opacity: 0.6;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-size="40" fill="%23999">📖</text></svg>');
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .book-details {
