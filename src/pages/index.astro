@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 
+const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEFXG48Y';
+
 const posts = await getCollection('blog');
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
@@ -85,6 +87,7 @@ function getWatermarkSvg(category: string, title: string) {
     <meta name="google-site-verification" content="A8tOtO8MGTE81uwVZVGSbnvRT2F583xupmBPJzmTgKc" />
     <meta name="description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。愛着障害・発達障害からの回復体験も発信中。">
     <link rel="canonical" href="https://tech-wealth-mind.com/">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tech-wealth-mind.com/">
     <meta property="og:title" content="会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ">
@@ -95,9 +98,21 @@ function getWatermarkSvg(category: string, title: string) {
     <meta name="twitter:description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。">
     <meta name="keywords" content="投資,AI,DX,心理学,高配当株,NISA,株主優待,会社員,ブログ">
     <!-- Google AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-3923204756310022">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3923204756310022"
+    <meta name="google-adsense-account" content="ca-pub-7499855875738477">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"
      crossorigin="anonymous"></script>
+    <!-- Google Analytics -->
+    {googleAnalyticsId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
+        <script define:vars={{ googleAnalyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', googleAnalyticsId);
+        </script>
+      </>
+    )}
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     {

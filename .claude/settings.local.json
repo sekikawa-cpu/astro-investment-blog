@@ -59,7 +59,18 @@
       "Bash(gh workflow *)",
       "Bash(npm ci *)",
       "Bash(gh pr create --title 'feat: add Google AdSense support for tech-wealth-mind.com' --body ' *)",
-      "Bash(gh --version)"
+      "Bash(gh --version)",
+      "Bash(git -C \"C:\\\\Apps\\\\astro-investment-blog\\\\.claude\\\\worktrees\\\\cool-vaughan-fa98d3\" status)",
+      "Bash(gh pr create --title 'fix: Add favicon to all pages' --body ' *)",
+      "Bash(command -v gh)",
+      "PowerShell(winget install --id GitHub.CLI --accept-source-agreements --accept-package-agreements)",
+      "PowerShell($ghPath = \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\"; if \\(Test-Path $ghPath\\) { Write-Host \"Found gh at: $ghPath\" } else { Write-Host \"gh not found at expected location\"; Get-ChildItem \"C:\\\\Program Files\" -Recurse -Include \"gh.exe\" -ErrorAction SilentlyContinue | Select-Object -First 1 })",
+      "Bash(xargs grep *)",
+      "mcp__Claude_in_Chrome__tabs_create_mcp",
+      "Bash(curl -I https://tech-wealth-mind.com)",
+      "Bash(curl -s https://tech-wealth-mind.com)",
+      "Bash(curl -sL https://tech-wealth-mind.com)",
+      "Bash(PUBLIC_GOOGLE_ANALYTICS_ID=G-2F8G5290KT npm run build)"
     ]
   }
 }

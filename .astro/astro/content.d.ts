@@ -208,6 +208,34 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"2026-05-05.mdx": {
+	id: "2026-05-05.mdx";
+  slug: "2026-05-05";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"2026-05-06-ai-dx-news.mdx": {
+	id: "2026-05-06-ai-dx-news.mdx";
+  slug: "2026-05-06-ai-dx-news";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"2026-05-06-beginner-guide.mdx": {
+	id: "2026-05-06-beginner-guide.mdx";
+  slug: "2026-05-06-beginner-guide";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"2026-05-06.mdx": {
+	id: "2026-05-06.mdx";
+  slug: "2026-05-06";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "book-review-business-process-dx-guide.mdx": {
 	id: "book-review-business-process-dx-guide.mdx";
   slug: "book-review-business-process-dx-guide";
@@ -288,6 +316,13 @@ declare module 'astro:content' {
 "nisa-haito-kabu-poruto.mdx": {
 	id: "nisa-haito-kabu-poruto.mdx";
   slug: "nisa-haito-kabu-poruto";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"shoken-kouza-haito-kabu-erabikata.mdx": {
+	id: "shoken-kouza-haito-kabu-erabikata.mdx";
+  slug: "shoken-kouza-haito-kabu-erabikata";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">

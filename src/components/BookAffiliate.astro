@@ -12,6 +12,11 @@ const rakutenAffiliateId = import.meta.env.RAKUTEN_AFFILIATE_ID;
 
 function buildRakutenLink(url: string): string {
   if (!url) return '';
+  // 既に hgc フォーマット（完全なアフィリエイトURL）の場合はそのまま返す
+  if (url.includes('hb.afl.rakuten.co.jp/hgc/')) {
+    return url;
+  }
+  // 古い形式（アフィリエイトID未設定）の場合は l-id を追加
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}l-id=${rakutenAffiliateId}`;
 }

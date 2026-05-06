@@ -11,5 +11,10 @@ export default defineConfig({
     tailwind(),
     mdx(),
   ],
+  vite: {
+    ssr: {
+      external: ['@astrojs/tailwind'],
+    },
+  },
 });
 

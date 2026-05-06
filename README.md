@@ -94,3 +94,4 @@ npm run preview  # ビルド結果をプレビュー
 ```
 
 `dist/` ディレクトリをNetlify、Vercel、Cloudflare Pages、GitHub Pagesなど任意の静的ホスティングにデプロイできます。
+
