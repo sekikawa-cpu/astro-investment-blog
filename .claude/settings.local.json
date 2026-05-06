@@ -65,7 +65,12 @@
       "Bash(command -v gh)",
       "PowerShell(winget install --id GitHub.CLI --accept-source-agreements --accept-package-agreements)",
       "PowerShell($ghPath = \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\"; if \\(Test-Path $ghPath\\) { Write-Host \"Found gh at: $ghPath\" } else { Write-Host \"gh not found at expected location\"; Get-ChildItem \"C:\\\\Program Files\" -Recurse -Include \"gh.exe\" -ErrorAction SilentlyContinue | Select-Object -First 1 })",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "mcp__Claude_in_Chrome__tabs_create_mcp",
+      "Bash(curl -I https://tech-wealth-mind.com)",
+      "Bash(curl -s https://tech-wealth-mind.com)",
+      "Bash(curl -sL https://tech-wealth-mind.com)",
+      "Bash(PUBLIC_GOOGLE_ANALYTICS_ID=G-2F8G5290KT npm run build)"
     ]
   }
 }
