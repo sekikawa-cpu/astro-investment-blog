@@ -2,7 +2,7 @@ name = "astro-investment-blog"
 type = "javascript"
 
 [env.production]
-vars = { PUBLIC_GOOGLE_ANALYTICS_ID = "G-2F8G5290KT" }
+vars = { PUBLIC_GOOGLE_ANALYTICS_ID = "G-7WDEFXG48Y" }
 
 [env.preview]
-vars = { PUBLIC_GOOGLE_ANALYTICS_ID = "G-2F8G5290KT" }
+vars = { PUBLIC_GOOGLE_ANALYTICS_ID = "G-7WDEFXG48Y" }

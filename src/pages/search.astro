@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
-const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-2F8G5290KT';
+const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEFXG48Y';
 const posts = await getCollection('blog');
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 // 全記事データをJSONとしてクライアントに渡す
