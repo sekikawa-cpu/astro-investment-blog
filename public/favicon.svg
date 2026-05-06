@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3182ce;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="192" height="192" fill="url(#grad)" rx="40"/>
+
+  <!-- 上向きのトレンドライン -->
+  <path d="M 40 130 L 70 100 L 100 110 L 130 60"
+        stroke="white" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- トレンドラインの矢印 -->
+  <polygon points="130,40 145,60 125,70" fill="white"/>
+
+  <!-- 技術を表すドット -->
+  <circle cx="50" cy="80" r="4" fill="white" opacity="0.8"/>
+  <circle cx="90" cy="45" r="4" fill="white" opacity="0.8"/>
+  <circle cx="140" cy="75" r="4" fill="white" opacity="0.8"/>
+</svg>
