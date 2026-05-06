@@ -3,3 +3,4 @@ dist/
 .astro/
 .vercel/
 .claude/worktrees/
+.claude/settings.local.json
