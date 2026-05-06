@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
-const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
+const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-2F8G5290KT';
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
