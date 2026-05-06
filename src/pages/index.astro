@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 
+const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-2F8G5290KT';
+
 const posts = await getCollection('blog');
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
@@ -99,6 +101,18 @@ function getWatermarkSvg(category: string, title: string) {
     <meta name="google-adsense-account" content="ca-pub-7499855875738477">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"
      crossorigin="anonymous"></script>
+    <!-- Google Analytics -->
+    {googleAnalyticsId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
+        <script define:vars={{ googleAnalyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', googleAnalyticsId);
+        </script>
+      </>
+    )}
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     {
