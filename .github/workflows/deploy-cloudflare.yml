@@ -29,6 +29,17 @@ jobs:
       - name: Clear build cache
         run: rm -rf .astro dist node_modules/.vite
 
+      - name: Remove duplicate content files
+        run: |
+          # Find and remove duplicate .md files if .mdx version exists
+          for mdx_file in src/content/blog/*.mdx; do
+            md_file="${mdx_file%.mdx}.md"
+            if [ -f "$mdx_file" ] && [ -f "$md_file" ]; then
+              echo "Removing duplicate: $md_file"
+              rm "$md_file"
+            fi
+          done
+
       - name: Build Astro site
         env:
           PUBLIC_GOOGLE_ANALYTICS_ID: G-7WDEFXG48Y
