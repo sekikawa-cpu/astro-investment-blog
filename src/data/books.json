@@ -4,18 +4,18 @@
     "title": "オートモードで月に18.5万円が入ってくる「高配当」株投資",
     "author": "長期株式投資",
     "amazonUrl": "https://www.amazon.co.jp/dp/4046055472/?tag=investinsight-22",
-    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fbooks.rakuten.co.jp%2Frb%2F16988099%2F",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F754ae31b810321ac2cdee39d0dcaacf3%2F",
     "imageUrl": "https://m.media-amazon.com/images/P/4046055472.01.L.jpg",
-    "status": "fixed"
+    "status": "implemented"
   },
   {
     "id": "hoったらかし-investment-3rd",
     "title": "全面改訂 第3版 ほったらかし投資術（朝日新書）",
     "author": "山崎元 / 水瀬ケンイチ",
     "amazonUrl": "https://www.amazon.co.jp/dp/4022951672/?tag=investinsight-22",
-    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fbooks.rakuten.co.jp%2Frb%2F17053097%2F",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F906c45456a421f6d32d5aa711742f9df%2F",
     "imageUrl": "https://m.media-amazon.com/images/P/4022951672.01.L.jpg",
-    "status": "fixed"
+    "status": "implemented"
   },
   {
     "id": "jason-money-increase-revised",
@@ -24,7 +24,7 @@
     "amazonUrl": "https://www.amazon.co.jp/dp/4835650018/?tag=investinsight-22",
     "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F848073d58914c90b512c7c9a7f10da27%2F",
     "imageUrl": "https://m.media-amazon.com/images/P/4835650018.01.L.jpg",
-    "status": "fixed"
+    "status": "implemented"
   },
   {
     "id": "just-keep-buying",
@@ -105,6 +105,15 @@
     "amazonUrl": "https://www.amazon.co.jp/dp/4798172308/?tag=investinsight-22",
     "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Fcdd4ed610116ba9fa2f3ddacb4b90864%2F",
     "imageUrl": "https://m.media-amazon.com/images/P/4798172308.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "astro-frontend-textbook",
+    "title": "Astro フロントエンド開発の教科書",
+    "author": "WINGS プロジェクト / 齊藤 新三",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4297150085/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F3783a652d7f8d7bc32d12a0ef35789ed%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/4297150085.01.L.jpg",
     "status": "implemented"
   }
 ]
