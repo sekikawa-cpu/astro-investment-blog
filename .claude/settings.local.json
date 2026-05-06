@@ -57,7 +57,9 @@
       "Bash(chmod +x /tmp/add_rakuten.sh)",
       "Bash(/tmp/add_rakuten.sh)",
       "Bash(gh workflow *)",
-      "Bash(npm ci *)"
+      "Bash(npm ci *)",
+      "Bash(gh pr create --title 'feat: add Google AdSense support for tech-wealth-mind.com' --body ' *)",
+      "Bash(gh --version)"
     ]
   }
 }
