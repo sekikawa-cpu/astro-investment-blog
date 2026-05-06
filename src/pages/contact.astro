@@ -1,4 +1,5 @@
 ---
+const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
 ---
 <html lang="ja">
   <script type="application/ld+json">
@@ -25,6 +26,18 @@
     <meta name="description" content="配当＆優待ナビへのお問い合わせページです。ご質問・ご意見・ご要望はこちらからどうぞ。">
     <link rel="canonical" href="https://tech-wealth-mind.com/contact">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Google Analytics -->
+    {googleAnalyticsId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
+        <script define:vars={{ googleAnalyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', googleAnalyticsId);
+        </script>
+      </>
+    )}
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-7499855875738477">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"

@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+
+const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
 const posts = await getCollection('blog');
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 // 全記事データをJSONとしてクライアントに渡す
@@ -20,6 +22,18 @@ const postsJson = JSON.stringify(posts.map(p => ({
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Google Analytics -->
+    {googleAnalyticsId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
+        <script define:vars={{ googleAnalyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', googleAnalyticsId);
+        </script>
+      </>
+    )}
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
     <header class="bg-slate-900 text-white shadow-md py-3 sticky top-0 z-30">
