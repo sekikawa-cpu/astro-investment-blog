@@ -306,6 +306,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"nihon-kabu-kohaito-ranking.md": {
+	id: "nihon-kabu-kohaito-ranking.md";
+  slug: "nihon-kabu-kohaito-ranking";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "nihon-yusen-kaisen-haito.mdx": {
 	id: "nihon-yusen-kaisen-haito.mdx";
   slug: "nihon-yusen-kaisen-haito";

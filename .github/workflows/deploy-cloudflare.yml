@@ -45,7 +45,7 @@ jobs:
 
       - name: Build Astro site
         env:
-          PUBLIC_GOOGLE_ANALYTICS_ID: G-7WDEFXG48Y
+          PUBLIC_GOOGLE_ANALYTICS_ID: G-2F8G5290KT
         run: npm run build
 
       - name: Verify build output
