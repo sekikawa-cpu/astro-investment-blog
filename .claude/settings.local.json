@@ -70,7 +70,9 @@
       "Bash(curl -I https://tech-wealth-mind.com)",
       "Bash(curl -s https://tech-wealth-mind.com)",
       "Bash(curl -sL https://tech-wealth-mind.com)",
-      "Bash(PUBLIC_GOOGLE_ANALYTICS_ID=G-2F8G5290KT npm run build)"
+      "Bash(PUBLIC_GOOGLE_ANALYTICS_ID=G-2F8G5290KT npm run build)",
+      "Bash(gh pr create --title 'fix: Google インデックス登録エラーを修正' --body ' *)",
+      "PowerShell(choco install gh -y)"
     ]
   }
 }
