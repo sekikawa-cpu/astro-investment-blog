@@ -133,5 +133,77 @@
     "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F606786c6179602118a51d3ccc3912245%2F",
     "imageUrl": "https://m.media-amazon.com/images/P/4492602313.01.L.jpg",
     "status": "implemented"
+  },
+  {
+    "id": "tokyo-univ-100-island-economy",
+    "title": "東大生が日本を100人の島に例えたら 面白いほど経済がわかった!",
+    "author": "東大生チーム",
+    "amazonUrl": "https://www.amazon.co.jp/dp/480140099X/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F43cbc966349a79cc051267497d5648d0%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/480140099X.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "world-inflation-mystery",
+    "title": "世界インフレの謎 (講談社現代新書)",
+    "author": "渡辺努",
+    "amazonUrl": "https://www.amazon.co.jp/dp/406529438X/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F3f42372ee570d33b8f02bbd11ad5f02c%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/406529438X.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "interest-rate-investment-revised",
+    "title": "改訂版 金利を見れば投資はうまくいく",
+    "author": "堀井正孝",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4295406856/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Fe6ad6040b5c04d4f15f4de2ac1b2a0ef%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/4295406856.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "random-walk-wall-street-13th",
+    "title": "ウォール街のランダム・ウォーカー＜原著第13版＞ 株式投資の不滅の真理",
+    "author": "バートン・マルキール",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4296115871/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F7563d9a0652917e4ff0104fa956e2e20%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/4296115871.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "okane-neru-fueru-revised",
+    "title": "改訂版 お金は寝かせて増やしなさい",
+    "author": "水瀬ケンイチ",
+    "amazonUrl": "https://www.amazon.co.jp/dp/486680260X/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F60f87ea2b23f54e26ef56efceadeb11e%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/486680260X.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "dx-management-strategy-roadmap",
+    "title": "DXで経営戦略を仕組み化する技術　AI・デジタル時代の成長ロードマップ",
+    "author": "内山悟志",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4297154226/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F89b5afaa4b727c9dcf76e4e5d09c7f9c%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/4297154226.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "generative-ai-introduction-textbook",
+    "title": "生成AI導入の教科書",
+    "author": "向井領治",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4651203795/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F89c34f3538e6b3764538c233a48b76ac%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/4651203795.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "ai-agent-dev-ops-guide",
+    "title": "AIエージェント開発 / 運用入門 [生成AI深掘りガイド]",
+    "author": "中山浩太郎",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4815636605/?tag=investinsight-22",
+    "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Feaca6ac9e49d2d335514cc9d25086e0e%2F",
+    "imageUrl": "https://m.media-amazon.com/images/P/4815636605.01.L.jpg",
+    "status": "implemented"
   }
 ]
