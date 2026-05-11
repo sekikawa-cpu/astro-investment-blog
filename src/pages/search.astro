@@ -17,10 +17,11 @@ const postsJson = JSON.stringify(posts.map(p => ({
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>検索結果 | 会社員の生活日記</title>
+    <title>記事検索 | 会社員の生活日記</title>
+    <meta name="description" content="会社員の生活日記の全記事から検索できます。投資・AI/DX・心理学に関する記事を探す。" />
+    <link rel="canonical" href="https://tech-wealth-mind.com/search">
     <script>document.addEventListener('DOMContentLoaded',()=>{const q=new URLSearchParams(location.search).get('q');if(q)document.title=`「${q}」の検索結果 | 会社員の生活日記`});</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Google Analytics -->
     {googleAnalyticsId && (

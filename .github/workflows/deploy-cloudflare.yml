@@ -17,9 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Remove duplicate Markdown files
-        run: find src/content/blog -name "*.md" -type f ! -name "*.mdx" | while read md_file; do mdx_file="${md_file%.md}.mdx"; [ -f "$mdx_file" ] && rm -f "$md_file"; done
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
