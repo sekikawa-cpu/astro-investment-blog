@@ -14,7 +14,10 @@ interface Props {
 
 const { title, description = SITE_DESCRIPTION } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// 実際のサーバーは末尾スラッシュありで配信するため、canonicalも合わせる
+const rawPath = Astro.url.pathname;
+const normalizedPath = rawPath === '/' ? '/' : (rawPath.endsWith('/') ? rawPath : rawPath + '/');
+const canonicalURL = new URL(normalizedPath, Astro.site);
 
 const navItems = [
   { name: '運営者プロフィール', href: '/profile' },

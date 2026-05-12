@@ -4,12 +4,13 @@ export async function GET() {
   const posts = await getCollection('blog');
   const site = 'https://tech-wealth-mind.com';
 
+  // 末尾スラッシュあり（実際のサーバー配信形式に合わせる）
   const staticPages = [
-    '',
-    '/profile',
-    '/contact',
-    '/privacy',
-    '/search',
+    '/',
+    '/profile/',
+    '/contact/',
+    '/privacy/',
+    '/search/',
   ];
 
   const allPages = [
@@ -17,10 +18,10 @@ export async function GET() {
       url: `${site}${page}`,
       lastmod: new Date().toISOString().split('T')[0],
       changefreq: 'weekly',
-      priority: page === '' ? '1.0' : '0.8',
+      priority: page === '/' ? '1.0' : '0.8',
     })),
     ...posts.map(post => ({
-      url: `${site}/blog/${post.slug}`,
+      url: `${site}/blog/${post.slug}/`,
       lastmod: post.data.updatedDate
         ? post.data.updatedDate.toISOString().split('T')[0]
         : post.data.pubDate.toISOString().split('T')[0],
