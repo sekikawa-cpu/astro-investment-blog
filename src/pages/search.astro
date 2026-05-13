@@ -143,7 +143,7 @@ const postsJson = JSON.stringify(posts.map(p => ({
           const wmUrl = getWmUrl(p.category, p.title);
           
           grid.innerHTML += `
-            <a href="/blog/${p.slug}"
+            <a href="/blog/${p.slug}/"
               class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5"
               style="position:relative; overflow:hidden;">
               

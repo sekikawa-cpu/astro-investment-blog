@@ -419,7 +419,7 @@ function getWatermarkSvg(category: string, title: string) {
                 ) : (
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {displayPosts.map(post => (
-                      <a href={`/blog/${post.slug}`}
+                      <a href={`/blog/${post.slug}/`}
                         class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4">
                         <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
                         <div class="post-card-content">
@@ -497,7 +497,7 @@ function getWatermarkSvg(category: string, title: string) {
             <div class="sidebar-widget-title">🏆 人気記事</div>
             <div class="sidebar-widget-body">
               {popularPosts.map((post, i) => (
-                <a href={`/blog/${post.slug}`} class="popular-item">
+                <a href={`/blog/${post.slug}/`} class="popular-item">
                   <span class={`popular-rank ${i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : ''}`}>
                     {i + 1}
                   </span>
