@@ -1,0 +1,6 @@
+# Cloudflare Pages: 末尾スラッシュなしURLを正規URLへ301リダイレクト
+/blog/:slug  /blog/:slug/  301
+/contact     /contact/     301
+/privacy     /privacy/     301
+/profile     /profile/     301
+/search      /search/      301
