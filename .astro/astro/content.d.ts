@@ -327,6 +327,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"2026-05-12-ai-dx-news.mdx": {
+	id: "2026-05-12-ai-dx-news.mdx";
+  slug: "2026-05-12-ai-dx-news";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "2026-05-12-beginner-guide.mdx": {
 	id: "2026-05-12-beginner-guide.mdx";
   slug: "2026-05-12-beginner-guide";
@@ -337,6 +344,27 @@ declare module 'astro:content' {
 "2026-05-12.mdx": {
 	id: "2026-05-12.mdx";
   slug: "2026-05-12";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"2026-05-13-ai-dx-news.mdx": {
+	id: "2026-05-13-ai-dx-news.mdx";
+  slug: "2026-05-13-ai-dx-news";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"2026-05-13-beginner.mdx": {
+	id: "2026-05-13-beginner.mdx";
+  slug: "2026-05-13-beginner";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"2026-05-13.mdx": {
+	id: "2026-05-13.mdx";
+  slug: "2026-05-13";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
