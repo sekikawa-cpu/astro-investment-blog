@@ -1,7 +1,8 @@
 import { getCollection } from 'astro:content';
 
 export async function GET() {
-  const posts = await getCollection('blog');
+  const allPosts = await getCollection('blog');
+  const posts = allPosts.filter(p => !p.data.noindex);
   const site = 'https://tech-wealth-mind.com';
 
   // 末尾スラッシュあり（実際のサーバー配信形式に合わせる）

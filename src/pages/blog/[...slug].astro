@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
-const { title, pubDate, description, tags = [], author, category } = entry.data;
+const { title, pubDate, description, tags = [], author, category, noindex = false } = entry.data;
 ---
 
 <!doctype html>
@@ -24,6 +24,7 @@ const { title, pubDate, description, tags = [], author, category } = entry.data;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="referrer" content="no-referrer" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={`https://tech-wealth-mind.com/blog/${entry.slug}/`} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Google Analytics -->
