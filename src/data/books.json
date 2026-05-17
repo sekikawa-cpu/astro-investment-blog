@@ -1,5 +1,14 @@
 [
   {
+    "id": "diamond-zai-2026-07",
+    "title": "ダイヤモンドZAi 2026年7月号",
+    "author": "ダイヤモンド社",
+    "amazonUrl": "https://www.amazon.co.jp/dp/B0GWLHHNXZ/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/2a08beaa403d9f037fdaaf9849e40196/",
+    "imageUrl": "https://m.media-amazon.com/images/P/B0GWLHHNXZ.01.L.jpg",
+    "status": "implemented"
+  },
+  {
     "id": "auto-mode-high-dividend",
     "title": "オートモードで月に18.5万円が入ってくる「高配当」株投資",
     "author": "長期株式投資",
