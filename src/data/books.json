@@ -205,5 +205,41 @@
     "rakutenUrl": "https://hb.afl.rakuten.co.jp/hgc/53760253.1fc542d8.53760254.a8c82353/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Feaca6ac9e49d2d335514cc9d25086e0e%2F",
     "imageUrl": "https://m.media-amazon.com/images/P/4815636605.01.L.jpg",
     "status": "implemented"
+  },
+  {
+    "id": "sc-ukaru-textbook",
+    "title": "うかる！ 情報処理安全確保支援士",
+    "author": "上原孝之",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4798194638/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/b09cfc45fc93d0e6fc88e0975ec37f82/",
+    "imageUrl": "https://m.media-amazon.com/images/P/4798194638.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "sc-gogo-juten-taisaku",
+    "title": "情報処理安全確保支援士「午後の重点対策」",
+    "author": "三好康之",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4865753486/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/50fde92f9a8b69b657b02bae6045edf3/",
+    "imageUrl": "https://m.media-amazon.com/images/P/4865753486.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "sc-ukaru-gogo-mondaishu-samon",
+    "title": "うかる！ 情報処理安全確保支援士 午後問題集",
+    "author": "左門至峰・平田賀一",
+    "amazonUrl": "https://www.amazon.co.jp/dp/429715501X/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/1d8276584201d35359fd6ad08e90b54f/",
+    "imageUrl": "https://m.media-amazon.com/images/P/429715501X.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "sc-gogo-mondaishu-zurui",
+    "title": "SC うかる！ 情報処理安全確保支援士 午後問題集 速効サプリ",
+    "author": "村山直紀",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4296117599/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/499afba86440c9b3b28a927bfc13ba28/",
+    "imageUrl": "https://m.media-amazon.com/images/P/4296117599.01.L.jpg",
+    "status": "implemented"
   }
 ]

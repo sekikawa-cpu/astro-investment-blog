@@ -8,7 +8,7 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     author: z.string().default('ただの会社員'),
-    pillar: z.enum(['投資', 'AI・DX', '心理学']).default('投資'),
+    pillar: z.enum(['投資', 'ビジネス・AI・DX', '心理学']).default('投資'),
     category: z.enum([
       // 投資
       'マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説',

@@ -18,7 +18,7 @@ posts.forEach(p => {
 const popularPosts = posts.slice(0, 5);
 
 // 柱別記事（各最大4件）
-const PILLAR_KEYS = ['投資', 'AI・DX', '心理学'] as const;
+const PILLAR_KEYS = ['投資', 'ビジネス・AI・DX', '心理学'] as const;
 const postsByPillar: Record<string, typeof posts> = {};
 PILLAR_KEYS.forEach(p => {
   postsByPillar[p] = posts.filter(post => (post.data.pillar ?? '投資') === p);
@@ -27,34 +27,34 @@ PILLAR_KEYS.forEach(p => {
 // 柱カラー定義
 const PILLAR_BORDER: Record<string, string> = {
   '投資':   'border-blue-500',
-  'AI・DX': 'border-purple-500',
+  'ビジネス・AI・DX': 'border-purple-500',
   '心理学': 'border-teal-500',
 };
 const PILLAR_TEXT: Record<string, string> = {
   '投資':   'text-blue-600',
-  'AI・DX': 'text-purple-600',
+  'ビジネス・AI・DX': 'text-purple-600',
   '心理学': 'text-teal-600',
 };
 const PILLAR_BG: Record<string, string> = {
   '投資':   'bg-blue-100 text-blue-700',
-  'AI・DX': 'bg-purple-100 text-purple-700',
+  'ビジネス・AI・DX': 'bg-purple-100 text-purple-700',
   '心理学': 'bg-teal-100 text-teal-700',
 };
 
 // 3本柱のカテゴリー定義
 const PILLAR_CATEGORIES: Record<string, string[]> = {
   '投資':   ['マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説', 'コラム'],
-  'AI・DX': ['AI最新情報', 'DX・業務改善', '資格・学習', '書籍レビュー'],
+  'ビジネス・AI・DX': ['AI最新情報', 'DX・業務改善', '資格・学習', '書籍レビュー'],
   '心理学': ['心理学・メンタル', '生きづらさと回復'],
 };
 const PILLAR_ICONS: Record<string, string> = {
   '投資':   '📊',
-  'AI・DX': '🤖',
+  'ビジネス・AI・DX': '🤖',
   '心理学': '🧠',
 };
 const PILLAR_COLORS: Record<string, string> = {
   '投資':   'text-blue-600',
-  'AI・DX': 'text-purple-600',
+  'ビジネス・AI・DX': 'text-purple-600',
   '心理学': 'text-teal-600',
 };
 
@@ -364,10 +364,10 @@ function getWatermarkSvg(category: string, title: string) {
               <span class="text-xl leading-none">📊</span>
               <span class="text-xs font-bold mt-1">投資</span>
             </a>
-            <a href={`/search?q=${encodeURIComponent('AI・DX')}`}
+            <a href={`/search?q=${encodeURIComponent('ビジネス・AI・DX')}`}
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
               <span class="text-xl leading-none">🤖</span>
-              <span class="text-xs font-bold mt-1">AI・DX</span>
+              <span class="text-xs font-bold mt-1">ビジネス・AI・DX</span>
             </a>
             <a href={`/search?q=${encodeURIComponent('心理学')}`}
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
