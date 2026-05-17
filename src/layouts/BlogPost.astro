@@ -5,7 +5,7 @@ import type { CollectionEntry } from 'astro:content';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, author, category, tags, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, author, category, tags, heroImage, noindex } = Astro.props;
 
 const currentPath = Astro.url.pathname;
 const fullUrl = `https://tech-wealth-mind.com${currentPath}`;
@@ -33,7 +33,7 @@ const schemaData = {
   "keywords": tags.join(", ")
 };
 ---
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} noindex={noindex}>
   <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
   <article class="article">
     <div class="container-narrow">
