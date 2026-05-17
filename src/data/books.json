@@ -1,5 +1,23 @@
 [
   {
+    "id": "dokuoya-sodachi",
+    "title": "毒親育ち",
+    "author": "松本耳子",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4594068081/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/86ab991e275e023d65a9ad19a7bc5f95/",
+    "imageUrl": "https://m.media-amazon.com/images/P/4594068081.01.L.jpg",
+    "status": "implemented"
+  },
+  {
+    "id": "dokuoya-survival",
+    "title": "毒親サバイバル",
+    "author": "菊池真理子",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4046022809/?tag=investinsight-22",
+    "rakutenUrl": "https://product.rakuten.co.jp/product/-/8e89e5ed7b063cfdbca42731a7eb2d99/",
+    "imageUrl": "https://m.media-amazon.com/images/P/4046022809.01.L.jpg",
+    "status": "implemented"
+  },
+  {
     "id": "diamond-zai-2026-07",
     "title": "ダイヤモンドZAi 2026年7月号",
     "author": "ダイヤモンド社",
