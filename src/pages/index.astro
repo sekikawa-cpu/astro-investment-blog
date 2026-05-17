@@ -422,7 +422,10 @@ function getWatermarkSvg(category: string, title: string) {
                     {displayPosts.map(post => (
                       <a href={`/blog/${post.slug}/`}
                         class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4">
-                        <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
+                        {post.data.heroImage
+                          ? <div class="post-card-wm"><img src={post.data.heroImage} alt="" style="width:100%;height:100%;object-fit:cover;" /></div>
+                          : <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
+                        }
                         <div class="post-card-content">
                           <div class="flex items-center gap-2 mb-2">
                             <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${PILLAR_BG[pillar]}`}>
