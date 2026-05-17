@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
-const { title, pubDate, description, tags = [], author, category, noindex = false } = entry.data;
+const { title, pubDate, description, tags = [], author, category, noindex = false, heroImage } = entry.data;
 ---
 
 <!doctype html>
@@ -83,6 +83,12 @@ const { title, pubDate, description, tags = [], author, category, noindex = fals
             <p class="text-sm text-slate-500 mt-4">執筆: {author}</p>
           )}
         </header>
+
+        {heroImage && (
+          <div class="w-full">
+            <img src={heroImage} alt={title} class="w-full h-auto object-cover" />
+          </div>
+        )}
 
         <div class="markdown-content px-6 md:px-12 py-10">
           <Content />
