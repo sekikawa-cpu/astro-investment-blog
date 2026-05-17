@@ -13,6 +13,7 @@ const postsJson = JSON.stringify(posts.map(p => ({
   category: p.data.category || 'マーケット分析',
   pillar: p.data.pillar || '投資',
   pubDate: new Date(p.data.pubDate).toLocaleDateString('ja-JP'),
+  heroImage: p.data.heroImage || '',
 })));
 ---
 <html lang="ja">
@@ -141,16 +142,15 @@ const postsJson = JSON.stringify(posts.map(p => ({
         noResult.classList.add('hidden');
 
         filtered.forEach(p => {
-          const wmUrl = getWmUrl(p.category, p.title);
-          
+          const bgUrl = p.heroImage ? p.heroImage : getWmUrl(p.category, p.title);
+          const bgOpacity = p.heroImage ? '0.15' : '0.1';
+
           grid.innerHTML += `
             <a href="/blog/${p.slug}/"
               class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5"
               style="position:relative; overflow:hidden;">
-              
-              <!-- 背景画像を独立したdivとして配置 -->
-              <!-- URLのクォーテーションの使い方を調整しています -->
-              <div style="position:absolute; inset:0; width:100%; height:100%; background-image:url(&quot;${wmUrl}&quot;); background-size:cover; background-position:center; background-repeat:no-repeat; opacity:0.1; pointer-events:none;"></div>
+
+              <div style="position:absolute; inset:0; width:100%; height:100%; background-image:url(&quot;${bgUrl}&quot;); background-size:cover; background-position:center; background-repeat:no-repeat; opacity:${bgOpacity}; pointer-events:none;"></div>
               
               <div style="position:relative; z-index:10;">
                 <div class="flex items-center gap-2 mb-2">
