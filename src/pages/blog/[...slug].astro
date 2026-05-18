@@ -14,6 +14,43 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 const { title, pubDate, description, tags = [], author, category, noindex = false, heroImage } = entry.data;
+
+const fullUrl = `https://tech-wealth-mind.com/blog/${entry.slug}/`;
+const ogImageUrl = heroImage
+  ? `https://tech-wealth-mind.com${heroImage}`
+  : 'https://tech-wealth-mind.com/images/profile.png';
+
+const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "image": ogImageUrl,
+  "datePublished": new Date(pubDate).toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": author || "ただの会社員",
+    "url": "https://tech-wealth-mind.com/profile"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "会社員の生活日記",
+    "url": "https://tech-wealth-mind.com"
+  },
+  "url": fullUrl,
+  "articleSection": category,
+  "keywords": tags.join(", ")
+};
+
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tech-wealth-mind.com/" },
+    { "@type": "ListItem", "position": 2, "name": category || "記事", "item": `https://tech-wealth-mind.com/search?q=${encodeURIComponent(category || '')}` },
+    { "@type": "ListItem", "position": 3, "name": title, "item": fullUrl }
+  ]
+};
 ---
 
 <!doctype html>
@@ -25,8 +62,22 @@ const { title, pubDate, description, tags = [], author, category, noindex = fals
     <meta name="description" content={description} />
     <meta name="referrer" content="no-referrer" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <link rel="canonical" href={`https://tech-wealth-mind.com/blog/${entry.slug}/`} />
+    <link rel="canonical" href={fullUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- OGP / Twitter Card -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={fullUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="会社員の生活日記" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <!-- 構造化データ -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbData)} />
     <!-- Google Analytics -->
     {googleAnalyticsId && (
       <>
@@ -39,10 +90,6 @@ const { title, pubDate, description, tags = [], author, category, noindex = fals
         </script>
       </>
     )}
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="会社員の生活日記" />
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-7499855875738477">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"

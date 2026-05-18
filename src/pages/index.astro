@@ -94,9 +94,11 @@ function getWatermarkSvg(category: string, title: string) {
     <meta property="og:title" content="会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ">
     <meta property="og:description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。">
     <meta property="og:site_name" content="会社員の生活日記">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://tech-wealth-mind.com/images/profile.png">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ">
     <meta name="twitter:description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。">
+    <meta name="twitter:image" content="https://tech-wealth-mind.com/images/profile.png">
     <meta name="keywords" content="投資,AI,DX,心理学,高配当株,NISA,株主優待,会社員,ブログ">
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-7499855875738477">
@@ -428,7 +430,7 @@ function getWatermarkSvg(category: string, title: string) {
                       <a href={`/blog/${post.slug}/`}
                         class="post-card block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4">
                         {post.data.heroImage
-                          ? <div class="post-card-wm"><img src={post.data.heroImage} alt="" style="width:100%;height:100%;object-fit:cover;" /></div>
+                          ? <div class="post-card-wm"><img src={post.data.heroImage} alt={post.data.title} style="width:100%;height:100%;object-fit:cover;" /></div>
                           : <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
                         }
                         <div class="post-card-content">

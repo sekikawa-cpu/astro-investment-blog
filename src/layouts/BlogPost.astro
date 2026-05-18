@@ -9,6 +9,9 @@ const { title, description, pubDate, updatedDate, author, category, tags, heroIm
 
 const currentPath = Astro.url.pathname;
 const fullUrl = `https://tech-wealth-mind.com${currentPath}`;
+const ogImageUrl = heroImage
+  ? `https://tech-wealth-mind.com${heroImage}`
+  : 'https://tech-wealth-mind.com/images/profile.png';
 
 const schemaData = {
   "@context": "https://schema.org",
@@ -32,9 +35,19 @@ const schemaData = {
   "articleSection": category,
   "keywords": tags.join(", ")
 };
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tech-wealth-mind.com/" },
+    { "@type": "ListItem", "position": 2, "name": category, "item": `https://tech-wealth-mind.com/search?q=${encodeURIComponent(category)}` },
+    { "@type": "ListItem", "position": 3, "name": title, "item": fullUrl }
+  ]
+};
 ---
-<BaseLayout title={title} description={description} noindex={noindex}>
+<BaseLayout title={title} description={description} noindex={noindex} ogImage={ogImageUrl}>
   <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbData)} />
   <article class="article">
     <div class="container-narrow">
       <header class="article-header">

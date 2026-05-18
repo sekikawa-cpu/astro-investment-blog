@@ -11,9 +11,12 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  ogImage?: string;
 }
 
-const { title, description = SITE_DESCRIPTION, noindex = false } = Astro.props;
+const { title, description = SITE_DESCRIPTION, noindex = false, ogImage } = Astro.props;
+const defaultOgImage = 'https://tech-wealth-mind.com/images/profile.png';
+const ogImageUrl = ogImage || defaultOgImage;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 // 実際のサーバーは末尾スラッシュありで配信するため、canonicalも合わせる
 const rawPath = Astro.url.pathname;
@@ -36,6 +39,17 @@ const navItems = [
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- OGP / Twitter Card -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="会社員の生活日記" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
