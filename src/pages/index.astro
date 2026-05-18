@@ -351,26 +351,27 @@ function getWatermarkSvg(category: string, title: string) {
 
     <!-- メインコンテンツ -->
     <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
-      <!-- ヒーロー（コンパクト横並び） -->
+      <!-- ヒーロー -->
       <div class="mb-6 bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl text-white overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-4 gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-5 py-4 gap-3">
           <div class="min-w-0">
             <h1 class="text-base md:text-lg font-extrabold leading-tight">会社員の生活日記</h1>
             <p class="text-slate-400 text-xs mt-1">投資・AI/DX・心理学 — 等身大の記録</p>
           </div>
-          <div class="flex gap-2 flex-shrink-0">
+          <div class="flex gap-2">
             <a href={`/search?q=${encodeURIComponent('投資')}`}
-              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
+              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center min-w-0 flex-1 sm:flex-none">
               <span class="text-xl leading-none">📊</span>
               <span class="text-xs font-bold mt-1">投資</span>
             </a>
             <a href={`/search?q=${encodeURIComponent('ビジネス・AI・DX')}`}
-              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
+              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center min-w-0 flex-1 sm:flex-none">
               <span class="text-xl leading-none">🤖</span>
-              <span class="text-xs font-bold mt-1">ビジネス・AI・DX</span>
+              <span class="text-xs font-bold mt-1 hidden sm:block">ビジネス・AI・DX</span>
+              <span class="text-xs font-bold mt-1 sm:hidden">AI・DX</span>
             </a>
             <a href={`/search?q=${encodeURIComponent('心理学')}`}
-              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center">
+              class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center min-w-0 flex-1 sm:flex-none">
               <span class="text-xl leading-none">🧠</span>
               <span class="text-xs font-bold mt-1">心理学</span>
             </a>
