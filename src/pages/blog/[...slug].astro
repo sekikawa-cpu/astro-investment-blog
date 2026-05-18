@@ -449,9 +449,37 @@ const breadcrumbData = {
   .markdown-content table:not(.stock-table) tbody td:not(:last-child) {
     border-right: 1px solid #e2e8f0;
   }
+  /* テーブルキャプション */
+  .markdown-content table caption {
+    caption-side: top;
+    text-align: left;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+    padding: 0.4rem 0.5rem 0.4rem 0;
+    margin-bottom: 0.25rem;
+  }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  // テーブルに caption を自動付与（直前の見出しをキャプションとして使用）
+  document.querySelectorAll('.markdown-content table').forEach(table => {
+    if (table.querySelector('caption')) return;
+    // テーブルの直前の兄弟要素を遡って見出しを探す
+    let el = table.previousElementSibling;
+    while (el) {
+      if (/^H[2-4]$/.test(el.tagName)) {
+        const caption = document.createElement('caption');
+        caption.textContent = el.textContent.replace(/^[#\s]+/, '').trim();
+        table.insertBefore(caption, table.firstChild);
+        break;
+      }
+      // 別の table や paragraph を超えたら探索を止める
+      if (el.tagName === 'TABLE' || el.tagName === 'HR') break;
+      el = el.previousElementSibling;
+    }
+  });
+
   // async を追加して非同期処理（API通信）ができるようにします
   document.querySelectorAll('.book-item img').forEach(async (img) => {
     const item = img.closest('.book-item');
