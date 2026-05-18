@@ -12,8 +12,9 @@ const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEF
       "name": "ただの会社員",
       "url": "https://tech-wealth-mind.com/profile",
       "image": "https://tech-wealth-mind.com/images/profile.png",
-      "description": "地方在住の中年サラリーマン。投資・AI/DX・心理学の3本柱で発信中。",
-      "jobTitle": "会社員 / ITエンジニア"
+      "description": "AI/DX推進部 副部長。産業カウンセラー養成講座修了。投資・AI/DX・心理学の3本柱で発信中。",
+      "jobTitle": "AI/DX推進部 副部長",
+      "knowsAbout": ["高配当株投資", "新NISA", "AI/DX推進", "ビジネスプロセス改善", "産業カウンセリング", "心理学"]
     }
   }
   </script>
@@ -54,47 +55,70 @@ const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEF
 
         <div class="flex items-center gap-6 mb-10 p-6 bg-blue-50 rounded-xl">
           <img src="/images/profile.png" alt="ただの会社員"
-            class="w-20 h-20 rounded-full object-cover border-2 border-blue-100 shadow flex-shrink-0" />
+            style="width:88px;height:108px;border-radius:50%;object-fit:cover;object-position:center top;border:3px solid #bfdbfe;box-shadow:0 2px 8px rgba(0,0,0,0.12);flex-shrink:0;" />
           <div>
             <p class="text-xl font-bold text-slate-900">ただの会社員</p>
             <p class="text-slate-500 text-sm mt-1">会社員の生活日記 運営者</p>
-            <p class="text-slate-600 text-sm mt-2">高配当株・株主優待投資家 / 新NISA活用中</p>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">AI/DX推進部 副部長</span>
+              <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">産業カウンセラー養成講座 修了</span>
+              <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">高配当株・新NISA実践中</span>
+            </div>
           </div>
         </div>
 
         <section class="mb-8">
           <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">プロフィール</h2>
-          <p class="text-slate-600 leading-relaxed mb-4">地方在住の中年サラリーマン。投資・AI/DX・心理学の3本柱で発信中。幼少期の愛着障害体験と心理学の学びを経て、妻と子の3人で平和に暮らす。サイドFIREを目指しながら日々学んでいます。</p>
+          <p class="text-slate-600 leading-relaxed mb-4">地方在住の40代会社員。現在は<strong>AI/DX推進部の副部長</strong>として、社内のデジタル変革・業務プロセス改善を推進しています。前職ではITエンジニアとして新人研修・人材育成に10年以上携わりました。</p>
+          <p class="text-slate-600 leading-relaxed mb-4">2025年には<strong>産業カウンセラー養成講座（日本産業カウンセラー協会）を修了</strong>。自身の幼少期の愛着障害体験を言語化する過程で心理学への理解が深まり、職場メンタルヘルス支援にも力を入れています。投資は高配当株・新NISAを軸に実践中。妻と子の3人暮らし。サイドFIREを目指しながら日々学んでいます。</p>
 
           <div class="bg-slate-50 rounded-lg p-4 space-y-3 text-slate-600 text-sm">
-            <div>
-              <p class="font-semibold text-slate-700">興味</p>
-              <p>投資、経営組織</p>
-            </div>
-            <div>
-              <p class="font-semibold text-slate-700">性格</p>
-              <p>調和重視、楽観主義、人に喜んでもらうことが好き</p>
-            </div>
-            <div>
-              <p class="font-semibold text-slate-700">得意なこと</p>
-              <p>相手に寄り添うこと、傾聴</p>
-            </div>
-            <div>
-              <p class="font-semibold text-slate-700">苦手なこと</p>
-              <p>きめ細かいスケジュール作成</p>
-            </div>
-            <div>
-              <p class="font-semibold text-slate-700">16パーソナリティ</p>
-              <p>ENFP</p>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+              <div>
+                <p class="font-semibold text-slate-700">現職</p>
+                <p>AI/DX推進部 副部長</p>
+              </div>
+              <div>
+                <p class="font-semibold text-slate-700">前職</p>
+                <p>ITエンジニア / 新人研修講師</p>
+              </div>
+              <div>
+                <p class="font-semibold text-slate-700">専門</p>
+                <p>DX推進・業務改善・産業カウンセリング・高配当株投資</p>
+              </div>
+              <div>
+                <p class="font-semibold text-slate-700">16パーソナリティ</p>
+                <p>ENFP</p>
+              </div>
+              <div>
+                <p class="font-semibold text-slate-700">得意なこと</p>
+                <p>傾聴・人に寄り添うこと</p>
+              </div>
+              <div>
+                <p class="font-semibold text-slate-700">苦手なこと</p>
+                <p>きめ細かいスケジュール作成</p>
+              </div>
             </div>
           </div>
         </section>
 
         <section class="mb-8">
           <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">このサイトについて</h2>
-          <p class="text-slate-600 leading-relaxed mb-4">「会社員の生活日記」は、投資・AI/DX・心理学の3本柱で、会社員としてのリアルな生活と学びを記録・発信するサイトです。</p>
-          <p class="text-slate-600 leading-relaxed">高配当株や新NISAの活用、AIツールの実践、心理学の知見まで幅広く取り上げ、同じように日々を積み上げる方々の参考になる情報をお届けしています。</p>
-          <p class="text-slate-600 leading-relaxed">ITエンジニアとしてのデータ分析スキルを活かし、客観的で論理的な視点からお金・仕事・心のプロセスを記録・共有しています。</p>
+          <p class="text-slate-600 leading-relaxed mb-4">「会社員の生活日記」は、<strong>投資・AI/DX・心理学</strong>の3本柱で、会社員としてのリアルな生活と学びを記録・発信するサイトです。</p>
+          <div class="space-y-3 text-slate-600 text-sm">
+            <div class="flex gap-3 items-start">
+              <span class="text-blue-500 font-bold flex-shrink-0">💹</span>
+              <p><strong>投資</strong>：高配当株・新NISA・株主優待の実践記録。証券口座のリアルな運用状況をもとに、初心者でも再現しやすい情報を発信。</p>
+            </div>
+            <div class="flex gap-3 items-start">
+              <span class="text-blue-500 font-bold flex-shrink-0">🤖</span>
+              <p><strong>AI/DX</strong>：AI/DX推進部の副部長として現場で試したツール・施策のレポート。HeyGen・Claude Code・Power Automate等の実践活用事例を紹介。</p>
+            </div>
+            <div class="flex gap-3 items-start">
+              <span class="text-blue-500 font-bold flex-shrink-0">🧠</span>
+              <p><strong>心理学</strong>：産業カウンセラー養成講座修了の知見をもとに、生きづらさ・愛着・回復をテーマとした自己開示記事。同じ経験を持つ方の参考に。</p>
+            </div>
+          </div>
         </section>
 
         <section class="mb-8">
