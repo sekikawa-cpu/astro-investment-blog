@@ -1,0 +1,226 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="運営者について"
+  description="会社員の生活日記の運営者プロフィールです。投資・AI/DX・心理学の3本柱で発信する会社員の経歴・資格・投資歴をご紹介します。"
+>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "url": "https://tech-wealth-mind.com/about/",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "ただの会社員",
+      "url": "https://tech-wealth-mind.com/about/",
+      "image": "https://tech-wealth-mind.com/images/profile.png",
+      "description": "AI/DX推進部 副部長。産業カウンセラー養成講座修了。投資・AI/DX・心理学の3本柱で発信中。",
+      "jobTitle": "AI/DX推進部 副部長",
+      "knowsAbout": ["高配当株投資", "新NISA", "AI/DX推進", "ビジネスプロセス改善", "産業カウンセリング", "心理学"]
+    }
+  })} />
+
+  <div class="about-page">
+    <article class="about-card">
+      <h1 class="about-heading">運営者について</h1>
+
+      <!-- プロフィールカード -->
+      <div class="profile-card">
+        <img src="/images/profile.png" alt="ただの会社員" class="profile-avatar" />
+        <div>
+          <p class="profile-name">ただの会社員</p>
+          <p class="profile-sub">会社員の生活日記 運営者</p>
+          <div class="profile-badges">
+            <span class="badge badge-blue">AI/DX推進部 副部長</span>
+            <span class="badge badge-green">産業カウンセラー養成講座 修了</span>
+            <span class="badge badge-amber">高配当株・新NISA実践中</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 経歴 -->
+      <section class="about-section">
+        <h2 class="section-heading">経歴</h2>
+        <p class="section-text">地方在住の40代会社員。現在は<strong>AI/DX推進部の副部長</strong>として、社内のデジタル変革・業務プロセス改善を推進しています。前職ではITエンジニアとして新人研修・人材育成に10年以上携わりました。</p>
+        <p class="section-text">2025年には<strong>産業カウンセラー養成講座（日本産業カウンセラー協会）を修了</strong>。自身の幼少期の愛着障害体験を言語化する過程で心理学への理解が深まり、職場メンタルヘルス支援にも力を入れています。投資は高配当株・新NISAを軸に実践中。妻と子の3人暮らし。サイドFIREを目指しながら日々学んでいます。</p>
+        <div class="profile-grid">
+          <div><p class="grid-label">現職</p><p>AI/DX推進部 副部長</p></div>
+          <div><p class="grid-label">前職</p><p>ITエンジニア / 新人研修講師</p></div>
+          <div><p class="grid-label">専門</p><p>DX推進・業務改善・産業カウンセリング・高配当株投資</p></div>
+          <div><p class="grid-label">16パーソナリティ</p><p>ENFP</p></div>
+          <div><p class="grid-label">得意なこと</p><p>傾聴・人に寄り添うこと</p></div>
+          <div><p class="grid-label">苦手なこと</p><p>きめ細かいスケジュール作成</p></div>
+        </div>
+      </section>
+
+      <!-- 投資歴 -->
+      <section class="about-section">
+        <h2 class="section-heading">投資歴・スタイル</h2>
+        <ul class="invest-list">
+          <li><span class="invest-icon">▶</span><span>新NISAの成長投資枠を活用した高配当株への長期投資</span></li>
+          <li><span class="invest-icon">▶</span><span>日本株（通信・金融・商社・資源）と米国ETF（SPYD・VYM）の組み合わせ</span></li>
+          <li><span class="invest-icon">▶</span><span>配当再投資による複利効果を重視した長期保有</span></li>
+          <li><span class="invest-icon">▶</span><span>株主優待と配当の「両取り」による実質利回りの最大化</span></li>
+        </ul>
+      </section>
+
+      <!-- 取得資格 -->
+      <section class="about-section">
+        <h2 class="section-heading">取得資格</h2>
+        <ul class="cert-list">
+          <li><span class="cert-check">✓</span><span>2006年5月　基本情報技術者試験</span></li>
+          <li><span class="cert-check">✓</span><span>2018年9月　RPA技術者検定エキスパート</span></li>
+          <li><span class="cert-check">✓</span><span>2021年6月　情報処理安全確保支援士</span></li>
+          <li><span class="cert-check">✓</span><span>2021年8月　情報セキュリティマネジメント試験</span></li>
+          <li><span class="cert-check">✓</span><span>2022年2月　ITパスポート試験</span></li>
+          <li><span class="cert-check">✓</span><span>2022年11月　ビジネス・キャリア検定（人事・人材開発）３級</span></li>
+          <li><span class="cert-check">✓</span><span>2022年11月　ビジネス・キャリア検定（人事・人材開発）２級</span></li>
+          <li><span class="cert-check">✓</span><span>2022年11月　ITIL® 4 Foundation</span></li>
+          <li><span class="cert-check">✓</span><span>2022年11月　メンタルヘルス・マネジメント® 検定Ⅱ種</span></li>
+          <li><span class="cert-check">✓</span><span>2023年2月　ビジネス心理検定（初級）</span></li>
+          <li><span class="cert-check">✓</span><span>2023年3月　ビジネス・キャリア検定（総務）３級</span></li>
+          <li><span class="cert-check">✓</span><span>2024年3月　ビジネス・キャリア検定（総務）２級</span></li>
+          <li><span class="cert-check">✓</span><span>2024年5月　秘書技能検定２級・３級</span></li>
+          <li><span class="cert-check">✓</span><span>2024年6月　ビジネス実務マナー技能検定２級・３級</span></li>
+          <li><span class="cert-check">✓</span><span>2024年6月　Microsoft Certified: Azure Fundamentals (AZ-900)</span></li>
+          <li><span class="cert-check">✓</span><span>2024年8月　Microsoft Certified: Azure AI Fundamentals (AI-900)</span></li>
+          <li><span class="cert-check">✓</span><span>2024年11月　ビジネス・キャリア検定（経営情報システム）２級</span></li>
+          <li><span class="cert-check">✓</span><span>2024年11月　色彩検定２級・UC級</span></li>
+          <li><span class="cert-check">✓</span><span>2024年12月　AWS Certified Cloud Practitioner (CLF-C02)</span></li>
+          <li><span class="cert-check">✓</span><span>2024年12月　Google Cloud Certified Cloud Digital Leader</span></li>
+          <li><span class="cert-check">✓</span><span>2025年3月　ビジネス・キャリア検定（労務管理）３級</span></li>
+          <li><span class="cert-check">✓</span><span>2025年4月　メンタルヘルス・マネジメント® 検定Ⅲ種</span></li>
+          <li><span class="cert-check">✓</span><span>2025年6月　Microsoft Certified: Microsoft 365 Fundamentals (MS-900)</span></li>
+          <li><span class="cert-check">✓</span><span>2025年6月　Microsoft Certified: Security, Compliance, and Identity Fundamentals (SC-900)</span></li>
+          <li><span class="cert-check">✓</span><span>2025年6月　Microsoft Certified: Power Platform Fundamentals (PL-900)</span></li>
+          <li><span class="cert-check">✓</span><span>2025年7月　Microsoft Certified: Azure Data Fundamentals (DP-900)</span></li>
+          <li><span class="cert-check">✓</span><span>2025年8月　Google Cloud Certified Associate Cloud Engineer</span></li>
+          <li><span class="cert-check">✓</span><span>2025年8月　Microsoft Certified: Dynamics 365 Fundamentals CRM/ERP (MB-910 / MB-920)</span></li>
+          <li><span class="cert-check">✓</span><span>2025年11月　ビジネス・キャリア検定（経営戦略）２級</span></li>
+          <li><span class="cert-check cert-highlight">✓</span><span class="cert-highlight-text">産業カウンセラー養成講座 修了（日本産業カウンセラー協会 / 2026年3月）</span></li>
+          <li><span class="cert-next">→</span><span>G検定（ジェネラリスト検定）受験予定（日本ディープラーニング協会 / 2026年5月）</span></li>
+        </ul>
+        <p class="cert-skills">✨ スキル保有：Python・SQL・Tableau / AI・DXツール実践 / 心理学知見を活かした対人コミュニケーション / 新NISA・高配当投資実践</p>
+      </section>
+
+      <!-- このサイトについて -->
+      <section class="about-section">
+        <h2 class="section-heading">このサイトについて</h2>
+        <p class="section-text">「会社員の生活日記」は、<strong>投資・AI/DX・心理学</strong>の3本柱で、会社員としてのリアルな生活と学びを記録・発信するサイトです。</p>
+        <div class="site-pillars">
+          <div class="pillar-item"><span class="pillar-icon">💹</span><p><strong>投資</strong>：高配当株・新NISA・株主優待の実践記録。</p></div>
+          <div class="pillar-item"><span class="pillar-icon">🤖</span><p><strong>AI/DX</strong>：AI/DX推進部の副部長として現場で試したツール・施策のレポート。</p></div>
+          <div class="pillar-item"><span class="pillar-icon">🧠</span><p><strong>心理学</strong>：産業カウンセラー養成講座修了の知見をもとに、生きづらさ・愛着・回復をテーマとした自己開示記事。</p></div>
+        </div>
+      </section>
+
+      <!-- お問い合わせ -->
+      <section class="about-section">
+        <h2 class="section-heading">お問い合わせ</h2>
+        <p class="section-text">ご質問・ご意見は<a href="/contact/" class="text-link">お問い合わせページ</a>からお気軽にどうぞ。</p>
+      </section>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+  .about-card {
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+  }
+  .about-heading {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #3b82f6;
+    margin: 0 0 2rem;
+  }
+  .profile-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #eff6ff;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .profile-avatar {
+    width: 88px;
+    height: 108px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    border: 3px solid #bfdbfe;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    flex-shrink: 0;
+  }
+  .profile-name { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem; }
+  .profile-sub { font-size: 0.82rem; color: #64748b; margin: 0 0 0.5rem; }
+  .profile-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .badge { font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-amber { background: #fef3c7; color: #b45309; }
+  .about-section { margin-bottom: 2.5rem; }
+  .section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    border-left: 4px solid #60a5fa;
+    padding-left: 0.75rem;
+    margin: 0 0 1rem;
+  }
+  .section-text {
+    color: #475569;
+    line-height: 1.75;
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+  }
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.5rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: #475569;
+    margin-top: 1rem;
+  }
+  .grid-label { font-weight: 600; color: #334155; margin: 0 0 0.1rem; }
+  .invest-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+  .invest-list li { display: flex; align-items: flex-start; gap: 0.75rem; color: #475569; font-size: 0.9rem; }
+  .invest-icon { color: #3b82f6; font-weight: 700; flex-shrink: 0; margin-top: 0.1rem; }
+  .cert-list { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .cert-list li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.85rem; color: #475569; }
+  .cert-check { color: #22c55e; font-weight: 700; flex-shrink: 0; }
+  .cert-next { color: #3b82f6; font-weight: 700; flex-shrink: 0; }
+  .cert-highlight { color: #22c55e; font-size: 1rem; }
+  .cert-highlight-text { color: #0f172a; font-weight: 600; }
+  .cert-skills {
+    font-size: 0.78rem;
+    color: #64748b;
+    background: #f8fafc;
+    border-left: 2px solid #cbd5e1;
+    padding: 0.75rem;
+    border-radius: 0 0.375rem 0.375rem 0;
+  }
+  .site-pillars { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem; }
+  .pillar-item { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.9rem; color: #475569; }
+  .pillar-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .text-link { color: #2563eb; text-decoration: underline; }
+  .text-link:hover { color: #1d4ed8; }
+  @media (max-width: 640px) {
+    .about-card { padding: 1.5rem; }
+    .profile-grid { grid-template-columns: 1fr; }
+  }
+</style>

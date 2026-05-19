@@ -131,6 +131,16 @@ const breadcrumbData = {
           )}
         </header>
 
+        {category === '生きづらさと回復' ? (
+          <div class="content-warning mx-6 md:mx-12 mt-6">
+            <div class="content-warning-header">
+              <span>📢</span>
+              <strong>コンテンツ警告</strong>
+            </div>
+            <p class="content-warning-body">※本記事には家庭内の困難な経験に関する記述が含まれます。回復プロセスを共有する目的で執筆しています。</p>
+          </div>
+        ) : null}
+
         {heroImage && (
           <div class="w-full">
             <img src={heroImage} alt={title} class="w-full h-auto object-cover" />
@@ -160,17 +170,47 @@ const breadcrumbData = {
     </main>
 
     <footer class="bg-slate-900 text-slate-400 text-center py-8 mt-auto">
+      <div class="text-xs pb-4 mb-4 border-b border-slate-700 flex items-center justify-center gap-2 flex-wrap px-4">
+        <span>⚠️</span>
+        <span>当サイトの投資情報は教育目的です。特定銘柄の購入推奨ではありません。</span>
+        <a href="/privacy/" class="text-blue-400 hover:text-blue-300">詳細</a>
+      </div>
       <p class="text-sm">&copy; 2026 会社員の生活日記. All rights reserved.</p>
-      <nav class="flex justify-center gap-6 mt-3 text-xs">
-        <a href="/profile" class="hover:text-blue-300 transition-colors">運営者プロフィール</a>
-        <a href="/contact" class="hover:text-blue-300 transition-colors">お問い合わせ</a>
-        <a href="/privacy" class="hover:text-blue-300 transition-colors">プライバシーポリシー</a>
+      <nav class="flex justify-center gap-6 mt-3 text-xs flex-wrap">
+        <a href="/about/" class="hover:text-blue-300 transition-colors">運営者について</a>
+        <a href="/contact/" class="hover:text-blue-300 transition-colors">お問い合わせ</a>
+        <a href="/privacy/" class="hover:text-blue-300 transition-colors">プライバシーポリシー</a>
       </nav>
     </footer>
   </body>
 </html>
 
 <style is:global>
+  /* ===== コンテンツ警告 ===== */
+  .content-warning {
+    padding: 1rem 1.25rem;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-left: 4px solid #22c55e;
+    border-radius: 0 0.5rem 0.5rem 0;
+    margin-bottom: 0;
+  }
+  .content-warning-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: #15803d;
+    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+  }
+  .content-warning-body {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: #166534;
+  }
+
   /* ===== 導入文 ===== */
   .markdown-content .lead-text {
     position: relative;

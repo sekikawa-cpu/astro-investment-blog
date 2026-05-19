@@ -69,13 +69,23 @@ const breadcrumbData = {
         </div>
       </header>
 
-      <div class="disclaimer disclaimer-prominent">
-        <div class="disclaimer-header">
-          <span class="disclaimer-icon">⚠️</span>
-          <strong>投資に関する免責事項</strong>
+      {category === '生きづらさと回復' ? (
+        <div class="content-warning">
+          <div class="content-warning-header">
+            <span>📢</span>
+            <strong>コンテンツ警告</strong>
+          </div>
+          <p class="content-warning-body">※本記事には家庭内の困難な経験に関する記述が含まれます。回復プロセスを共有する目的で執筆しています。</p>
         </div>
-        <p class="disclaimer-content">本記事は情報提供・教育目的です。<strong>特定銘柄の購入推奨ではありません。</strong>投資判断は必ずご自身の責任で行ってください。</p>
-      </div>
+      ) : (
+        <div class="disclaimer disclaimer-prominent">
+          <div class="disclaimer-header">
+            <span class="disclaimer-icon">⚠️</span>
+            <strong>投資に関する免責事項</strong>
+          </div>
+          <p class="disclaimer-content">本記事は情報提供・教育目的です。<strong>特定銘柄の購入推奨ではありません。</strong>投資判断は必ずご自身の責任で行ってください。</p>
+        </div>
+      )}
 
       {heroImage && (
         <div class="article-hero">
@@ -202,6 +212,29 @@ const breadcrumbData = {
   }
   .disclaimer-link:hover {
     color: #78350f;
+  }
+  .content-warning {
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-left: 4px solid #22c55e;
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+  .content-warning-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: #15803d;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+  }
+  .content-warning-body {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #166534;
   }
   .back-link {
     margin-top: 3rem;
