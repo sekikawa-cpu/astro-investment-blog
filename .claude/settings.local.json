@@ -81,7 +81,8 @@
       "Bash(node_modules/.bin/astro build *)",
       "Bash(ln -sf /c/Apps/astro-investment-blog/node_modules node_modules)",
       "Bash(git rm *)",
-      "PowerShell(Get-Command gh -ErrorAction SilentlyContinue; \\(Get-ChildItem \"C:\\\\Program Files\\\\GitHub CLI\\\\\" -ErrorAction SilentlyContinue | Select-Object -First 3\\))"
+      "PowerShell(Get-Command gh -ErrorAction SilentlyContinue; \\(Get-ChildItem \"C:\\\\Program Files\\\\GitHub CLI\\\\\" -ErrorAction SilentlyContinue | Select-Object -First 3\\))",
+      "Bash(node node_modules/astro/astro.js build)"
     ]
   }
 }
