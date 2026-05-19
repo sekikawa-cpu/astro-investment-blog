@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
-const { title, pubDate, description, tags = [], author, category, noindex = false, heroImage } = entry.data;
+const { title, pubDate, description, tags = [], author, category, pillar, noindex = false, heroImage } = entry.data;
 
 const fullUrl = `https://tech-wealth-mind.com/blog/${entry.slug}/`;
 const ogImageUrl = heroImage
@@ -161,6 +161,26 @@ const breadcrumbData = {
           </div>
         )}
 
+        {pillar === '投資' && (
+          <div class="article-disclaimer article-disclaimer--invest px-6 md:px-12 pb-6">
+            <div class="article-disclaimer__header">
+              <span>⚠️</span>
+              <strong>投資に関する免責事項</strong>
+            </div>
+            <p>本記事は筆者個人の投資記録であり、特定銘柄の売買を推奨するものではありません。掲載情報は執筆時点のものであり、最新情報は各自でご確認ください。投資判断はご自身の責任で行ってください。</p>
+          </div>
+        )}
+
+        {pillar === '心理学' && (
+          <div class="article-disclaimer article-disclaimer--health px-6 md:px-12 pb-6">
+            <div class="article-disclaimer__header">
+              <span>🩺</span>
+              <strong>医療・専門家への相談について</strong>
+            </div>
+            <p>本記事は筆者個人の学習記録および体験をもとにした情報提供を目的としています。医療行為や治療の代替となるものではありません。心理的な課題や体調不良については、医師・臨床心理士・カウンセラーなど専門家へのご相談をお勧めします。</p>
+          </div>
+        )}
+
         <div class="px-6 md:px-12 pb-10 pt-6 border-t border-slate-100">
           <a href="/" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">
             ← 記事一覧に戻る
@@ -186,6 +206,36 @@ const breadcrumbData = {
 </html>
 
 <style is:global>
+  /* ===== 記事末尾免責ブロック ===== */
+  .article-disclaimer {
+    margin: 0 0 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-size: 0.84rem;
+    line-height: 1.75;
+  }
+  .article-disclaimer__header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 0.88rem;
+  }
+  .article-disclaimer p { margin: 0; }
+  .article-disclaimer--invest {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    color: #78350f;
+  }
+  .article-disclaimer--invest .article-disclaimer__header { color: #b45309; }
+  .article-disclaimer--health {
+    background: #f0f9ff;
+    border-left: 4px solid #38bdf8;
+    color: #0c4a6e;
+  }
+  .article-disclaimer--health .article-disclaimer__header { color: #0369a1; }
+
   /* ===== コンテンツ警告 ===== */
   .content-warning {
     padding: 1rem 1.25rem;
