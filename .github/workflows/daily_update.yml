@@ -3,11 +3,9 @@ name: Daily Market Summary
 # 毎日 日本時間 17:00(JST)= UTC 08:00 に実行
 # 手動実行(workflow_dispatch)も可能にしておく
 on:
-  schedule:
-    # cron は UTC で指定する必要がある: JST 17:00 = UTC 08:00
-    # 日本時間 16:47 と 17:02 に実行（混雑時間を避ける）
-    - cron: '47 7 * * *'  # 毎日 UTC 07:47 (JST 16:47)
-    - cron: '2 8 * * *'   # 毎日 UTC 08:02 (JST 17:02) ← フォールバック
+  # schedule:  # 自動実行を一時停止中
+  #   - cron: '47 7 * * *'  # 毎日 UTC 07:47 (JST 16:47)
+  #   - cron: '2 8 * * *'   # 毎日 UTC 08:02 (JST 17:02) ← フォールバック
   workflow_dispatch:
     inputs:
       force_commit:
