@@ -327,13 +327,6 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
-"2026-05-19.md": {
-	id: "2026-05-19.md";
-  slug: "2026-05-19";
-  body: string;
-  collection: "blog";
-  data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
 "book-review-business-process-dx-guide.mdx": {
 	id: "book-review-business-process-dx-guide.mdx";
   slug: "book-review-business-process-dx-guide";
