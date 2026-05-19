@@ -1,0 +1,49 @@
+:root {
+  --color-primary-900: #0f172a;
+  --color-primary-800: #1e293b;
+  --color-primary-700: #334155;
+  --color-primary-500: #64748b;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-bg-soft: #f8fafc;
+  --radius: 0.375rem;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.container-narrow {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Prose styles for article content */
+.prose h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 0.75rem; color: var(--color-primary-900); border-bottom: 1px solid var(--color-border); padding-bottom: 0.4rem; }
+.prose h3 { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: var(--color-primary-800); }
+.prose p { margin: 0 0 1.2rem; line-height: 1.85; color: #374151; }
+.prose ul, .prose ol { margin: 0 0 1.2rem 1.5rem; line-height: 1.8; color: #374151; }
+.prose li { margin-bottom: 0.3rem; }
+.prose blockquote { border-left: 4px solid var(--color-border); padding: 0.5rem 1rem; margin: 1.5rem 0; color: var(--color-muted); font-style: italic; background: var(--color-bg-soft); }
+.prose a { color: #2563eb; text-decoration: underline; }
+.prose a:hover { color: #1d4ed8; }
+.prose table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+.prose th { background: #f1f5f9; font-weight: 700; padding: 0.6rem 0.75rem; border: 1px solid var(--color-border); text-align: left; }
+.prose td { padding: 0.6rem 0.75rem; border: 1px solid var(--color-border); }
+.prose tr:nth-child(even) td { background: #f8fafc; }
+.prose code { background: #f1f5f9; padding: 0.1em 0.35em; border-radius: 0.25rem; font-size: 0.87em; }
+.prose pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: var(--radius); overflow-x: auto; margin: 1.5rem 0; }
+.prose pre code { background: none; padding: 0; font-size: 0.85rem; }
+
+/* Badge shared */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #dbeafe;
+  color: #1d4ed8;
+}

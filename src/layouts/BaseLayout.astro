@@ -24,9 +24,9 @@ const normalizedPath = rawPath === '/' ? '/' : (rawPath.endsWith('/') ? rawPath 
 const canonicalURL = new URL(normalizedPath, Astro.site);
 
 const navItems = [
-  { name: '運営者プロフィール', href: '/profile' },
-  { name: 'お問い合わせ', href: '/contact' },
-  { name: 'プライバシーポリシー', href: '/privacy' },
+  { name: '運営者について', href: '/about/' },
+  { name: 'お問い合わせ', href: '/contact/' },
+  { name: 'プライバシーポリシー', href: '/privacy/' },
 ];
 ---
 <!doctype html>

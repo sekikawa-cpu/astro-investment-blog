@@ -4,3 +4,8 @@
 /privacy     /privacy/     301
 /profile     /profile/     301
 /search      /search/      301
+/about       /about/       301
+
+# /privacy-policy/ → /privacy/ へリダイレクト
+/privacy-policy   /privacy/  301
+/privacy-policy/  /privacy/  301

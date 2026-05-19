@@ -72,7 +72,15 @@
       "Bash(curl -sL https://tech-wealth-mind.com)",
       "Bash(PUBLIC_GOOGLE_ANALYTICS_ID=G-2F8G5290KT npm run build)",
       "Bash(gh pr create --title 'fix: Google インデックス登録エラーを修正' --body ' *)",
-      "PowerShell(choco install gh -y)"
+      "PowerShell(choco install gh -y)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Apps\\\\astro-investment-blog\\\\.claude\\\\worktrees\\\\ecstatic-bartik-3e5765\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(xargs ls -la)",
+      "Bash(npx astro *)",
+      "Bash(node_modules\\\\.bin\\\\astro build *)",
+      "Bash(node_modules/.bin/astro build *)",
+      "Bash(ln -sf /c/Apps/astro-investment-blog/node_modules node_modules)",
+      "Bash(git rm *)"
     ]
   }
 }
