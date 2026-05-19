@@ -9,7 +9,7 @@
 - テーマに基づいて books_data.json から最適な3冊を選書
 - 書影は public/images/books/{ISBN13}.jpg を使用
 - Amazon アフィリエイトリンク: https://www.amazon.co.jp/dp/{ASIN}?tag=investinsight-22
-- frontmatter + 本文を src/content/blog/{YYYY-MM-DD}.md に書き出し
+- frontmatter + 本文を src/content/blog/{YYYY-MM-DD}.mdx に書き出し
 """
 import json
 import os
@@ -1691,7 +1691,7 @@ def main() -> int:
     try:
         books = load_books()
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        out_path = OUTPUT_DIR / f"{report_date}.md"
+        out_path = OUTPUT_DIR / f"{report_date}.mdx"
 
         if weekday in (5, 6):
             # ── 土日：SEOキーワード特化記事を生成 ──────────────────
@@ -1704,7 +1704,7 @@ def main() -> int:
 
             md, article_slug = generate_column(topic, books, report_date, day_label)
             # スラッグをファイル名に使用（URLになる）
-            out_path = OUTPUT_DIR / f"{article_slug}.md"
+            out_path = OUTPUT_DIR / f"{article_slug}.mdx"
             # 既存ファイルがある場合はスキップ（同じ記事の重複生成防止）
             if out_path.exists():
                 print(f"[info] Skip: {out_path} already exists", file=sys.stderr)
@@ -1734,7 +1734,7 @@ def main() -> int:
             kw_topic = get_weekday_keyword_topic(report_date)
             print(f"[info] Keyword article: {kw_topic['title']}", file=sys.stderr)
             kw_md, kw_slug = generate_column(kw_topic, books, report_date, "キーワード解説")
-            kw_path = OUTPUT_DIR / f"{kw_slug}.md"
+            kw_path = OUTPUT_DIR / f"{kw_slug}.mdx"
             if kw_path.exists():
                 print(f"[info] Skip keyword article: {kw_path} already exists", file=sys.stderr)
             else:
