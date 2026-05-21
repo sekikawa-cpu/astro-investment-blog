@@ -7,13 +7,20 @@ export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
   return blogEntries.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props: { entry, allEntries: blogEntries },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, allEntries } = Astro.props;
 const { Content } = await entry.render();
 const { title, pubDate, description, tags = [], author, category, pillar, noindex = false, heroImage } = entry.data;
+
+const pillarEmoji = pillar === '投資' ? '📊' : pillar === 'ビジネス・AI・DX' ? '💼' : pillar === '心理学' ? '🧠' : '';
+
+const relatedPosts = allEntries
+  .filter(e => e.data.category === category && e.slug !== entry.slug && !e.data.draft)
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 3);
 
 const fullUrl = `https://tech-wealth-mind.com/blog/${entry.slug}/`;
 const ogImageUrl = heroImage
@@ -47,8 +54,9 @@ const breadcrumbData = {
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tech-wealth-mind.com/" },
-    { "@type": "ListItem", "position": 2, "name": category || "記事", "item": `https://tech-wealth-mind.com/search?q=${encodeURIComponent(category || '')}` },
-    { "@type": "ListItem", "position": 3, "name": title, "item": fullUrl }
+    { "@type": "ListItem", "position": 2, "name": pillar || "記事", "item": `https://tech-wealth-mind.com/search?q=${encodeURIComponent(pillar || '')}` },
+    { "@type": "ListItem", "position": 3, "name": category || "記事", "item": `https://tech-wealth-mind.com/search?q=${encodeURIComponent(category || '')}` },
+    { "@type": "ListItem", "position": 4, "name": title, "item": fullUrl }
   ]
 };
 ---
@@ -109,6 +117,34 @@ const breadcrumbData = {
     </header>
 
     <main class="flex-grow max-w-5xl mx-auto px-4 py-10 w-full">
+      <nav aria-label="パンくずリスト" class="mb-4">
+        <ol class="flex flex-wrap items-center gap-1 text-xs text-slate-500">
+          <li><a href="/" class="hover:text-blue-600 transition-colors">ホーム</a></li>
+          {pillar && (
+            <>
+              <li class="text-slate-300" aria-hidden="true">›</li>
+              <li>
+                <a href={`/search?q=${encodeURIComponent(pillar)}`} class="hover:text-blue-600 transition-colors">
+                  {pillarEmoji} {pillar}
+                </a>
+              </li>
+            </>
+          )}
+          {category && (
+            <>
+              <li class="text-slate-300" aria-hidden="true">›</li>
+              <li>
+                <a href={`/search?q=${encodeURIComponent(category)}`} class="hover:text-blue-600 transition-colors">
+                  {category}
+                </a>
+              </li>
+            </>
+          )}
+          <li class="text-slate-300" aria-hidden="true">›</li>
+          <li class="text-slate-700 font-medium line-clamp-1 max-w-[200px] md:max-w-xs" aria-current="page">{title}</li>
+        </ol>
+      </nav>
+
       <article class="bg-white shadow-sm rounded-lg overflow-hidden">
         <header class="px-6 md:px-12 pt-10 pb-8 border-b border-slate-100">
           <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -158,6 +194,44 @@ const breadcrumbData = {
                 #{tag}
               </span>
             ))}
+          </div>
+        )}
+
+        {relatedPosts.length > 0 && (
+          <div class="px-6 md:px-12 py-8 border-t border-slate-100">
+            <h2 class="text-sm font-bold text-slate-600 mb-4 flex items-center gap-1">
+              <span>📌</span> あわせて読みたい
+            </h2>
+            <ul class="flex flex-col gap-2">
+              {relatedPosts.map(post => (
+                <li>
+                  <a
+                    href={`/blog/${post.slug}/`}
+                    class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:border-blue-200 hover:bg-slate-50 transition-colors group"
+                  >
+                    {post.data.heroImage ? (
+                      <img
+                        src={post.data.heroImage}
+                        alt={post.data.title}
+                        class="w-14 h-10 object-cover rounded flex-shrink-0"
+                      />
+                    ) : (
+                      <div class="w-14 h-10 bg-slate-100 rounded flex-shrink-0 flex items-center justify-center text-slate-400 text-xs">
+                        📄
+                      </div>
+                    )}
+                    <div class="min-w-0">
+                      <span class="text-xs text-slate-400 block mb-0.5">
+                        {new Date(post.data.pubDate).toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </span>
+                      <span class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2">
+                        {post.data.title}
+                      </span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
