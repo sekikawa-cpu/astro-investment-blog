@@ -5,9 +5,10 @@ const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEF
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
-  return blogEntries.map((entry) => ({
+  const publishedEntries = blogEntries.filter(e => !e.data.draft);
+  return publishedEntries.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry, allEntries: blogEntries },
+    props: { entry, allEntries: publishedEntries },
   }));
 }
 
