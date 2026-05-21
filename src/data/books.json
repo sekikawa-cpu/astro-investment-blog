@@ -277,5 +277,14 @@
     "rakutenUrl": "https://product.rakuten.co.jp/product/-/766105fe8dd9009c80c5ccb8d843ce8d/",
     "imageUrl": "https://m.media-amazon.com/images/P/4798171182.01.L.jpg",
     "status": "implemented"
+  },
+  {
+    "id": "llm-hallucination-basics-strategies",
+    "title": "LLMとハルシネーション: 基礎と対策",
+    "author": "橘 秀幸, 稲原宗能, 高崎 環, 福地成彦",
+    "amazonUrl": "https://www.amazon.co.jp/dp/4274233618/?tag=investinsight-22",
+    "rakutenUrl": "https://item.rakuten.co.jp/book/18237683/",
+    "imageUrl": "https://m.media-amazon.com/images/P/4274233618.01.L.jpg",
+    "status": "implemented"
   }
 ]
