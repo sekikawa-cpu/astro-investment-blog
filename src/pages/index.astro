@@ -44,7 +44,7 @@ const PILLAR_BG: Record<string, string> = {
 // 3本柱のカテゴリー定義
 const PILLAR_CATEGORIES: Record<string, string[]> = {
   '投資':   ['マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説', 'コラム'],
-  'ビジネス・AI・DX': ['AI最新情報', 'DX・業務改善', '資格・学習', '書籍レビュー'],
+  'ビジネス・AI・DX': ['AI最新情報', 'AIツール', 'DX・業務改善', '資格・学習', '書籍レビュー'],
   '心理学': ['心理学・メンタル', '生きづらさと回復', 'ボランティア'],
 };
 const PILLAR_ICONS: Record<string, string> = {
@@ -56,6 +56,11 @@ const PILLAR_COLORS: Record<string, string> = {
   '投資':   'text-blue-600',
   'ビジネス・AI・DX': 'text-purple-600',
   '心理学': 'text-teal-600',
+};
+const PILLAR_SLUGS: Record<string, string> = {
+  '投資': 'toshi',
+  'ビジネス・AI・DX': 'business-ai-dx',
+  '心理学': 'shinrigaku',
 };
 
 // カード透かしSVG生成関数（Astroのビルド時にサーバー側で実行されます）
@@ -86,7 +91,7 @@ function getWatermarkSvg(category: string, title: string) {
     <title>会社員の生活日記 | 投資・AI/DX・心理学を綴るブログ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="A8tOtO8MGTE81uwVZVGSbnvRT2F583xupmBPJzmTgKc" />
-    <meta name="description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。愛着障害・発達障害からの回復体験も発信中。">
+    <meta name="description" content="投資・AI/DX・心理学。地方在住の中年会社員が、お金・仕事・心のリアルな記録を綴ります。メンタルヘルスや生きづらさに関する記事も発信中。">
     <link rel="canonical" href="https://tech-wealth-mind.com/">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website">
@@ -278,7 +283,7 @@ function getWatermarkSvg(category: string, title: string) {
         const total = cats.reduce((s, c) => s + (categoryCount[c] || 0), 0);
         return (
           <>
-            <a href={`/search?q=${encodeURIComponent(pillar)}`}
+            <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
               class={`flex items-center justify-between px-5 py-2.5 bg-slate-50 font-bold text-sm ${PILLAR_TEXT[pillar]}`}>
               <span>{PILLAR_ICONS[pillar]} {pillar}</span>
               {total > 0 && <span class="cat-badge">{total}</span>}
@@ -365,18 +370,18 @@ function getWatermarkSvg(category: string, title: string) {
             <p class="text-slate-400 text-xs mt-1 leading-relaxed">40代会社員が、投資・AI/DX・心理学の学びを実体験ベースで記録するブログです。新NISAや高配当株、生成AI活用、メンタルヘルスの学びを、初心者にもわかりやすく整理しています。</p>
           </div>
           <div class="flex gap-2">
-            <a href={`/search?q=${encodeURIComponent('投資')}`}
+            <a href="/category/toshi/"
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center min-w-0 flex-1 sm:flex-none">
               <span class="text-xl leading-none">📊</span>
               <span class="text-xs font-bold mt-1">投資</span>
             </a>
-            <a href={`/search?q=${encodeURIComponent('ビジネス・AI・DX')}`}
+            <a href="/category/business-ai-dx/"
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center min-w-0 flex-1 sm:flex-none">
               <span class="text-xl leading-none">🤖</span>
               <span class="text-xs font-bold mt-1 hidden sm:block">ビジネス・AI・DX</span>
               <span class="text-xs font-bold mt-1 sm:hidden">AI・DX</span>
             </a>
-            <a href={`/search?q=${encodeURIComponent('心理学')}`}
+            <a href="/category/shinrigaku/"
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center min-w-0 flex-1 sm:flex-none">
               <span class="text-xl leading-none">🧠</span>
               <span class="text-xs font-bold mt-1">心理学</span>
@@ -414,7 +419,7 @@ function getWatermarkSvg(category: string, title: string) {
                     <span>{PILLAR_ICONS[pillar]}</span>
                     <span class={PILLAR_TEXT[pillar]}>{pillar}</span>
                   </span>
-                  <a href={`/search?q=${encodeURIComponent(pillar)}`}
+                  <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
                     class={`text-xs font-normal ${PILLAR_TEXT[pillar]} hover:underline`}>
                     すべて見る ({pillarPosts.length}件) →
                   </a>
@@ -527,7 +532,7 @@ function getWatermarkSvg(category: string, title: string) {
                 const total = cats.reduce((s, c) => s + (categoryCount[c] || 0), 0);
                 return (
                   <>
-                    <a href={`/search?q=${encodeURIComponent(pillar)}`}
+                    <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
                       class={`flex items-center justify-between px-3 py-2 hover:bg-slate-50 font-bold text-sm ${PILLAR_TEXT[pillar]}`}>
                       <span>{PILLAR_ICONS[pillar]} {pillar}</span>
                       {total > 0 && <span class="cat-badge">{total}</span>}
