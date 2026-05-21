@@ -35,6 +35,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span class="badge badge-green">産業カウンセラー養成講座 修了</span>
             <span class="badge badge-amber">高配当株・新NISA実践中</span>
           </div>
+          <a href="https://x.com/TechWealthMind" target="_blank" rel="noopener noreferrer" class="x-link">
+            <svg class="x-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            @TechWealthMind
+          </a>
         </div>
       </div>
 
@@ -46,7 +50,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="profile-grid">
           <div><p class="grid-label">現職</p><p>AI/DX推進部 副部長</p></div>
           <div><p class="grid-label">前職</p><p>ITエンジニア / 新人研修講師</p></div>
-          <div><p class="grid-label">専門</p><p>DX推進・業務改善・産業カウンセリング・高配当株投資</p></div>
+          <div><p class="grid-label">専門</p><p>DX推進・業務改善・メンタルケア・高配当株投資</p></div>
           <div><p class="grid-label">16パーソナリティ</p><p>ENFP</p></div>
           <div><p class="grid-label">得意なこと</p><p>傾聴・人に寄り添うこと</p></div>
           <div><p class="grid-label">苦手なこと</p><p>きめ細かいスケジュール作成</p></div>
@@ -58,7 +62,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2 class="section-heading">投資歴・スタイル</h2>
         <ul class="invest-list">
           <li><span class="invest-icon">▶</span><span>新NISAの成長投資枠を活用した高配当株への長期投資</span></li>
-          <li><span class="invest-icon">▶</span><span>日本株（通信・金融・商社・資源）と米国ETF（SPYD・VYM）の組み合わせ</span></li>
+          <li><span class="invest-icon">▶</span><span>日本株（通信・金融・商社・資源）と国内ETF（NF日経高配当50など）の組み合わせ</span></li>
           <li><span class="invest-icon">▶</span><span>配当再投資による複利効果を重視した長期保有</span></li>
           <li><span class="invest-icon">▶</span><span>株主優待と配当の「両取り」による実質利回りの最大化</span></li>
         </ul>
@@ -219,6 +223,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .pillar-icon { font-size: 1.1rem; flex-shrink: 0; }
   .text-link { color: #2563eb; text-decoration: underline; }
   .text-link:hover { color: #1d4ed8; }
+  .x-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.6rem;
+    padding: 0.3rem 0.75rem;
+    background: #000;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .x-link:hover { background: #1a1a1a; }
+  .x-icon { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
   @media (max-width: 640px) {
     .about-card { padding: 1.5rem; }
     .profile-grid { grid-template-columns: 1fr; }
