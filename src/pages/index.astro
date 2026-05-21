@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-2F8G5290KT';
 
 const allPosts = await getCollection('blog');
-const posts = allPosts.filter(p => !p.data.noindex);
+const posts = allPosts.filter(p => !p.data.draft && !p.data.noindex);
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
 // カテゴリー別記事数
