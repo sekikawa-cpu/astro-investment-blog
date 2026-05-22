@@ -1,0 +1,83 @@
+---
+interface Props {
+  src: string;
+  title: string;
+  caption?: string;
+}
+const { src, title, caption } = Astro.props;
+---
+
+<figure class="music-player">
+  <div class="music-video-wrapper">
+    <video controls preload="metadata" class="music-video">
+      <source src={src} type="video/mp4" />
+      お使いのブラウザは動画の再生に対応していません。
+    </video>
+  </div>
+  <figcaption class="music-caption">
+    <span class="music-icon">🎵</span>
+    <span class="music-title">{title}</span>
+    {caption && <span class="music-desc">{caption}</span>}
+  </figcaption>
+</figure>
+
+<style>
+.music-player {
+  margin: 2rem 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.music-video-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.music-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.2rem;
+  flex-wrap: wrap;
+}
+
+.music-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.music-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  letter-spacing: 0.02em;
+}
+
+.music-desc {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-left: 0.25rem;
+}
+
+@media (max-width: 600px) {
+  .music-caption {
+    padding: 0.7rem 1rem;
+  }
+  .music-title {
+    font-size: 0.88rem;
+  }
+}
+</style>
