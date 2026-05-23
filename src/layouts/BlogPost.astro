@@ -140,7 +140,7 @@ const breadcrumbData = {
       <div class="back-link">
         <a id="article-back-btn" href="/search"
            class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
-          ← 記事一覧に戻る
+          📰 記事一覧に戻る
         </a>
       </div>
     </div>
@@ -277,15 +277,19 @@ const breadcrumbData = {
     if (!btn) return;
     const ref = document.referrer;
     const origin = location.origin;
-    if (ref && ref.startsWith(origin)) {
-      const refPath = ref.slice(origin.length).split('?')[0];
-      if (refPath.startsWith('/search') || refPath.startsWith('/category/')) {
-        btn.textContent = '← 記事一覧に戻る';
-        (btn as HTMLAnchorElement).href = ref;
-      } else if (refPath === '/' || refPath === '') {
-        btn.textContent = '← トップに戻る';
+    const refPath = (ref && ref.startsWith(origin))
+      ? ref.slice(origin.length).split('?')[0]
+      : '';
+    if (refPath === '/' || refPath === '') {
+      // トップページ経由 or 直接アクセス
+      if (refPath === '/') {
+        btn.textContent = '🏠 トップページに戻る';
         (btn as HTMLAnchorElement).href = '/';
       }
+      // 直接アクセス（refPath===''）はデフォルトの「📰 記事一覧に戻る」のまま
+    } else {
+      btn.textContent = '📰 記事一覧に戻る';
+      (btn as HTMLAnchorElement).href = ref;
     }
   })();
 </script>
