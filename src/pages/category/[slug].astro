@@ -7,6 +7,7 @@ export async function getStaticPaths() {
     { params: { slug: 'toshi' } },
     { params: { slug: 'business-ai-dx' } },
     { params: { slug: 'shinrigaku' } },
+    { params: { slug: 'keyword-kaisetsu' } },
   ];
 }
 
@@ -17,6 +18,7 @@ const PILLAR_MAP: Record<string, {
   badgeClass: string;
   borderClass: string;
   textClass: string;
+  filterByCategory?: string;
 }> = {
   'toshi': {
     label: '投資',
@@ -42,6 +44,15 @@ const PILLAR_MAP: Record<string, {
     borderClass: 'border-teal-500',
     textClass: 'text-teal-600',
   },
+  'keyword-kaisetsu': {
+    label: 'キーワード解説',
+    icon: '📖',
+    description: '投資・資産運用・NISA・ETFなど、知っておきたい金融・経済キーワードをわかりやすく解説します。',
+    badgeClass: 'bg-orange-100 text-orange-700',
+    borderClass: 'border-orange-500',
+    textClass: 'text-orange-600',
+    filterByCategory: 'キーワード解説',
+  },
 };
 
 const { slug } = Astro.params;
@@ -49,7 +60,11 @@ const pillarInfo = PILLAR_MAP[slug as string]!;
 
 const allPosts = await getCollection('blog');
 const posts = allPosts
-  .filter(p => !p.data.draft && !p.data.noindex && (p.data.pillar ?? '投資') === pillarInfo.label)
+  .filter(p => {
+    if (p.data.draft || p.data.noindex) return false;
+    if (pillarInfo.filterByCategory) return p.data.category === pillarInfo.filterByCategory;
+    return (p.data.pillar ?? '投資') === pillarInfo.label;
+  })
   .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 ---
 <BaseLayout
