@@ -154,8 +154,8 @@ const pageLinks = [
 
       .site-header {
         height: var(--header-height);
-        background: #ffffff;
-        border-bottom: 1px solid #e2e8f0;
+        background: #0f172a;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -177,11 +177,13 @@ const pageLinks = [
         text-decoration: none;
         font-size: 1.1rem;
         font-weight: 800;
-        color: var(--primary-blue);
+        color: #ffffff;
         white-space: nowrap;
         flex-shrink: 0;
+        transition: color 0.15s;
       }
-      .logo-dot { color: var(--accent-blue); }
+      .logo:hover { color: #93c5fd; }
+      .logo-dot { color: #60a5fa; }
 
       /* デスクトップ カテゴリナビ */
       .cat-nav {
@@ -199,16 +201,17 @@ const pageLinks = [
         text-decoration: none;
         font-size: 0.82rem;
         font-weight: 600;
-        color: #2d3748;
+        color: rgba(255,255,255,0.8);
         white-space: nowrap;
         transition: background 0.15s, color 0.15s;
       }
-      .cat-nav-link:hover { background: #ebf8ff; color: var(--accent-blue); }
+      .cat-nav-link:hover { background: rgba(255,255,255,0.12); color: #ffffff; }
       .cat-nav-link--highlight {
-        background: #ebf8ff;
-        color: var(--accent-blue);
-        border: 1px solid #bfdbfe;
+        background: #3b82f6;
+        color: #ffffff;
+        border: none;
       }
+      .cat-nav-link--highlight:hover { background: #2563eb; color: #ffffff; }
 
       .menu-wrapper {
         position: relative;
@@ -230,29 +233,29 @@ const pageLinks = [
         padding: 0.3rem 0.5rem;
         text-decoration: none;
         font-size: 0.78rem;
-        color: #4a5568;
+        color: rgba(255,255,255,0.65);
         font-weight: 500;
         border-radius: 4px;
         white-space: nowrap;
         transition: color 0.15s, background 0.15s;
       }
-      .page-link:hover { color: var(--accent-blue); background: #f7fafc; }
+      .page-link:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
 
       /* モバイル ハンバーガー */
       .menu-button {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
         border-radius: 6px;
         padding: 8px;
         cursor: pointer;
-        color: var(--primary-blue);
+        color: #ffffff;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: background 0.2s;
       }
       @media (min-width: 900px) { .menu-button { display: none; } }
-      .menu-button:hover { background: #edf2f7; }
+      .menu-button:hover { background: rgba(255,255,255,0.2); }
 
       .hidden { display: none; }
 
