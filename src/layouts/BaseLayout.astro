@@ -341,7 +341,7 @@ const pageLinks = [
       document.addEventListener('astro:page-load', setupMenu);
     </script>
 
-    <script>
+    <script is:inline>
       // 文脈ナビバー：前ページに応じてボタンを表示
       (function() {
         const nav = document.getElementById('ctx-nav');
