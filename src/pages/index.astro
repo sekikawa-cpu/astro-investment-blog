@@ -303,6 +303,7 @@ function getWatermarkSvg(category: string, title: string) {
 
       <!-- サイト情報 -->
       <div class="px-5 py-3 mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50">このサイトについて</div>
+      <a href="/for-beginners/" class="drawer-cat-item font-bold text-blue-600">✨ 初めての方へ</a>
       <a href="/about/" class="drawer-cat-item">○ 運営者について</a>
       <a href="/privacy/" class="drawer-cat-item">○ プライバシーポリシー</a>
       <a href="/contact/" class="drawer-cat-item">○ お問い合わせ</a>
@@ -316,8 +317,16 @@ function getWatermarkSvg(category: string, title: string) {
           会社員の生活日記
         </a>
 
+        <!-- デスクトップ：カテゴリナビ -->
+        <nav class="hidden lg:flex items-center gap-1 ml-2">
+          <a href="/category/toshi/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">📊 投資</a>
+          <a href="/category/business-ai-dx/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🤖 AI/DX</a>
+          <a href="/category/shinrigaku/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🧠 心理学</a>
+          <a href="/for-beginners/" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-2.5 py-1.5 rounded transition-colors whitespace-nowrap">初めての方へ</a>
+        </nav>
+
         <!-- デスクトップ検索 -->
-        <form onsubmit="doSearch(event)" class="hidden md:flex flex-1 max-w-md gap-0 mx-4">
+        <form onsubmit="doSearch(event)" class="hidden md:flex flex-1 max-w-sm gap-0 mx-3">
           <input id="headerSearchInput" type="text" placeholder="記事を検索..."
             class="search-input flex-1 bg-white text-slate-900 placeholder-slate-400 border-0 rounded-l-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
           <button type="submit"
@@ -368,6 +377,10 @@ function getWatermarkSvg(category: string, title: string) {
           <div class="min-w-0">
             <h1 class="text-base md:text-lg font-extrabold leading-tight">会社員の生活日記</h1>
             <p class="text-slate-400 text-xs mt-1 leading-relaxed">40代会社員が、投資・AI/DX・心理学の学びを実体験ベースで記録するブログです。新NISAや高配当株、生成AI活用、メンタルヘルスの学びを、初心者にもわかりやすく整理しています。</p>
+            <a href="/for-beginners/"
+              class="inline-block mt-2 bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-colors">
+              ✨ 初めての方はこちら →
+            </a>
           </div>
           <div class="flex gap-2">
             <a href="/category/toshi/"
@@ -400,6 +413,56 @@ function getWatermarkSvg(category: string, title: string) {
               当サイトの投資関連情報は教育・情報提供目的です。特定銘柄の購入推奨ではありません。投資判断は必ずご自身の責任で行い、詳細は<a href="/privacy" class="font-bold hover:underline">プライバシーポリシー</a>をご確認ください。
             </p>
           </div>
+        </div>
+      </div>
+
+      <!-- まず読んでほしい記事 -->
+      <div class="mb-8 bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-3 flex items-center gap-2">
+          <span class="text-white text-lg">⭐</span>
+          <h2 class="text-white font-bold text-sm md:text-base">まず読んでほしい記事</h2>
+          <span class="text-blue-200 text-xs ml-auto">運営者イチオシの実体験記事</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+          {[
+            {
+              slug: 'hallucination-ai-lesson',
+              pillar: 'ビジネス・AI・DX',
+              icon: '🤖',
+              color: 'text-purple-600',
+              badge: 'bg-purple-100 text-purple-700',
+            },
+            {
+              slug: '2026-05-17-ion-owners-card',
+              pillar: '投資',
+              icon: '📊',
+              color: 'text-blue-600',
+              badge: 'bg-blue-100 text-blue-700',
+            },
+            {
+              slug: 'mental-health-management-2shu-goukaku',
+              pillar: '心理学',
+              icon: '🧠',
+              color: 'text-teal-600',
+              badge: 'bg-teal-100 text-teal-700',
+            },
+          ].map(({ slug, pillar, icon, color, badge }) => {
+            const post = posts.find(p => p.slug === slug);
+            if (!post) return null;
+            return (
+              <a href={`/blog/${slug}/`}
+                class="flex flex-col gap-1.5 px-5 py-4 hover:bg-slate-50 transition-colors group">
+                <span class={`text-xs font-bold px-2 py-0.5 rounded-full self-start ${badge}`}>
+                  {icon} {pillar}
+                </span>
+                <p class={`text-sm font-bold text-slate-900 group-hover:${color} transition-colors leading-snug line-clamp-2`}>
+                  {post.data.title}
+                </p>
+                <p class="text-xs text-slate-500 line-clamp-2">{post.data.description}</p>
+                <span class={`text-xs font-semibold ${color} mt-auto`}>記事を読む →</span>
+              </a>
+            );
+          })}
         </div>
       </div>
 
@@ -556,18 +619,39 @@ function getWatermarkSvg(category: string, title: string) {
       </div>
     </main>
 
-    <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
-      <div class="text-xs pb-4 mb-4 border-b border-slate-700 flex items-center justify-center gap-2 flex-wrap">
-        <span>⚠️</span>
-        <span>当サイトの投資情報は教育目的です。特定銘柄の購入推奨ではありません。</span>
-        <a href="/privacy/" class="text-blue-400 hover:text-blue-300">詳細</a>
+    <footer class="bg-slate-900 text-slate-400 text-center py-8 mt-auto">
+      <div class="max-w-6xl mx-auto px-4">
+        <!-- 免責バナー -->
+        <div class="text-xs pb-4 mb-5 border-b border-slate-700 flex items-center justify-center gap-2 flex-wrap">
+          <span>⚠️</span>
+          <span>当サイトの投資情報は教育目的です。特定銘柄の購入推奨ではありません。</span>
+          <a href="/disclaimer/" class="text-blue-400 hover:text-blue-300 underline">免責事項</a>
+        </div>
+        <!-- ナビ（2段） -->
+        <div class="flex justify-center gap-8 flex-wrap mb-5 pb-5 border-b border-slate-700">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">コンテンツ</p>
+            <nav class="flex gap-4 flex-wrap justify-center text-xs">
+              <a href="/" class="hover:text-blue-300 transition-colors">ホーム</a>
+              <a href="/category/toshi/" class="hover:text-blue-300 transition-colors">📊 投資</a>
+              <a href="/category/business-ai-dx/" class="hover:text-blue-300 transition-colors">🤖 AI/DX</a>
+              <a href="/category/shinrigaku/" class="hover:text-blue-300 transition-colors">🧠 心理学</a>
+              <a href="/for-beginners/" class="hover:text-blue-300 transition-colors">初めての方へ</a>
+            </nav>
+          </div>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">サイト情報</p>
+            <nav class="flex gap-4 flex-wrap justify-center text-xs">
+              <a href="/about/" class="hover:text-blue-300 transition-colors">プロフィール</a>
+              <a href="/contact/" class="hover:text-blue-300 transition-colors">お問い合わせ</a>
+              <a href="/privacy/" class="hover:text-blue-300 transition-colors">プライバシーポリシー</a>
+              <a href="/disclaimer/" class="hover:text-blue-300 transition-colors">免責事項</a>
+              <a href="/sitemap/" class="hover:text-blue-300 transition-colors">サイトマップ</a>
+            </nav>
+          </div>
+        </div>
+        <p class="text-xs">&copy; 2026 会社員の生活日記. All rights reserved.</p>
       </div>
-      <p class="text-sm">&copy; 2026 会社員の生活日記. All rights reserved.</p>
-      <nav class="flex justify-center gap-6 mt-3 text-xs flex-wrap">
-        <a href="/about/" class="hover:text-blue-300 transition-colors">運営者について</a>
-        <a href="/contact/" class="hover:text-blue-300 transition-colors">お問い合わせ</a>
-        <a href="/privacy/" class="hover:text-blue-300 transition-colors">プライバシーポリシー</a>
-      </nav>
     </footer>
 
     <script is:inline>

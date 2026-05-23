@@ -1,132 +1,120 @@
 ---
-const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEFXG48Y';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<html lang="ja">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "プライバシーポリシー",
-    "url": "https://tech-wealth-mind.com/privacy",
-    "publisher": {
-      "@type": "Organization",
-      "name": "会社員の生活日記",
-      "url": "https://tech-wealth-mind.com"
-    }
+<BaseLayout
+  title="プライバシーポリシー"
+  description="会社員の生活日記のプライバシーポリシーです。個人情報の取り扱い・アフィリエイト・アクセス解析についてご説明します。"
+>
+  <div class="max-w-3xl mx-auto px-4 py-10">
+    <article class="bg-white rounded-xl shadow-sm p-8 md:p-12">
+
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 pb-4 border-b-2 border-blue-500">
+        プライバシーポリシー
+      </h1>
+      <p class="text-slate-500 text-sm mb-8">制定日：2026年4月26日</p>
+
+      <p class="text-slate-600 mb-10 leading-relaxed">
+        会社員の生活日記（以下「当サイト」）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めます。
+      </p>
+
+      <!-- ========== 1. プライバシーポリシー ========== -->
+      <section class="mb-10">
+        <h2 class="section-heading">1. プライバシーポリシー</h2>
+
+        <h3 class="sub-heading">収集する情報</h3>
+        <p class="body-text">
+          お問い合わせフォームご利用の際に、お名前・メールアドレス・お問い合わせ内容を収集します。
+          これらはお問い合わせへの回答のみに使用し、第三者に提供することはありません。
+        </p>
+
+        <h3 class="sub-heading">Cookieの使用</h3>
+        <p class="body-text">
+          当サイトでは、アクセス解析および広告配信のためにCookieを使用しています。
+          ブラウザの設定から無効にすることが可能です。
+        </p>
+
+        <h3 class="sub-heading">アクセス解析について</h3>
+        <p class="body-text">
+          Googleアナリティクスを使用しています。収集データは匿名であり、個人を特定するものではありません。
+        </p>
+
+        <h3 class="sub-heading">お問い合わせ</h3>
+        <p class="body-text">
+          本ポリシーに関するお問い合わせは<a href="/contact/" class="text-blue-600 hover:underline">お問い合わせページ</a>よりご連絡ください。
+        </p>
+      </section>
+
+      <!-- ========== 2. 免責事項 ========== -->
+      <section class="mb-10">
+        <h2 class="section-heading">2. 免責事項</h2>
+        <p class="body-text mb-4">
+          当サイトに掲載されている情報は、教育・情報提供を目的としたものです。
+          投資判断・医療判断・心理的支援に関する内容は専門的助言ではなく、個人の体験と学習記録です。
+        </p>
+        <ul class="list-disc list-outside ml-5 space-y-2 text-slate-600 text-sm leading-relaxed">
+          <li>投資関連情報は特定銘柄への投資勧誘・購入推奨ではありません。投資はご自身の判断と責任で行ってください。</li>
+          <li>医療・メンタルヘルスに関する内容は、専門家への相談に代わるものではありません。</li>
+          <li>掲載情報の正確性・完全性を保証するものではありません。</li>
+        </ul>
+        <p class="mt-4">
+          <a href="/disclaimer/" class="inline-block text-sm text-blue-600 hover:underline font-semibold">
+            → 免責事項の詳細ページはこちら
+          </a>
+        </p>
+      </section>
+
+      <!-- ========== 3. 広告・アフィリエイトについて ========== -->
+      <section class="mb-10">
+        <h2 class="section-heading">3. 広告・アフィリエイトについて</h2>
+
+        <h3 class="sub-heading">Google AdSense</h3>
+        <p class="body-text">
+          当サイトはGoogle AdSenseを利用しています。Google AdSenseはCookieを使用し、
+          ユーザーの興味に基づいた広告を表示します。
+          <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Googleの広告ポリシー</a>および
+          <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">広告設定ページ</a>から
+          パーソナライズ広告を無効にできます。
+        </p>
+
+        <h3 class="sub-heading">Amazonアソシエイト</h3>
+        <p class="body-text">
+          当サイトはAmazonアソシエイト・プログラムの参加者です。
+          記事内の商品リンクを経由してご購入いただいた場合、紹介料を獲得する場合があります。
+          紹介料はサイト運営費に充てています。
+        </p>
+
+        <h3 class="sub-heading">その他アフィリエイト</h3>
+        <p class="body-text">
+          楽天アフィリエイトなど、その他のアフィリエイトプログラムにも参加する場合があります。
+          広告・アフィリエイトリンクには明示するよう努めています。
+        </p>
+      </section>
+
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    background: #f1f5f9;
+    border-left: 4px solid #3b82f6;
+    border-radius: 0 4px 4px 0;
   }
-  </script>
-  <head>
-    <meta charset="utf-8" />
-    <title>プライバシーポリシー | 会社員の生活日記</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="会社員の生活日記のプライバシーポリシーです。個人情報の取り扱い・アフィリエイト・アクセス解析についてご説明します。">
-    <link rel="canonical" href="https://tech-wealth-mind.com/privacy/">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Google Analytics -->
-    {googleAnalyticsId && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
-        <script define:vars={{ googleAnalyticsId }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', googleAnalyticsId);
-        </script>
-      </>
-    )}
-    <!-- Google AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-7499855875738477">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"
-     crossorigin="anonymous"></script>
-  </head>
-  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white shadow-md py-4">
-      <div class="max-w-3xl mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold hover:text-blue-300 transition-colors">会社員の生活日記</a>
-        <a href="/" class="text-sm text-slate-300 hover:text-blue-300 transition-colors">← トップへ</a>
-      </div>
-    </header>
-    <main class="flex-grow max-w-3xl mx-auto px-4 py-12 w-full">
-      <article class="bg-white rounded-lg shadow-sm p-8 md:p-12">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-8 pb-4 border-b-2 border-blue-500">プライバシーポリシー</h1>
-        <div class="warning-box">
-          <div class="warning-icon">⚠️</div>
-          <div>
-            <h2 class="warning-title">重要：投資に関する免責事項</h2>
-            <p class="warning-text">当サイトに掲載されている投資関連の情報および分析は、教育・情報提供目的です。<strong>特定銘柄への投資勧誘・購入推奨ではありません。</strong>掲載内容に基づいて投資判断を行う際には、必ずご自身の判断と責任において行ってください。投資にはリスクが伴います。過去のパフォーマンスは将来の成果を保証しません。</p>
-          </div>
-        </div>
-        <p class="text-slate-600 mb-8">会社員の生活日記（以下「当サイト」）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めます。</p>
-        <section class="mb-8">
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">1. 収集する情報</h2>
-          <p class="text-slate-600 leading-relaxed">お問い合わせフォームご利用の際に、お名前・メールアドレス・お問い合わせ内容を収集します。これらはお問い合わせへの回答のみに使用し、第三者に提供することはありません。</p>
-        </section>
-        <section class="mb-8">
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">2. Cookieの使用</h2>
-          <p class="text-slate-600 leading-relaxed">当サイトでは、アクセス解析および広告配信のためにCookieを使用しています。ブラウザの設定から無効にすることが可能です。</p>
-        </section>
-        <section class="mb-8">
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">3. Googleアドセンスについて</h2>
-          <p class="text-slate-600 leading-relaxed mb-3">当サイトはGoogle AdSenseの利用を予定しています。Google AdSenseはCookieを使用し、ユーザーの興味に基づいた広告を表示します。</p>
-          <p class="text-slate-600 leading-relaxed"><a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Googleの広告ポリシー</a>および<a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">広告設定ページ</a>からパーソナライズ広告を無効にできます。</p>
-        </section>
-        <section class="mb-8">
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">4. Amazonアソシエイトについて</h2>
-          <p class="text-slate-600 leading-relaxed">当サイトはAmazonアソシエイト・プログラムの参加者です。紹介料を獲得する場合があります。</p>
-        </section>
-        <section class="mb-8">
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">5. アクセス解析について</h2>
-          <p class="text-slate-600 leading-relaxed">Googleアナリティクスを使用しています。収集データは匿名であり、個人を特定するものではありません。</p>
-        </section>
-        <section class="mb-8">
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">6. 免責事項</h2>
-          <p class="text-slate-600 leading-relaxed">当サイトの情報は投資判断の参考を目的としており、特定銘柄の売買を推奨するものではありません。投資はご自身の判断と責任で行ってください。</p>
-        </section>
-        <section>
-          <h2 class="text-xl font-bold text-slate-900 mb-4 pl-3 border-l-4 border-blue-400">7. お問い合わせ</h2>
-          <p class="text-slate-600 leading-relaxed">本ポリシーに関するお問い合わせは<a href="/contact" class="text-blue-600 hover:underline">お問い合わせページ</a>よりご連絡ください。</p>
-        </section>
-        <p class="text-slate-400 text-sm mt-10 pt-6 border-t border-slate-100">制定日：2026年4月26日</p>
-      </article>
-    </main>
-    <footer class="bg-slate-900 text-slate-400 py-6 mt-auto">
-      <div class="max-w-3xl mx-auto px-4">
-        <div class="text-center text-xs pb-4 mb-4 border-b border-slate-700">
-          <p class="mb-2">⚠️ <span class="font-semibold">投資に関する免責事項</span></p>
-          <p>当サイトの投資情報は教育目的です。特定銘柄の購入推奨ではありません。投資は自己責任で。</p>
-        </div>
-        <p class="text-sm text-center">&copy; 2026 会社員の生活日記. All rights reserved.</p>
-      </div>
-    </footer>
-  </body>
-  <style>
-    .warning-box {
-      display: flex;
-      gap: 1rem;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      border: 2px solid #f59e0b;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(245, 158, 11, 0.15);
-    }
-    .warning-icon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-    .warning-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #b45309;
-      margin: 0 0 0.5rem 0;
-    }
-    .warning-text {
-      color: #92400e;
-      line-height: 1.6;
-      margin: 0;
-    }
-    .warning-text strong {
-      color: #78350f;
-    }
-  </style>
-</html>
+  .sub-heading {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #334155;
+    margin: 1.25rem 0 0.4rem;
+  }
+  .body-text {
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    margin: 0;
+  }
+</style>

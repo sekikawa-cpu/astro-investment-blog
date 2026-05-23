@@ -23,10 +23,18 @@ const rawPath = Astro.url.pathname;
 const normalizedPath = rawPath === '/' ? '/' : (rawPath.endsWith('/') ? rawPath : rawPath + '/');
 const canonicalURL = new URL(normalizedPath, Astro.site);
 
-const navItems = [
-  { name: '運営者について', href: '/about/' },
+const categoryLinks = [
+  { name: '📊 投資', href: '/category/toshi/' },
+  { name: '🤖 AI/DX', href: '/category/business-ai-dx/' },
+  { name: '🧠 心理学', href: '/category/shinrigaku/' },
+  { name: '✨ 初めての方へ', href: '/for-beginners/' },
+];
+const pageLinks = [
+  { name: 'プロフィール', href: '/about/' },
   { name: 'お問い合わせ', href: '/contact/' },
   { name: 'プライバシーポリシー', href: '/privacy/' },
+  { name: '免責事項', href: '/disclaimer/' },
+  { name: 'サイトマップ', href: '/sitemap/' },
 ];
 ---
 <!doctype html>
@@ -79,17 +87,40 @@ const navItems = [
           会社員の生活日記<span class="logo-dot">.</span>
         </a>
 
+        <!-- デスクトップ：カテゴリナビ -->
+        <nav class="cat-nav">
+          {categoryLinks.map((item) => (
+            <a href={item.href} class={`cat-nav-link${item.href === '/for-beginners/' ? ' cat-nav-link--highlight' : ''}`}>{item.name}</a>
+          ))}
+        </nav>
+
         <div class="menu-wrapper">
-          <!-- 三本線ボタン（SVGを使用して確実に表示） -->
+          <!-- デスクトップ：ページリンク直接表示 -->
+          <div class="page-links">
+            {pageLinks.map((item) => (
+              <a href={item.href} class="page-link">{item.name}</a>
+            ))}
+          </div>
+
+          <!-- モバイル：三本線ボタン -->
           <button id="menu-toggle" class="menu-button" aria-label="メニュー">
             <svg id="icon-hamburger" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
 
-          <!-- ドロップダウンメニュー -->
+          <!-- ドロップダウンメニュー（モバイル用・全リンク含む） -->
           <nav id="nav-menu" class="nav-menu">
+            <div class="nav-section-label">カテゴリ</div>
             <ul class="nav-list">
-              {navItems.map((item) => (
+              <li><a href="/" class="nav-link">🏠 ホーム</a></li>
+              {categoryLinks.map((item) => (
+                <li><a href={item.href} class="nav-link">{item.name}</a></li>
+              ))}
+            </ul>
+            <div class="nav-divider"></div>
+            <div class="nav-section-label">サイト情報</div>
+            <ul class="nav-list">
+              {pageLinks.map((item) => (
                 <li><a href={item.href} class="nav-link">{item.name}</a></li>
               ))}
             </ul>
@@ -144,14 +175,70 @@ const navItems = [
 
       .logo {
         text-decoration: none;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 800;
         color: var(--primary-blue);
+        white-space: nowrap;
+        flex-shrink: 0;
       }
       .logo-dot { color: var(--accent-blue); }
 
-      .menu-wrapper { position: relative; }
+      /* デスクトップ カテゴリナビ */
+      .cat-nav {
+        display: none;
+        align-items: center;
+        gap: 0.15rem;
+        flex: 1;
+        padding: 0 0.75rem;
+      }
+      @media (min-width: 900px) { .cat-nav { display: flex; } }
 
+      .cat-nav-link {
+        padding: 0.35rem 0.6rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #2d3748;
+        white-space: nowrap;
+        transition: background 0.15s, color 0.15s;
+      }
+      .cat-nav-link:hover { background: #ebf8ff; color: var(--accent-blue); }
+      .cat-nav-link--highlight {
+        background: #ebf8ff;
+        color: var(--accent-blue);
+        border: 1px solid #bfdbfe;
+      }
+
+      .menu-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      /* デスクトップ ページリンク */
+      .page-links {
+        display: none;
+        align-items: center;
+        gap: 0.1rem;
+      }
+      @media (min-width: 900px) { .page-links { display: flex; } }
+
+      .page-link {
+        padding: 0.3rem 0.5rem;
+        text-decoration: none;
+        font-size: 0.78rem;
+        color: #4a5568;
+        font-weight: 500;
+        border-radius: 4px;
+        white-space: nowrap;
+        transition: color 0.15s, background 0.15s;
+      }
+      .page-link:hover { color: var(--accent-blue); background: #f7fafc; }
+
+      /* モバイル ハンバーガー */
       .menu-button {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
@@ -164,11 +251,12 @@ const navItems = [
         justify-content: center;
         transition: background 0.2s;
       }
+      @media (min-width: 900px) { .menu-button { display: none; } }
       .menu-button:hover { background: #edf2f7; }
 
       .hidden { display: none; }
 
-      /* メニューのデザイン */
+      /* ドロップダウン（モバイル用） */
       .nav-menu {
         position: absolute;
         top: calc(100% + 12px);
@@ -177,33 +265,37 @@ const navItems = [
         border: 1px solid #e2e8f0;
         border-radius: 8px;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        min-width: 220px;
-        /* アニメーション用 */
+        min-width: 240px;
         opacity: 0;
         visibility: hidden;
         transform: translateY(-10px);
         transition: all 0.2s ease;
+        z-index: 1001;
       }
-
       .nav-menu.is-active {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
       }
-
-      .nav-list { list-style: none; padding: 8px 0; margin: 0; }
+      .nav-section-label {
+        padding: 8px 16px 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+      }
+      .nav-divider { height: 1px; background: #e2e8f0; margin: 4px 0; }
+      .nav-list { list-style: none; padding: 4px 0; margin: 0; }
       .nav-link {
         display: block;
-        padding: 12px 20px;
+        padding: 10px 20px;
         text-decoration: none;
         color: #2d3748;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-weight: 500;
       }
-      .nav-link:hover {
-        background-color: #f7fafc;
-        color: var(--accent-blue);
-      }
+      .nav-link:hover { background-color: #f7fafc; color: var(--accent-blue); }
     </style>
 
     <script>

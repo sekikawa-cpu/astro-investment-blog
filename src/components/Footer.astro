@@ -2,16 +2,37 @@
 ---
 <footer class="site-footer">
   <div class="footer-container">
+    <!-- 免責バナー -->
     <div class="footer-disclaimer">
-      <span class="footer-disclaimer-icon">⚠️</span>
+      <span>⚠️</span>
       <span>当サイトの投資情報は教育目的です。特定銘柄の購入推奨ではありません。</span>
-      <a href="/privacy/">詳細</a>
+      <a href="/disclaimer/">免責事項</a>
     </div>
-    <nav class="footer-nav">
-      <a href="/about/">運営者について</a>
-      <a href="/privacy/">プライバシーポリシー</a>
-      <a href="/contact/">お問い合わせ</a>
-    </nav>
+
+    <!-- ナビ（2段） -->
+    <div class="footer-nav-wrap">
+      <div class="footer-nav-group">
+        <p class="footer-nav-label">コンテンツ</p>
+        <nav class="footer-nav">
+          <a href="/">ホーム</a>
+          <a href="/category/toshi/">📊 投資</a>
+          <a href="/category/business-ai-dx/">🤖 AI/DX</a>
+          <a href="/category/shinrigaku/">🧠 心理学</a>
+          <a href="/for-beginners/">初めての方へ</a>
+        </nav>
+      </div>
+      <div class="footer-nav-group">
+        <p class="footer-nav-label">サイト情報</p>
+        <nav class="footer-nav">
+          <a href="/about/">プロフィール</a>
+          <a href="/contact/">お問い合わせ</a>
+          <a href="/privacy/">プライバシーポリシー</a>
+          <a href="/disclaimer/">免責事項</a>
+          <a href="/sitemap/">サイトマップ</a>
+        </nav>
+      </div>
+    </div>
+
     <p class="footer-copy">&copy; 2026 会社員の生活日記. All rights reserved.</p>
   </div>
 </footer>
@@ -20,7 +41,7 @@
   .site-footer {
     background: #1e293b;
     color: #94a3b8;
-    padding: 2rem 0 1.5rem;
+    padding: 2.5rem 0 1.5rem;
     margin-top: auto;
   }
   .footer-container {
@@ -31,8 +52,8 @@
   }
   .footer-disclaimer {
     font-size: 0.78rem;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
     border-bottom: 1px solid #334155;
     display: flex;
     align-items: center;
@@ -40,27 +61,43 @@
     gap: 0.4rem;
     flex-wrap: wrap;
   }
-  .footer-disclaimer a {
-    color: #60a5fa;
-    text-decoration: underline;
-  }
+  .footer-disclaimer a { color: #60a5fa; text-decoration: underline; }
   .footer-disclaimer a:hover { color: #93c5fd; }
-  .footer-nav {
+
+  .footer-nav-wrap {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 3rem;
     flex-wrap: wrap;
-    margin-bottom: 1rem;
-    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #334155;
+  }
+  .footer-nav-group { text-align: center; }
+  .footer-nav-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    margin: 0 0 0.5rem;
+  }
+  .footer-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 0.82rem;
   }
   .footer-nav a {
     color: #94a3b8;
     text-decoration: none;
     transition: color 0.15s;
+    white-space: nowrap;
   }
   .footer-nav a:hover { color: #60a5fa; }
   .footer-copy {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     margin: 0;
     color: #64748b;
   }
