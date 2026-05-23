@@ -129,17 +129,17 @@ const pageLinks = [
       </div>
     </header>
 
-    <!-- 文脈ナビバー（JS制御・前ページに応じて表示） -->
-    <div id="ctx-nav" style="display:none; background:#1e293b; border-bottom:1px solid #334155; padding:0.5rem 0; text-align:center;">
-      <a id="ctx-nav-btn" href="/"
-         style="display:inline-block; background:#334155; color:#fff; font-weight:700; padding:0.5rem 1.5rem; border-radius:9999px; text-decoration:none; font-size:0.85rem; transition:background 0.15s;">
-        ← トップに戻る
-      </a>
-    </div>
-
     <main>
       <slot />
     </main>
+
+    <!-- 文脈ナビバー（JS制御・前ページに応じて表示） -->
+    <div id="ctx-nav" style="display:none; padding:1.5rem 0; text-align:center; background:#f8fafc; border-top:1px solid #e2e8f0;">
+      <a id="ctx-nav-btn" href="/"
+         class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+        ← トップに戻る
+      </a>
+    </div>
 
     <Footer />
 
