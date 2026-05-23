@@ -1,8 +1,5 @@
 name = "astro-investment-blog"
-type = "javascript"
+compatibility_date = "2024-09-23"
 
-[env.production]
-vars = { PUBLIC_GOOGLE_ANALYTICS_ID = "G-2F8G5290KT" }
-
-[env.preview]
-vars = { PUBLIC_GOOGLE_ANALYTICS_ID = "G-2F8G5290KT" }
+[vars]
+PUBLIC_GOOGLE_ANALYTICS_ID = "G-2F8G5290KT"
