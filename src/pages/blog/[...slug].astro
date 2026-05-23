@@ -296,9 +296,10 @@ const breadcrumbData = {
           </div>
         )}
 
-        <div class="px-6 md:px-12 pb-10 pt-6 border-t border-slate-100">
-          <a href="/" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">
-            ← 記事一覧に戻る
+        <div class="px-6 md:px-12 pb-10 pt-6 border-t border-slate-100 text-center">
+          <a id="article-back-btn" href="/search"
+             class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+            📰 記事一覧に戻る
           </a>
         </div>
       </article>
@@ -874,4 +875,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+</script>
+
+<script>
+  // 記事フッターの戻るボタン：前ページに応じて切り替え
+  (function() {
+    const btn = document.getElementById('article-back-btn');
+    if (!btn) return;
+    const ref = document.referrer;
+    const origin = location.origin;
+    if (ref && ref.startsWith(origin)) {
+      const refPath = ref.slice(origin.length).split('?')[0];
+      if (refPath === '/' || refPath === '') {
+        btn.textContent = '🏠 トップページに戻る';
+        btn.setAttribute('href', '/');
+      } else {
+        btn.textContent = '📰 記事一覧に戻る';
+        btn.setAttribute('href', ref);
+      }
+    }
+  })();
 </script>
