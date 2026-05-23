@@ -131,14 +131,21 @@ const breadcrumbData = {
   </head>
 
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white shadow-md py-4">
-      <div class="max-w-5xl mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold hover:text-blue-300 transition-colors">
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+      <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+        <a href="/" class="text-lg font-bold hover:text-blue-300 transition-colors whitespace-nowrap flex-shrink-0">
           会社員の生活日記
-</a>
-        <a href="/" class="text-sm text-slate-300 hover:text-blue-300 transition-colors">
-          ← 記事一覧
         </a>
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="/category/toshi/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">📊 投資</a>
+          <a href="/category/business-ai-dx/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🤖 AI/DX</a>
+          <a href="/category/shinrigaku/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🧠 心理学</a>
+          <a href="/for-beginners/" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-2.5 py-1.5 rounded transition-colors whitespace-nowrap">初めての方へ</a>
+        </nav>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <a href="/about/" class="hidden md:block text-xs text-slate-300 hover:text-white transition-colors whitespace-nowrap">プロフィール</a>
+          <a href="/" class="text-xs text-slate-300 hover:text-blue-300 transition-colors whitespace-nowrap">← 記事一覧</a>
+        </div>
       </div>
     </header>
 
