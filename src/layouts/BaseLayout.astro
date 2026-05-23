@@ -355,7 +355,8 @@ const pageLinks = [
         const currentPath = location.pathname;
         // On sitemap/contact: only show 🏠 (from top page), never 📰
         const homeOnlyPage = currentPath === '/sitemap/' || currentPath === '/sitemap'
-          || currentPath === '/contact/' || currentPath === '/contact';
+          || currentPath === '/contact/' || currentPath === '/contact'
+          || currentPath === '/disclaimer/' || currentPath === '/disclaimer';
         if (homeOnlyPage && refPath !== '/' && refPath !== '') return;
         const isListPage = currentPath.startsWith('/category/') || currentPath.startsWith('/search');
         if (refPath === '/' || refPath === '' || (isListPage && refPath.startsWith('/blog/'))) {
