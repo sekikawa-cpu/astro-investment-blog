@@ -1,11 +1,10 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEFXG48Y';
 const allPosts = await getCollection('blog');
 const posts = allPosts.filter(p => !p.data.draft && !p.data.noindex);
 posts.sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
-// 全記事データをJSONとしてクライアントに渡す
 const postsJson = JSON.stringify(posts.map(p => ({
   slug: p.slug,
   title: p.data.title,
@@ -16,75 +15,42 @@ const postsJson = JSON.stringify(posts.map(p => ({
   heroImage: p.data.heroImage || '',
 })));
 ---
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>記事検索 | 会社員の生活日記</title>
-    <meta name="description" content="会社員の生活日記の全記事から検索できます。投資・AI/DX・心理学に関する記事を探す。" />
-    <link rel="canonical" href="https://tech-wealth-mind.com/search/">
-    <script>document.addEventListener('DOMContentLoaded',()=>{const q=new URLSearchParams(location.search).get('q');if(q)document.title=`「${q}」の検索結果 | 会社員の生活日記`});</script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Google Analytics -->
-    {googleAnalyticsId && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
-        <script define:vars={{ googleAnalyticsId }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', googleAnalyticsId);
-        </script>
-      </>
-    )}
-    <!-- Google AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-7499855875738477">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"
-     crossorigin="anonymous"></script>
-  </head>
-  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-      <div class="max-w-4xl mx-auto px-4 h-14 flex items-center gap-3">
-        <a href="/" class="text-lg font-bold hover:text-blue-300 transition-colors whitespace-nowrap flex-shrink-0">
-          会社員の生活日記
-        </a>
-        <nav class="hidden lg:flex items-center gap-1 flex-shrink-0">
-          <a href="/category/toshi/" class="text-white/80 hover:text-white text-xs font-semibold px-2 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">📊 投資</a>
-          <a href="/category/business-ai-dx/" class="text-white/80 hover:text-white text-xs font-semibold px-2 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🤖 AI/DX</a>
-          <a href="/category/shinrigaku/" class="text-white/80 hover:text-white text-xs font-semibold px-2 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🧠 心理学</a>
-        </nav>
-        <form id="searchForm" class="flex flex-1 gap-2 min-w-0">
-          <input id="searchInput" type="text" placeholder="キーワードを入力..."
-            class="flex-1 min-w-0 bg-white text-slate-900 border border-slate-300 rounded-lg px-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <button type="submit"
-            class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors whitespace-nowrap flex-shrink-0">
-            検索
-          </button>
-        </form>
-        <a href="/" class="text-xs text-slate-300 hover:text-blue-300 whitespace-nowrap flex-shrink-0 hidden md:block">← トップ</a>
-      </div>
-    </header>
+<BaseLayout
+  title="記事検索"
+  description="会社員の生活日記の全記事から検索できます。投資・AI/DX・心理学に関する記事を探す。"
+>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) document.title = `「${q}」の検索結果 | 会社員の生活日記`;
+    });
+  </script>
 
-    <main class="flex-grow max-w-4xl mx-auto px-4 py-8 w-full">
-      <div id="resultHeader" class="mb-6">
-        <p id="resultMsg" class="text-slate-500 text-sm"></p>
-      </div>
-      <div id="resultGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-      <div id="noResult" class="hidden text-center py-16">
-        <p class="text-4xl mb-4">🔍</p>
-        <p class="text-slate-500">「<span id="noResultQuery"></span>」に一致する記事が見つかりませんでした。</p>
-        <a href="/" class="mt-4 inline-block text-blue-600 hover:underline text-sm">← トップに戻る</a>
-      </div>
-    </main>
+  <div class="max-w-4xl mx-auto px-4 py-8 w-full">
+    <!-- 検索フォーム -->
+    <form id="searchForm" class="flex gap-2 mb-6">
+      <input id="searchInput" type="text" placeholder="キーワードを入力..."
+        class="flex-1 bg-white text-slate-900 border border-slate-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <button type="submit"
+        class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap">
+        検索
+      </button>
+    </form>
 
-    <footer class="bg-slate-900 text-slate-400 text-center py-6 mt-auto">
-      <p class="text-sm">&copy; 2026 会社員の生活日記. All rights reserved.</p>
-    </footer>
+    <div id="resultHeader" class="mb-6">
+      <p id="resultMsg" class="text-slate-500 text-sm"></p>
+    </div>
+    <div id="resultGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+    <div id="noResult" class="hidden text-center py-16">
+      <p class="text-4xl mb-4">🔍</p>
+      <p class="text-slate-500">「<span id="noResultQuery"></span>」に一致する記事が見つかりませんでした。</p>
+      <a href="/" class="mt-4 inline-block text-blue-600 hover:underline text-sm">← トップに戻る</a>
+    </div>
+  </div>
 
-    <script define:vars={{ postsJson }}>
-      const ALL_POSTS = JSON.parse(postsJson);
+  <script define:vars={{ postsJson }}>
+    const ALL_POSTS = JSON.parse(postsJson);
 
-      // ── 検索結果カードに透かし背景を適用 ──
     const SVG_URLS = {
       chart: "data:image/svg+xml,%3Csvg viewBox='0 0 320 170' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMidYMid slice'%3E%3Cline x1='0' y1='140' x2='320' y2='140' stroke='%231d4ed8' stroke-width='0.8'/%3E%3Cline x1='0' y1='70' x2='320' y2='70' stroke='%231d4ed8' stroke-width='0.5' stroke-dasharray='4,4'/%3E%3Cpath d='M0,130 L80,108 L160,80 L240,40 L320,15 L320,150 L0,150Z' fill='%231d4ed8' opacity='0.3'/%3E%3Cpolyline points='0,130 80,108 160,80 240,40 320,15' fill='none' stroke='%231d4ed8' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E",
       ship:  "data:image/svg+xml,%3Csvg viewBox='0 0 320 170' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMidYMid slice'%3E%3Cpath d='M0,125 Q80,110 160,125 Q240,140 320,125 L320,170 L0,170Z' fill='%23166534' opacity='0.2'/%3E%3Cpath d='M25,122 L25,80 L270,80 L295,122 Z' fill='none' stroke='%23166534' stroke-width='2'/%3E%3Crect x='55' y='52' width='170' height='28' fill='none' stroke='%23166534' stroke-width='1.5' rx='2'/%3E%3Crect x='65' y='58' width='22' height='14' fill='none' stroke='%23166534' stroke-width='1' rx='1'/%3E%3Crect x='91' y='58' width='22' height='14' fill='none' stroke='%23166534' stroke-width='1' rx='1'/%3E%3Crect x='117' y='58' width='22' height='14' fill='none' stroke='%23166534' stroke-width='1' rx='1'/%3E%3Crect x='143' y='58' width='22' height='14' fill='none' stroke='%23166534' stroke-width='1' rx='1'/%3E%3C/svg%3E",
@@ -94,6 +60,7 @@ const postsJson = JSON.stringify(posts.map(p => ({
       portfolio: "data:image/svg+xml,%3Csvg viewBox='0 0 320 170' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMidYMid slice'%3E%3Ccircle cx='95' cy='88' r='70' fill='none' stroke='%2392400e' stroke-width='1'/%3E%3Cpath d='M95,88 L95,18 A70,70 0 0,1 156,123 Z' fill='%2392400e' opacity='0.5'/%3E%3Cpath d='M95,88 L156,123 A70,70 0 0,1 34,123 Z' fill='%2392400e' opacity='0.3'/%3E%3Cpath d='M95,88 L34,53 A70,70 0 0,1 95,18 Z' fill='%2392400e' opacity='0.08'/%3E%3Ccircle cx='95' cy='88' r='30' fill='white'/%3E%3Crect x='190' y='20' width='115' height='140' fill='none' stroke='%2392400e' stroke-width='1' rx='4'/%3E%3Cline x1='190' y1='38' x2='305' y2='38' stroke='%2392400e' stroke-width='1'/%3E%3Crect x='197' y='45' width='27' height='18' rx='2' fill='%2392400e' opacity='0.4'/%3E%3Crect x='228' y='45' width='27' height='18' rx='2' fill='%2392400e' opacity='0.2'/%3E%3Crect x='259' y='45' width='27' height='18' rx='2' fill='%2392400e' opacity='0.4'/%3E%3C/svg%3E",
       search: "data:image/svg+xml,%3Csvg viewBox='0 0 320 170' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMidYMid slice'%3E%3Ccircle cx='130' cy='80' r='60' fill='none' stroke='%23166534' stroke-width='2'/%3E%3Ccircle cx='130' cy='80' r='42' fill='none' stroke='%23166534' stroke-width='1' opacity='0.5'/%3E%3Cline x1='178' y1='128' x2='255' y2='160' stroke='%23166534' stroke-width='5' stroke-linecap='round'/%3E%3Cline x1='100' y1='68' x2='160' y2='68' stroke='%23166534' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='100' y1='80' x2='160' y2='80' stroke='%23166534' stroke-width='2' stroke-linecap='round'/%3E%3Cline x1='100' y1='92' x2='145' y2='92' stroke='%23166534' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E",
     };
+
     function getWmUrl(cat, title) {
       const t = (title || '').toLowerCase();
       if (t.includes('海運') || t.includes('郵船') || t.includes('船')) return SVG_URLS.ship;
@@ -105,59 +72,57 @@ const postsJson = JSON.stringify(posts.map(p => ({
       if (cat === 'コラム') return SVG_URLS.compound;
       return SVG_URLS.chart;
     }
-    // 検索結果レンダリング後にカードへ透かしを適用
 
     function renderResults(q) {
-        const query = q.trim().toLowerCase();
-        const grid = document.getElementById('resultGrid');
-        const noResult = document.getElementById('noResult');
-        const msg = document.getElementById('resultMsg');
+      const query = q.trim().toLowerCase();
+      const grid = document.getElementById('resultGrid');
+      const noResult = document.getElementById('noResult');
+      const msg = document.getElementById('resultMsg');
 
-        // フィルタリング
-        const filtered = query
-          ? ALL_POSTS.filter(p =>
-              p.pillar.toLowerCase() === query ||            // 柱完全一致（最優先）
-              p.category.toLowerCase() === query ||          // カテゴリー完全一致
-              p.category.toLowerCase().includes(query) ||   // カテゴリー部分一致
-              p.title.toLowerCase().includes(query) ||
-              p.description.toLowerCase().includes(query)
-            )
-          : ALL_POSTS;
+      const filtered = query
+        ? ALL_POSTS.filter(p =>
+            p.pillar.toLowerCase() === query ||
+            p.category.toLowerCase() === query ||
+            p.category.toLowerCase().includes(query) ||
+            p.title.toLowerCase().includes(query) ||
+            p.description.toLowerCase().includes(query)
+          )
+        : ALL_POSTS;
 
-        // メッセージ
-        if (query) {
-          // カテゴリー完全一致の場合は「#カテゴリー名」表示
-          const isCat = ALL_POSTS.some(p => p.category.toLowerCase() === query);
-          if (isCat) {
-            msg.textContent = `# ${q} の記事：${filtered.length}件`;
-          } else {
-            msg.textContent = `「${q}」の検索結果：${filtered.length}件`;
-          }
-        } else {
-          msg.textContent = `全記事：${filtered.length}件`;
-        }
+      if (query) {
+        const isCat = ALL_POSTS.some(p => p.category.toLowerCase() === query);
+        msg.textContent = isCat
+          ? `# ${q} の記事：${filtered.length}件`
+          : `「${q}」の検索結果：${filtered.length}件`;
+      } else {
+        msg.textContent = `全記事：${filtered.length}件`;
+      }
 
-        // 結果表示
-        grid.innerHTML = '';
-        if (filtered.length === 0) {
-          noResult.classList.remove('hidden');
-          document.getElementById('noResultQuery').textContent = q;
-          return;
-        }
-        noResult.classList.add('hidden');
+      grid.innerHTML = '';
+      if (filtered.length === 0) {
+        noResult.classList.remove('hidden');
+        document.getElementById('noResultQuery').textContent = q;
+        return;
+      }
+      noResult.classList.add('hidden');
 
-        filtered.forEach(p => {
-          const bgUrl = p.heroImage ? p.heroImage : getWmUrl(p.category, p.title);
-          const bgOpacity = p.heroImage ? '0.15' : '0.1';
+      filtered.forEach(p => {
+        const heroHtml = p.heroImage
+          ? `<img src="${p.heroImage}" alt="${p.title.replace(/"/g, '&quot;')}" style="width:100%;height:9rem;object-fit:cover;border-radius:0.75rem 0.75rem 0 0;display:block;">`
+          : '';
+        const wmUrl = getWmUrl(p.category, p.title);
+        const wmDiv = !p.heroImage
+          ? `<div style="position:absolute;inset:0;width:100%;height:100%;background-image:url('${wmUrl}');background-size:cover;background-position:center;opacity:0.1;pointer-events:none;"></div>`
+          : '';
 
-          grid.innerHTML += `
-            <a href="/blog/${p.slug}/"
-              class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5"
-              style="position:relative; overflow:hidden;">
-
-              <div style="position:absolute; inset:0; width:100%; height:100%; background-image:url(&quot;${bgUrl}&quot;); background-size:cover; background-position:center; background-repeat:no-repeat; opacity:${bgOpacity}; pointer-events:none;"></div>
-              
-              <div style="position:relative; z-index:10;">
+        grid.innerHTML += `
+          <a href="/blog/${p.slug}/"
+            class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200"
+            style="overflow:hidden;">
+            ${heroHtml}
+            <div style="position:relative;overflow:hidden;">
+              ${wmDiv}
+              <div style="position:relative;z-index:10;padding:1.25rem;">
                 <div class="flex items-center gap-2 mb-2">
                   <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">${p.category}</span>
                   <p class="text-xs text-slate-400">${p.pubDate}</p>
@@ -166,31 +131,26 @@ const postsJson = JSON.stringify(posts.map(p => ({
                 <p class="text-slate-500 text-xs line-clamp-2 mb-3">${p.description}</p>
                 <div class="flex items-center text-blue-600 text-xs font-semibold">記事を読む →</div>
               </div>
-            </a>`;
-        });
-      }
-
-      // URLパラメータから検索クエリ取得
-      const params = new URLSearchParams(window.location.search);
-      const initialQ = params.get('q') || '';
-      const input = document.getElementById('searchInput');
-      input.value = initialQ;
-      renderResults(initialQ);
-
-      // フォーム送信
-      document.getElementById('searchForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const q = input.value;
-        // URLを更新
-        const url = new URL(window.location.href);
-        url.searchParams.set('q', q);
-        window.history.pushState({}, '', url);
-        renderResults(q);
+            </div>
+          </a>`;
       });
+    }
 
-      // 入力のたびにリアルタイム検索
-      input.addEventListener('input', () => renderResults(input.value));
+    const params = new URLSearchParams(window.location.search);
+    const initialQ = params.get('q') || '';
+    const input = document.getElementById('searchInput');
+    input.value = initialQ;
+    renderResults(initialQ);
 
-    </script>
-  </body>
-</html>
+    document.getElementById('searchForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const q = input.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('q', q);
+      window.history.pushState({}, '', url);
+      renderResults(q);
+    });
+
+    input.addEventListener('input', () => renderResults(input.value));
+  </script>
+</BaseLayout>

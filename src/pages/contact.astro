@@ -1,9 +1,11 @@
 ---
-const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEFXG48Y';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<html lang="ja">
-  <script type="application/ld+json">
-  {
+<BaseLayout
+  title="お問い合わせ"
+  description="会社員の生活日記へのお問い合わせページです。ご質問・ご意見・ご要望はこちらからどうぞ。通常2〜3営業日以内にご返信いたします。"
+>
+  <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ContactPage",
     "url": "https://tech-wealth-mind.com/contact/",
@@ -17,211 +19,167 @@ const googleAnalyticsId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || 'G-7WDEF
         "url": "https://tech-wealth-mind.com/contact/"
       }
     }
-  }
-  </script>
-  <head>
-    <meta charset="utf-8" />
-    <title>お問い合わせ | 会社員の生活日記</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="会社員の生活日記へのお問い合わせページです。ご質問・ご意見・ご要望はこちらからどうぞ。通常2〜3営業日以内にご返信いたします。">
-    <link rel="canonical" href="https://tech-wealth-mind.com/contact/" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {googleAnalyticsId && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
-        <script define:vars={{ googleAnalyticsId }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', googleAnalyticsId);
-        </script>
-      </>
-    )}
-    <meta name="google-adsense-account" content="ca-pub-7499855875738477">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"
-     crossorigin="anonymous"></script>
-  </head>
-  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white shadow-md py-4">
-      <div class="max-w-3xl mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold hover:text-blue-300 transition-colors">会社員の生活日記</a>
-        <a href="/" class="text-sm text-slate-300 hover:text-blue-300 transition-colors">← トップへ</a>
+  })} />
+
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <article class="bg-white rounded-lg shadow-sm p-8 md:p-12">
+      <h1 class="text-3xl font-extrabold text-slate-900 mb-4 pb-4 border-b-2 border-blue-500">お問い合わせ</h1>
+      <p class="text-slate-600 mb-6">ご質問・ご意見・ご要望がございましたら、以下のフォームよりお気軽にお送りください。通常2〜3営業日以内にご返信いたします。</p>
+
+      <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-100 text-slate-600 text-sm">
+        ※ 投資に関する個別の相談・アドバイスはお受けしておりません。<br>
+        ※ サイトの内容に関するご意見・誤りのご指摘は歓迎いたします。
       </div>
-    </header>
 
-    <main class="flex-grow max-w-3xl mx-auto px-4 py-12 w-full">
-      <article class="bg-white rounded-lg shadow-sm p-8 md:p-12">
-        <h1 class="text-3xl font-extrabold text-slate-900 mb-4 pb-4 border-b-2 border-blue-500">お問い合わせ</h1>
-        <p class="text-slate-600 mb-6">ご質問・ご意見・ご要望がございましたら、以下のフォームよりお気軽にお送りください。通常2〜3営業日以内にご返信いたします。</p>
+      <!-- 送信成功メッセージ -->
+      <div id="form-success" class="hidden mb-6 p-5 bg-green-50 border border-green-200 rounded-lg text-center">
+        <div class="text-2xl mb-2">✅</div>
+        <p class="font-bold text-green-800 mb-1">送信が完了しました！</p>
+        <p class="text-green-700 text-sm">お問い合わせありがとうございます。通常2〜3営業日以内にご返信いたします。</p>
+      </div>
 
-        <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-100 text-slate-600 text-sm">
-          ※ 投資に関する個別の相談・アドバイスはお受けしておりません。<br>
-          ※ サイトの内容に関するご意見・誤りのご指摘は歓迎いたします。
-        </div>
+      <!-- エラーメッセージ -->
+      <div id="form-error" class="hidden mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-red-700 text-sm font-semibold" id="form-error-msg">送信に失敗しました。時間をおいて再度お試しください。</p>
+      </div>
 
-        <!-- 送信成功メッセージ -->
-        <div id="form-success" class="hidden mb-6 p-5 bg-green-50 border border-green-200 rounded-lg text-center">
-          <div class="text-2xl mb-2">✅</div>
-          <p class="font-bold text-green-800 mb-1">送信が完了しました！</p>
-          <p class="text-green-700 text-sm">お問い合わせありがとうございます。通常2〜3営業日以内にご返信いたします。</p>
-        </div>
-
-        <!-- エラーメッセージ -->
-        <div id="form-error" class="hidden mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p class="text-red-700 text-sm font-semibold" id="form-error-msg">送信に失敗しました。時間をおいて再度お試しください。</p>
-        </div>
-
-        <!-- お問い合わせフォーム -->
-        <form id="contact-form" novalidate>
-          <div class="space-y-5">
-            <!-- お名前 -->
-            <div>
-              <label for="name" class="block text-sm font-semibold text-slate-700 mb-1">
-                お名前 <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                placeholder="山田 太郎"
-                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-              />
-            </div>
-
-            <!-- メールアドレス -->
-            <div>
-              <label for="email" class="block text-sm font-semibold text-slate-700 mb-1">
-                メールアドレス <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                placeholder="your@example.com"
-                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-              />
-            </div>
-
-            <!-- 件名 -->
-            <div>
-              <label for="subject" class="block text-sm font-semibold text-slate-700 mb-1">
-                件名
-              </label>
-              <input
-                type="text"
-                id="subject"
-                name="subject"
-                placeholder="例：記事の内容について"
-                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-              />
-            </div>
-
-            <!-- メッセージ -->
-            <div>
-              <label for="message" class="block text-sm font-semibold text-slate-700 mb-1">
-                メッセージ <span class="text-red-500">*</span>
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                required
-                rows="6"
-                placeholder="お問い合わせ内容をご記入ください。"
-                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition resize-y"
-              ></textarea>
-            </div>
-
-            <!-- 送信ボタン -->
-            <div>
-              <button
-                type="submit"
-                id="submit-btn"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                <span id="submit-label">送信する</span>
-                <span id="submit-spinner" class="hidden">
-                  <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                  </svg>
-                </span>
-              </button>
-            </div>
+      <!-- お問い合わせフォーム -->
+      <form id="contact-form" novalidate>
+        <div class="space-y-5">
+          <!-- お名前 -->
+          <div>
+            <label for="name" class="block text-sm font-semibold text-slate-700 mb-1">
+              お名前 <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              placeholder="山田 太郎"
+              class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+            />
           </div>
-        </form>
-      </article>
-    </main>
 
-    <footer class="bg-slate-900 text-slate-400 py-6 mt-auto">
-      <div class="max-w-3xl mx-auto px-4">
-        <div class="text-center text-xs pb-4 mb-4 border-b border-slate-700 flex items-center justify-center gap-2 flex-wrap">
-          <span>⚠️</span>
-          <span>当サイトの投資情報は教育目的です。特定銘柄の購入推奨ではありません。</span>
-          <a href="/privacy/" class="text-blue-400 hover:text-blue-300">詳細</a>
+          <!-- メールアドレス -->
+          <div>
+            <label for="email" class="block text-sm font-semibold text-slate-700 mb-1">
+              メールアドレス <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="your@example.com"
+              class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <!-- 件名 -->
+          <div>
+            <label for="subject" class="block text-sm font-semibold text-slate-700 mb-1">
+              件名
+            </label>
+            <input
+              type="text"
+              id="subject"
+              name="subject"
+              placeholder="例：記事の内容について"
+              class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+            />
+          </div>
+
+          <!-- メッセージ -->
+          <div>
+            <label for="message" class="block text-sm font-semibold text-slate-700 mb-1">
+              メッセージ <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              rows="6"
+              placeholder="お問い合わせ内容をご記入ください。"
+              class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition resize-y"
+            ></textarea>
+          </div>
+
+          <!-- 送信ボタン -->
+          <div>
+            <button
+              type="submit"
+              id="submit-btn"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <span id="submit-label">送信する</span>
+              <span id="submit-spinner" class="hidden">
+                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+              </span>
+            </button>
+          </div>
         </div>
-        <p class="text-sm text-center">&copy; 2026 会社員の生活日記. All rights reserved.</p>
-        <nav class="flex justify-center gap-6 mt-3 text-xs flex-wrap">
-          <a href="/about/" class="hover:text-blue-300 transition-colors">運営者について</a>
-          <a href="/contact/" class="hover:text-blue-300 transition-colors">お問い合わせ</a>
-          <a href="/privacy/" class="hover:text-blue-300 transition-colors">プライバシーポリシー</a>
-        </nav>
+      </form>
+
+      <!-- トップに戻る -->
+      <div class="text-center mt-10">
+        <a href="/" class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">🏠 トップページに戻る</a>
       </div>
-    </footer>
+    </article>
+  </div>
 
-    <script>
-      const form = document.getElementById('contact-form');
-      const btn  = document.getElementById('submit-btn');
-      const label   = document.getElementById('submit-label');
-      const spinner = document.getElementById('submit-spinner');
-      const success = document.getElementById('form-success');
-      const errBox  = document.getElementById('form-error');
-      const errMsg  = document.getElementById('form-error-msg');
+  <script>
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const btn  = document.getElementById('submit-btn') as HTMLButtonElement;
+    const label   = document.getElementById('submit-label')!;
+    const spinner = document.getElementById('submit-spinner')!;
+    const success = document.getElementById('form-success')!;
+    const errBox  = document.getElementById('form-error')!;
+    const errMsg  = document.getElementById('form-error-msg')!;
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-        // バリデーション
-        const name    = form.name.value.trim();
-        const email   = form.email.value.trim();
-        const message = form.message.value.trim();
-        if (!name || !email || !message) {
-          showError('お名前・メールアドレス・メッセージは必須項目です。');
-          return;
-        }
-
-        // 送信中UI
-        btn.disabled = true;
-        label.textContent = '送信中...';
-        spinner.classList.remove('hidden');
-        errBox.classList.add('hidden');
-
-        try {
-          const data = new FormData(form);
-          const res  = await fetch('/api/contact', { method: 'POST', body: data });
-          const json = await res.json();
-
-          if (res.ok && json.success) {
-            form.classList.add('hidden');
-            success.classList.remove('hidden');
-          } else {
-            showError(json.error || '送信に失敗しました。時間をおいて再度お試しください。');
-          }
-        } catch {
-          showError('送信に失敗しました。ネットワーク接続を確認してください。');
-        } finally {
-          btn.disabled = false;
-          label.textContent = '送信する';
-          spinner.classList.add('hidden');
-        }
-      });
-
-      function showError(msg) {
-        errMsg.textContent = msg;
-        errBox.classList.remove('hidden');
-        errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const name    = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+      const email   = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+      const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value.trim();
+      if (!name || !email || !message) {
+        showError('お名前・メールアドレス・メッセージは必須項目です。');
+        return;
       }
-    </script>
-  </body>
-</html>
+
+      btn.disabled = true;
+      label.textContent = '送信中...';
+      spinner.classList.remove('hidden');
+      errBox.classList.add('hidden');
+
+      try {
+        const data = new FormData(form);
+        const res  = await fetch('/api/contact', { method: 'POST', body: data });
+        const json = await res.json();
+
+        if (res.ok && json.success) {
+          form.classList.add('hidden');
+          success.classList.remove('hidden');
+        } else {
+          showError(json.error || '送信に失敗しました。時間をおいて再度お試しください。');
+        }
+      } catch {
+        showError('送信に失敗しました。ネットワーク接続を確認してください。');
+      } finally {
+        btn.disabled = false;
+        label.textContent = '送信する';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    function showError(msg: string) {
+      errMsg.textContent = msg;
+      errBox.classList.remove('hidden');
+      errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  </script>
+</BaseLayout>

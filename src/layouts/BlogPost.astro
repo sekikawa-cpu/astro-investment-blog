@@ -138,7 +138,10 @@ const breadcrumbData = {
       )}
 
       <div class="back-link">
-        <a href="/blog">← 記事一覧に戻る</a>
+        <a id="article-back-btn" href="/search"
+           class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+          ← 記事一覧に戻る
+        </a>
       </div>
     </div>
   </article>
@@ -267,6 +270,26 @@ const breadcrumbData = {
   document.addEventListener('astro:page-load', setupCopyButtons);
 </script>
 
+<script>
+  // 記事下部の戻るボタン：前ページに応じて文脈切り替え
+  (function() {
+    const btn = document.getElementById('article-back-btn');
+    if (!btn) return;
+    const ref = document.referrer;
+    const origin = location.origin;
+    if (ref && ref.startsWith(origin)) {
+      const refPath = ref.slice(origin.length).split('?')[0];
+      if (refPath.startsWith('/search') || refPath.startsWith('/category/')) {
+        btn.textContent = '← 記事一覧に戻る';
+        (btn as HTMLAnchorElement).href = ref;
+      } else if (refPath === '/' || refPath === '') {
+        btn.textContent = '← トップに戻る';
+        (btn as HTMLAnchorElement).href = '/';
+      }
+    }
+  })();
+</script>
+
 <style>
   .article { padding: 3rem 0 1rem; }
   .article-header {
@@ -391,6 +414,7 @@ const breadcrumbData = {
     padding-top: 1.5rem;
     border-top: 1px solid var(--color-border);
     font-size: 0.95rem;
+    text-align: center;
   }
   @media (max-width: 640px) {
     .article-title { font-size: 1.65rem; }
