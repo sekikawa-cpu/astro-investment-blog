@@ -347,6 +347,7 @@ const pageLinks = [
         const nav = document.getElementById('ctx-nav');
         const btn = document.getElementById('ctx-nav-btn');
         if (!nav || !btn) return;
+        if (location.pathname === '/for-beginners/' || location.pathname === '/for-beginners') return;
         const ref = document.referrer;
         const origin = location.origin;
         if (!ref || !ref.startsWith(origin)) return;
