@@ -9,7 +9,7 @@ const { src, title, caption } = Astro.props;
 
 <figure class="music-player">
   <div class="music-video-wrapper">
-    <video controls preload="metadata" class="music-video">
+    <video controls preload="none" class="music-video">
       <source src={src} type="video/mp4" />
       お使いのブラウザは動画の再生に対応していません。
     </video>
