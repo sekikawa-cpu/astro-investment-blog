@@ -5,7 +5,8 @@ import type { CollectionEntry } from 'astro:content';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, author, category, tags, heroImage, noindex } = Astro.props;
+const { title, description, pubDate, updatedDate, author, pillar, category, tags, heroImage, noindex } = Astro.props;
+const isInvestment = pillar === '投資' || !pillar;
 
 const currentPath = Astro.url.pathname;
 const fullUrl = `https://tech-wealth-mind.com${currentPath}`;
@@ -35,12 +36,33 @@ const schemaData = {
   "articleSection": category,
   "keywords": tags.join(", ")
 };
+const CATEGORY_URLS: Record<string, string> = {
+  'マーケット分析': '/category/toshi/',
+  '資産運用': '/category/toshi/',
+  '投資戦略': '/category/toshi/',
+  '経済ニュース': '/category/toshi/',
+  '初心者ガイド': '/category/toshi/',
+  'キーワード解説': '/category/keyword-kaisetsu/',
+  '用語・基礎知識': '/category/toshi/',
+  '銘柄分析': '/category/toshi/',
+  'ファンド・ETF': '/category/toshi/',
+  'AI最新情報': '/category/business-ai-dx/',
+  'DX・業務改善': '/category/business-ai-dx/',
+  'AIツール': '/category/business-ai-dx/',
+  '資格・学習': '/category/business-ai-dx/',
+  '心理学・メンタル': '/category/shinrigaku/',
+  '生きづらさと回復': '/category/shinrigaku/',
+  '書籍レビュー': '/category/shinrigaku/',
+  'ボランティア': '/category/shinrigaku/',
+  'コラム': '/',
+};
+const categoryUrl = CATEGORY_URLS[category] ?? '/';
 const breadcrumbData = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tech-wealth-mind.com/" },
-    { "@type": "ListItem", "position": 2, "name": category, "item": `https://tech-wealth-mind.com/search?q=${encodeURIComponent(category)}` },
+    { "@type": "ListItem", "position": 2, "name": category, "item": `https://tech-wealth-mind.com${categoryUrl}` },
     { "@type": "ListItem", "position": 3, "name": title, "item": fullUrl }
   ]
 };
@@ -77,15 +99,15 @@ const breadcrumbData = {
           </div>
           <p class="content-warning-body">※本記事には家庭内の困難な経験に関する記述が含まれます。回復プロセスを共有する目的で執筆しています。</p>
         </div>
-      ) : (
+      ) : isInvestment ? (
         <div class="disclaimer disclaimer-prominent">
           <div class="disclaimer-header">
             <span class="disclaimer-icon">⚠️</span>
-            <strong>投資に関する免責事項</strong>
+            <strong>投資に関する重要な免責事項</strong>
           </div>
-          <p class="disclaimer-content">本記事は情報提供・教育目的です。<strong>特定銘柄の購入推奨ではありません。</strong>投資判断は必ずご自身の責任で行ってください。</p>
+          <p class="disclaimer-content">本記事は情報提供・教育目的です。<strong>特定銘柄の購入・売却を推奨するものではありません。</strong>投資にはリスクが伴い、元本を割り込む可能性があります。投資判断は必ずご自身の責任で行ってください。</p>
         </div>
-      )}
+      ) : null}
 
       {heroImage && (
         <div class="article-hero">
@@ -105,13 +127,15 @@ const breadcrumbData = {
         </div>
       )}
 
-      <div class="disclaimer disclaimer-prominent">
-        <div class="disclaimer-header">
-          <span class="disclaimer-icon">⚠️</span>
-          <strong>重要な免責事項</strong>
+      {isInvestment && (
+        <div class="disclaimer disclaimer-prominent">
+          <div class="disclaimer-header">
+            <span class="disclaimer-icon">⚠️</span>
+            <strong>重要な免責事項</strong>
+          </div>
+          <p class="disclaimer-content">本記事に掲載される投資・資産運用に関する情報は、教育・情報提供目的です。<strong>特定銘柄の購入・売却を推奨するものではありません。</strong>本記事の内容に基づいて投資判断を行う場合、必ずご自身の判断と責任で行ってください。投資にはリスクが伴い、元本を割り込む損失が生じる可能性があります。詳細は<a href="/privacy" class="disclaimer-link">プライバシーポリシー</a>および<a href="/disclaimer/" class="disclaimer-link">免責事項</a>をご確認ください。</p>
         </div>
-        <p class="disclaimer-content">本記事に掲載される投資・資産運用に関する情報は、教育・情報提供目的です。<strong>特定銘柄の購入・売却推奨ではありません。</strong>本記事の内容に基づいて投資判断を行う場合、必ずご自身の判断と責任で行ってください。投資にはリスクが伴い、損失が生じる可能性があります。詳細は<a href="/privacy" class="disclaimer-link">プライバシーポリシー</a>をご確認ください。</p>
-      </div>
+      )}
 
       <div class="back-link">
         <a href="/blog">← 記事一覧に戻る</a>
@@ -307,10 +331,11 @@ const breadcrumbData = {
   }
   .disclaimer strong { color: var(--color-primary-800); }
   .disclaimer-prominent {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border: 2px solid #f59e0b;
-    border-left: 4px solid #d97706;
-    padding: 1.5rem;
+    background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+    border: 2px solid #f87171;
+    border-left: 5px solid #dc2626;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
     margin: 2rem 0;
   }
   .disclaimer-header {
@@ -319,22 +344,24 @@ const breadcrumbData = {
     gap: 0.5rem;
     margin-bottom: 0.75rem;
     font-weight: 700;
-    color: #b45309;
+    color: #991b1b;
+    font-size: 0.95rem;
   }
   .disclaimer-icon {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
   .disclaimer-content {
-    color: #92400e;
+    color: #7f1d1d;
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.65;
+    font-size: 0.88rem;
   }
   .disclaimer-link {
-    color: #b45309;
+    color: #991b1b;
     text-decoration: underline;
   }
   .disclaimer-link:hover {
-    color: #78350f;
+    color: #7f1d1d;
   }
   .content-warning {
     margin: 2rem 0;
