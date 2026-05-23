@@ -128,23 +128,54 @@ const breadcrumbData = {
     <meta name="google-adsense-account" content="ca-pub-7499855875738477">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7499855875738477"
      crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   </head>
 
   <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-      <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
-        <a href="/" class="text-lg font-bold hover:text-blue-300 transition-colors whitespace-nowrap flex-shrink-0">
-          会社員の生活日記
+    <header class="site-header">
+      <div class="header-container">
+        <a href="/" class="logo">
+          会社員の生活日記<span class="logo-dot">.</span>
         </a>
-        <nav class="hidden md:flex items-center gap-1">
-          <a href="/category/toshi/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">📊 投資</a>
-          <a href="/category/business-ai-dx/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🤖 AI/DX</a>
-          <a href="/category/shinrigaku/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🧠 心理学</a>
-          <a href="/for-beginners/" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-2.5 py-1.5 rounded transition-colors whitespace-nowrap">初めての方へ</a>
+        <nav class="cat-nav">
+          <a href="/category/toshi/" class="cat-nav-link">📊 投資</a>
+          <a href="/category/business-ai-dx/" class="cat-nav-link">🤖 AI/DX</a>
+          <a href="/category/shinrigaku/" class="cat-nav-link">🧠 心理学</a>
+          <a href="/for-beginners/" class="cat-nav-link cat-nav-link--highlight">✨ 初めての方へ</a>
         </nav>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <a href="/about/" class="hidden md:block text-xs text-slate-300 hover:text-white transition-colors whitespace-nowrap">プロフィール</a>
-          <a href="/" class="text-xs text-slate-300 hover:text-blue-300 transition-colors whitespace-nowrap">← 記事一覧</a>
+        <div class="menu-wrapper">
+          <div class="page-links">
+            <a href="/about/" class="page-link">プロフィール</a>
+            <a href="/contact/" class="page-link">お問い合わせ</a>
+            <a href="/privacy/" class="page-link">プライバシーポリシー</a>
+            <a href="/disclaimer/" class="page-link">免責事項</a>
+            <a href="/sitemap/" class="page-link">サイトマップ</a>
+          </div>
+          <button id="menu-toggle" class="menu-button" aria-label="メニュー">
+            <svg id="icon-hamburger" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg id="icon-close" class="art-hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <nav id="nav-menu" class="nav-menu">
+            <div class="nav-section-label">カテゴリ</div>
+            <ul class="nav-list">
+              <li><a href="/" class="nav-link">🏠 ホーム</a></li>
+              <li><a href="/category/toshi/" class="nav-link">📊 投資</a></li>
+              <li><a href="/category/business-ai-dx/" class="nav-link">🤖 AI/DX</a></li>
+              <li><a href="/category/shinrigaku/" class="nav-link">🧠 心理学</a></li>
+              <li><a href="/for-beginners/" class="nav-link">✨ 初めての方へ</a></li>
+            </ul>
+            <div class="nav-divider"></div>
+            <div class="nav-section-label">サイト情報</div>
+            <ul class="nav-list">
+              <li><a href="/about/" class="nav-link">プロフィール</a></li>
+              <li><a href="/contact/" class="nav-link">お問い合わせ</a></li>
+              <li><a href="/privacy/" class="nav-link">プライバシーポリシー</a></li>
+              <li><a href="/disclaimer/" class="nav-link">免責事項</a></li>
+              <li><a href="/sitemap/" class="nav-link">サイトマップ</a></li>
+            </ul>
+          </nav>
         </div>
       </div>
     </header>
@@ -322,6 +353,133 @@ const breadcrumbData = {
 </html>
 
 <style is:global>
+  /* ===== サイトヘッダー（BaseLayout と共通） ===== */
+  .site-header {
+    height: 70px;
+    background: #0f172a;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+  }
+  .header-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+  .logo:hover { color: #93c5fd; }
+  .logo-dot { color: #60a5fa; }
+  .cat-nav {
+    display: none;
+    align-items: center;
+    gap: 0.15rem;
+    flex: 1;
+    padding: 0 0.75rem;
+  }
+  @media (min-width: 900px) { .cat-nav { display: flex; } }
+  .cat-nav-link {
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }
+  .cat-nav-link:hover { background: rgba(255,255,255,0.12); color: #ffffff; }
+  .cat-nav-link--highlight { background: #3b82f6; color: #ffffff; }
+  .cat-nav-link--highlight:hover { background: #2563eb; color: #ffffff; }
+  .menu-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+  .page-links {
+    display: none;
+    align-items: center;
+    gap: 0.1rem;
+  }
+  @media (min-width: 900px) { .page-links { display: flex; } }
+  .page-link {
+    padding: 0.3rem 0.5rem;
+    text-decoration: none;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: color 0.15s, background 0.15s;
+  }
+  .page-link:hover { color: #ffffff; background: rgba(255,255,255,0.1); }
+  .menu-button {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  @media (min-width: 900px) { .menu-button { display: none; } }
+  .menu-button:hover { background: rgba(255,255,255,0.2); }
+  .art-hidden { display: none; }
+  .nav-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    min-width: 240px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 1001;
+  }
+  .nav-menu.is-active { opacity: 1; visibility: visible; transform: translateY(0); }
+  .nav-section-label {
+    padding: 8px 16px 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+  }
+  .nav-divider { height: 1px; background: #e2e8f0; margin: 4px 0; }
+  .nav-list { list-style: none; padding: 4px 0; margin: 0; }
+  .nav-link {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #2d3748;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .nav-link:hover { background-color: #f7fafc; color: #3182ce; }
+
   /* ===== 記事末尾免責ブロック ===== */
   .article-disclaimer {
     margin: 0 0 1rem;
@@ -894,5 +1052,29 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.setAttribute('href', ref);
       }
     }
+  })();
+</script>
+
+<script>
+  // ヘッダーハンバーガーメニュー
+  (function() {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('nav-menu');
+    const iconHam = document.getElementById('icon-hamburger');
+    const iconClose = document.getElementById('icon-close');
+    if (!toggle || !menu) return;
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('is-active');
+      iconHam?.classList.toggle('art-hidden');
+      iconClose?.classList.toggle('art-hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+        menu.classList.remove('is-active');
+        iconHam?.classList.remove('art-hidden');
+        iconClose?.classList.add('art-hidden');
+      }
+    });
   })();
 </script>
