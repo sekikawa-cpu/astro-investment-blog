@@ -100,20 +100,29 @@ const posts = allPosts
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         {posts.map(post => (
           <a href={`/blog/${post.slug}/`}
-            class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 p-5">
-            <div class="flex items-center gap-2 mb-2">
-              <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${pillarInfo.badgeClass}`}>
-                {post.data.category}
-              </span>
-              <span class="text-xs text-slate-400">
-                {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
-              </span>
-            </div>
-            <h2 class="text-base font-bold text-slate-900 mb-2 leading-snug">{post.data.title}</h2>
-            {post.data.description && (
-              <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
+            class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+            {post.data.heroImage ? (
+              <img src={post.data.heroImage} alt={post.data.title} class="w-full h-36 object-cover" />
+            ) : (
+              <div class="w-full h-36 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                <span class="text-5xl opacity-20">{pillarInfo.icon}</span>
+              </div>
             )}
-            <div class={`text-xs font-semibold ${pillarInfo.textClass}`}>記事を読む →</div>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${pillarInfo.badgeClass}`}>
+                  {post.data.category}
+                </span>
+                <span class="text-xs text-slate-400">
+                  {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
+                </span>
+              </div>
+              <h2 class="text-base font-bold text-slate-900 mb-2 leading-snug">{post.data.title}</h2>
+              {post.data.description && (
+                <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
+              )}
+              <div class={`text-xs font-semibold ${pillarInfo.textClass}`}>記事を読む →</div>
+            </div>
           </a>
         ))}
       </div>
