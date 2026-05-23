@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout
   title="お問い合わせ"
   description="会社員の生活日記へのお問い合わせページです。ご質問・ご意見・ご要望はこちらからどうぞ。通常2〜3営業日以内にご返信いたします。"
+  ctxNavMode="home-only"
 >
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
@@ -124,10 +125,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </form>
 
-      <!-- トップに戻る -->
-      <div class="text-center mt-10">
-        <a href="/" class="inline-block bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">🏠 トップページに戻る</a>
-      </div>
     </article>
   </div>
 
@@ -142,6 +139,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
 
       const name    = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
       const email   = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
