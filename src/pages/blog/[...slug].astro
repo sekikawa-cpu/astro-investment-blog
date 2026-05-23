@@ -625,82 +625,118 @@ const breadcrumbData = {
     margin-bottom: 0.25rem;
   }
 
-  /* ===== コードブロック コピーボタン ===== */
+  /* ===== コードブロック ===== */
   .code-block-wrapper {
-    position: relative;
     margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #000;
   }
   .code-block-wrapper pre {
     margin: 0 !important;
+    border-radius: 0 !important;
+    background: #000 !important;
   }
-  .copy-btn {
-    position: absolute;
-    top: 0.6rem;
-    right: 0.6rem;
-    display: inline-flex;
+  .code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 0.85rem;
+    background: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .code-block-lang {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    font-family: 'Inter', ui-sans-serif, sans-serif;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+    user-select: none;
+  }
+  .code-block-actions {
+    display: flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.3rem 0.65rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .code-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    background: transparent;
+    border: none;
     border-radius: 4px;
     color: #94a3b8;
-    font-size: 0.75rem;
-    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-    line-height: 1;
-    user-select: none;
-    z-index: 1;
+    transition: background 0.15s, color 0.15s;
+    padding: 0;
   }
-  .copy-btn:hover {
-    background: rgba(255, 255, 255, 0.16);
+  .code-action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
     color: #e2e8f0;
-    border-color: rgba(255, 255, 255, 0.35);
   }
-  .copy-btn.copied {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: rgba(34, 197, 94, 0.4);
+  .code-action-btn.copied {
     color: #4ade80;
   }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // ===== コードブロック コピーボタン =====
+  // ===== コードブロック =====
   document.querySelectorAll('.markdown-content pre').forEach((pre) => {
     if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+
+    const codeEl = pre.querySelector('code');
+    const lang = pre.getAttribute('data-language') || 'code';
 
     const wrapper = document.createElement('div');
     wrapper.className = 'code-block-wrapper';
     pre.parentNode.insertBefore(wrapper, pre);
     wrapper.appendChild(pre);
 
-    const btn = document.createElement('button');
-    btn.className = 'copy-btn';
-    btn.setAttribute('aria-label', 'コードをコピー');
-    btn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-      </svg>
-      <span>コピー</span>
+    const header = document.createElement('div');
+    header.className = 'code-block-header';
+    header.innerHTML = `
+      <span class="code-block-lang">${lang}</span>
+      <div class="code-block-actions">
+        <button class="code-action-btn download-btn" aria-label="ダウンロード">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </button>
+        <button class="code-action-btn copy-btn" aria-label="コードをコピー">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
+      </div>
     `;
+    wrapper.insertBefore(header, pre);
 
-    btn.addEventListener('click', async () => {
-      const code = pre.querySelector('code');
-      const text = (code ?? pre).innerText;
-      try {
-        await navigator.clipboard.writeText(text);
-        btn.classList.add('copied');
-        btn.querySelector('span').textContent = 'コピー済み ✓';
-        setTimeout(() => {
-          btn.classList.remove('copied');
-          btn.querySelector('span').textContent = 'コピー';
-        }, 2000);
-      } catch { /* clipboard未対応環境は無視 */ }
+    header.querySelector('.download-btn').addEventListener('click', () => {
+      const text = (codeEl ?? pre).innerText;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `code.${lang}`;
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
-    wrapper.appendChild(btn);
+    header.querySelector('.copy-btn').addEventListener('click', async () => {
+      const text = (codeEl ?? pre).innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = header.querySelector('.copy-btn');
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 2000);
+      } catch { /* clipboard未対応環境は無視 */ }
+    });
   });
   // テーブルに caption を自動付与（直前の見出しをキャプションとして使用）
   document.querySelectorAll('.markdown-content table').forEach(table => {
