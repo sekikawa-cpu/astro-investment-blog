@@ -327,6 +327,34 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"2026-05-19-volunteer-visit-nagaoka-komehyappyo-support-center.mdx": {
+	id: "2026-05-19-volunteer-visit-nagaoka-komehyappyo-support-center.mdx";
+  slug: "2026-05-19-volunteer-visit-nagaoka-komehyappyo-support-center";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"ai-dx-learning-roadmap.mdx": {
+	id: "ai-dx-learning-roadmap.mdx";
+  slug: "ai-dx-learning-roadmap";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"ai-hallucination-checklist.mdx": {
+	id: "ai-hallucination-checklist.mdx";
+  slug: "ai-hallucination-checklist";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"attachment-style-workplace.mdx": {
+	id: "attachment-style-workplace.mdx";
+  slug: "attachment-style-workplace";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "book-review-business-process-dx-guide.mdx": {
 	id: "book-review-business-process-dx-guide.mdx";
   slug: "book-review-business-process-dx-guide";
@@ -341,6 +369,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"claude-vs-chatgpt-gyomu-hikaku.mdx": {
+	id: "claude-vs-chatgpt-gyomu-hikaku.mdx";
+  slug: "claude-vs-chatgpt-gyomu-hikaku";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "etf-1489-2516-hikaku-nisa.mdx": {
 	id: "etf-1489-2516-hikaku-nisa.mdx";
   slug: "etf-1489-2516-hikaku-nisa";
@@ -351,6 +386,13 @@ declare module 'astro:content' {
 "g-kentei-2026-jukken-report.mdx": {
 	id: "g-kentei-2026-jukken-report.mdx";
   slug: "g-kentei-2026-jukken-report";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"gemini-lyria3-pro-music-creation.mdx": {
+	id: "gemini-lyria3-pro-music-creation.mdx";
+  slug: "gemini-lyria3-pro-music-creation";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
@@ -372,6 +414,13 @@ declare module 'astro:content' {
 "haito-saito-rishi-keisan-hoho.mdx": {
 	id: "haito-saito-rishi-keisan-hoho.mdx";
   slug: "haito-saito-rishi-keisan-hoho";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"hallucination-ai-lesson.mdx": {
+	id: "hallucination-ai-lesson.mdx";
+  slug: "hallucination-ai-lesson";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
@@ -414,6 +463,13 @@ declare module 'astro:content' {
 "kohaito-etf-1489-tokuchou.mdx": {
 	id: "kohaito-etf-1489-tokuchou.mdx";
   slug: "kohaito-etf-1489-tokuchou";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"mental-health-management-2shu-goukaku.mdx": {
+	id: "mental-health-management-2shu-goukaku.mdx";
+  slug: "mental-health-management-2shu-goukaku";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
@@ -470,6 +526,13 @@ declare module 'astro:content' {
 "shoken-kouza-haito-kabu-erabikata.mdx": {
 	id: "shoken-kouza-haito-kabu-erabikata.mdx";
   slug: "shoken-kouza-haito-kabu-erabikata";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"stress-coping-methods.mdx": {
+	id: "stress-coping-methods.mdx";
+  slug: "stress-coping-methods";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
