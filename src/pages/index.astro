@@ -24,6 +24,19 @@ PILLAR_KEYS.forEach(p => {
   postsByPillar[p] = posts.filter(post => (post.data.pillar ?? '投資') === p);
 });
 
+// サブカテゴリURLマッピング（/search?q= の代わりに固有URLを使用）
+const SUBCATEGORY_URLS: Record<string, string> = {
+  '資産運用':     '/category/toshi/shisan-unyo/',
+  'キーワード解説': '/category/toshi/keyword/',
+  'コラム':       '/category/toshi/column/',
+  'AIツール':     '/category/business-ai-dx/ai-tools/',
+  'DX・業務改善': '/category/business-ai-dx/dx-kaizen/',
+  '資格・学習':   '/category/business-ai-dx/shikaku/',
+  '書籍レビュー': '/category/business-ai-dx/books/',
+  '心理学・メンタル': '/category/shinrigaku/mental/',
+  'ボランティア': '/category/shinrigaku/volunteer/',
+};
+
 // 柱カラー定義
 const PILLAR_BORDER: Record<string, string> = {
   '投資':   'border-blue-500',
@@ -125,30 +138,39 @@ function getWatermarkSvg(category: string, title: string) {
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Blog",
+      "@type": "WebSite",
       "name": "会社員の生活日記",
-      "url": "https://tech-wealth-mind.com",
-      "description": "会社員として働きながら、投資・AI/DX・心理学を実際に学び、試した記録をまとめています。新NISAや高配当株の体験談、生成AIの業務活用、メンタルヘルスの学びを、同じ会社員の方が判断材料にしやすいよう整理しています。",
-      "image": "https://tech-wealth-mind.com/og-image.jpg",
-      "mainEntity": {
-        "@type": "Person",
-        "name": "ただの会社員",
-        "url": "https://tech-wealth-mind.com/profile",
-        "image": "/images/profile.png"
+      "url": "https://tech-wealth-mind.com/",
+      "description": "会社員として働きながら、投資・AI/DX・心理学を実際に学び、試した記録をまとめています。新NISAや高配当株の体験談、生成AIの業務活用、資格学習・メンタルヘルスの学びを、同じ会社員の方が判断材料にしやすいよう整理しています。",
+      "publisher": {
+        "@type": "Organization",
+        "name": "会社員の生活日記",
+        "url": "https://tech-wealth-mind.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://tech-wealth-mind.com/images/profile.png"
+        }
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://tech-wealth-mind.com/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
       }
     }
     </script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "会社員の生活日記",
-      "url": "https://tech-wealth-mind.com",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "Customer Service",
-        "url": "https://tech-wealth-mind.com/contact"
-      }
+      "@type": "Person",
+      "name": "ただの会社員",
+      "url": "https://tech-wealth-mind.com/about/",
+      "image": "https://tech-wealth-mind.com/images/profile.png",
+      "jobTitle": "AI/DX推進部 副部長",
+      "description": "地方在住の会社員。投資・AI/DX・心理学の3本柱で発信中。産業カウンセラー養成講座修了。新NISAや高配当株を実践しながらサイドFIREを目指す。",
+      "sameAs": ["https://x.com/TechWealthMind"]
     }
     </script>
     <style>
@@ -291,7 +313,7 @@ function getWatermarkSvg(category: string, title: string) {
             </a>
             <div class="ml-5 border-l-2 border-slate-200">
               {cats.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
-                <a href={`/search?q=${encodeURIComponent(cat)}`}
+                <a href={SUBCATEGORY_URLS[cat] || `/search?q=${encodeURIComponent(cat)}`}
                   class="flex items-center justify-between pl-3 pr-5 py-2 border-b border-slate-50 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600">
                   <span>{cat}</span>
                   <span class="cat-badge">{categoryCount[cat]}</span>
@@ -529,7 +551,7 @@ function getWatermarkSvg(category: string, title: string) {
 
                 {hasMore && (
                   <div class="mt-3 text-right">
-                    <a href={`/search?q=${encodeURIComponent(pillar)}`}
+                    <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
                       class={`text-xs font-semibold ${PILLAR_TEXT[pillar]} hover:underline`}>
                       {pillar}の記事をもっと見る（残り{pillarPosts.length - 4}件）→
                     </a>
@@ -606,7 +628,7 @@ function getWatermarkSvg(category: string, title: string) {
                     </a>
                     <div class="ml-4 mb-1 border-l-2 border-slate-200 pl-2">
                       {cats.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
-                        <a href={`/search?q=${encodeURIComponent(cat)}`}
+                        <a href={SUBCATEGORY_URLS[cat] || `/search?q=${encodeURIComponent(cat)}`}
                           class="flex items-center justify-between py-1 px-2 hover:bg-slate-50 rounded text-xs text-slate-600 hover:text-blue-600">
                           <span>{cat}</span>
                           <span class="text-slate-400">{categoryCount[cat]}</span>
