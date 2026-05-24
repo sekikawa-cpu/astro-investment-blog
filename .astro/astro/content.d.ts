@@ -362,6 +362,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"chatgpt-teams-gyomu-jissen.mdx": {
+	id: "chatgpt-teams-gyomu-jissen.mdx";
+  slug: "chatgpt-teams-gyomu-jissen";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "claude-code-dx-case-study-1.mdx": {
 	id: "claude-code-dx-case-study-1.mdx";
   slug: "claude-code-dx-case-study-1";
@@ -372,6 +379,13 @@ declare module 'astro:content' {
 "claude-vs-chatgpt-gyomu-hikaku.mdx": {
 	id: "claude-vs-chatgpt-gyomu-hikaku.mdx";
   slug: "claude-vs-chatgpt-gyomu-hikaku";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"dx-suishin-kaisha-naichousei.mdx": {
+	id: "dx-suishin-kaisha-naichousei.mdx";
+  slug: "dx-suishin-kaisha-naichousei";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
