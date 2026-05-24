@@ -1,0 +1,245 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+interface PillarConfig {
+  pillarLabel: string;
+  pillarIcon: string;
+  pillarColor: string;
+  borderClass: string;
+  badgeClass: string;
+  bgClass: string;
+}
+
+interface SubcatConfig {
+  label: string;
+  category: string;
+  description: string;
+  disclaimer?: string;
+}
+
+// getStaticPaths 内で定義し、props 経由で渡すことで
+// Astro の getStaticPaths スコープ問題を回避する
+export async function getStaticPaths() {
+  const PILLAR_CONFIGS: Record<string, PillarConfig> = {
+    'toshi': {
+      pillarLabel: '投資',
+      pillarIcon: '📊',
+      pillarColor: 'text-blue-600',
+      borderClass: 'border-blue-500',
+      badgeClass: 'bg-blue-100 text-blue-700',
+      bgClass: 'bg-blue-50 border-blue-200',
+    },
+    'business-ai-dx': {
+      pillarLabel: 'ビジネス・AI・DX',
+      pillarIcon: '🤖',
+      pillarColor: 'text-purple-600',
+      borderClass: 'border-purple-500',
+      badgeClass: 'bg-purple-100 text-purple-700',
+      bgClass: 'bg-purple-50 border-purple-200',
+    },
+    'shinrigaku': {
+      pillarLabel: '心理学',
+      pillarIcon: '🧠',
+      pillarColor: 'text-teal-600',
+      borderClass: 'border-teal-500',
+      badgeClass: 'bg-teal-100 text-teal-700',
+      bgClass: 'bg-teal-50 border-teal-200',
+    },
+  };
+
+  const SUBCAT_CONFIGS: Record<string, Record<string, SubcatConfig>> = {
+    'toshi': {
+      'shisan-unyo': {
+        label: '資産運用',
+        category: '資産運用',
+        description: '高配当株・新NISA・ETFなどの資産運用実践記録。同じ会社員の方が判断材料にしやすいよう整理しています。',
+        disclaimer: '本カテゴリの記事は情報提供・教育目的であり、特定銘柄の売買を推奨するものではありません。投資にはリスクが伴い、元本を割り込む可能性があります。投資判断はご自身の責任で行ってください。',
+      },
+      'keyword': {
+        label: 'キーワード解説',
+        category: 'キーワード解説',
+        description: '投資・資産運用・NISA・ETFなど、知っておきたい金融・経済キーワードをわかりやすく解説します。',
+        disclaimer: '掲載情報は教育・情報提供目的であり、特定商品の購入を推奨するものではありません。数値・制度は変更される場合がありますので、最新情報は公的機関・各金融機関の公式サイトでご確認ください。',
+      },
+      'column': {
+        label: 'コラム',
+        category: 'コラム',
+        description: '投資に関するコラム・エッセイ。会社員投資家としての視点や投資観、市場への見方を綴ります。',
+      },
+    },
+    'business-ai-dx': {
+      'ai-tools': {
+        label: 'AIツール',
+        category: 'AIツール',
+        description: 'ChatGPT・Claude・Geminiなど、実際に業務で試したAIツールのレビューと活用法をお届けします。',
+        disclaimer: 'ツールの料金・機能は変更される場合があります。最新情報は各公式サイトでご確認ください。記事内の評価は筆者個人の体験に基づくものです。',
+      },
+      'dx-kaizen': {
+        label: 'DX・業務改善',
+        category: 'DX・業務改善',
+        description: 'AI/DX推進部 副部長としての現場視点で、デジタル変革・業務プロセス改善の実践記録を発信します。',
+      },
+      'shikaku': {
+        label: '資格・学習',
+        category: '資格・学習',
+        description: 'IT・AI・ビジネス系資格の勉強法・合格体験記。独学で多数の資格を取得した筆者の実践的な情報を発信します。',
+      },
+      'books': {
+        label: '書籍レビュー',
+        category: '書籍レビュー',
+        description: 'ビジネス・AI・DX・自己啓発に関する書籍レビュー。実際に読んで役立った本を正直にレビューします。',
+      },
+    },
+    'shinrigaku': {
+      'mental': {
+        label: '心理学・メンタル',
+        category: '心理学・メンタル',
+        description: '産業カウンセラー養成講座修了の知見をもとに、心理学・メンタルヘルスの学びを職場や日常に活かす方法を発信します。',
+        disclaimer: '本カテゴリの記事は診断目的ではなく、医療的な助言に代わるものではありません。メンタルヘルス上の不調については、医師・臨床心理士・カウンセラーなど専門家へのご相談をお勧めします。',
+      },
+      'volunteer': {
+        label: 'ボランティア',
+        category: 'ボランティア',
+        description: '地域ボランティア活動への参加記録と体験レポート。社会貢献の現場からの生の声をお届けします。',
+      },
+    },
+  };
+
+  const paths: {
+    params: { pillar: string; subslug: string };
+    props: { pillarConfig: PillarConfig; subcatConfig: SubcatConfig };
+  }[] = [];
+
+  for (const [pillar, subcats] of Object.entries(SUBCAT_CONFIGS)) {
+    const pc = PILLAR_CONFIGS[pillar];
+    for (const [subslug, sc] of Object.entries(subcats)) {
+      paths.push({
+        params: { pillar, subslug },
+        props: { pillarConfig: pc, subcatConfig: sc },
+      });
+    }
+  }
+  return paths;
+}
+
+const { pillar, subslug } = Astro.params;
+const { pillarConfig, subcatConfig } = Astro.props as {
+  pillarConfig: PillarConfig;
+  subcatConfig: SubcatConfig;
+};
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter(p => !p.data.draft && !p.data.noindex && p.data.category === subcatConfig.category)
+  .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+
+const canonicalUrl = `https://tech-wealth-mind.com/category/${pillar}/${subslug}/`;
+const pillarUrl = `/category/${pillar}/`;
+
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://tech-wealth-mind.com/" },
+    { "@type": "ListItem", "position": 2, "name": pillarConfig.pillarLabel, "item": `https://tech-wealth-mind.com${pillarUrl}` },
+    { "@type": "ListItem", "position": 3, "name": subcatConfig.label, "item": canonicalUrl },
+  ]
+};
+
+const collectionPageData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": `${subcatConfig.label}の記事一覧`,
+  "description": subcatConfig.description,
+  "url": canonicalUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "会社員の生活日記",
+    "url": "https://tech-wealth-mind.com/"
+  }
+};
+---
+
+<BaseLayout
+  title={`${subcatConfig.label}の記事一覧`}
+  description={subcatConfig.description}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbData)} />
+  <script type="application/ld+json" set:html={JSON.stringify(collectionPageData)} />
+
+  <div class="max-w-4xl mx-auto px-4 py-8">
+
+    <!-- パンくずリスト -->
+    <nav aria-label="パンくずリスト" class="text-xs text-slate-500 mb-4 flex items-center gap-1 flex-wrap">
+      <a href="/" class="hover:text-blue-600 transition-colors">ホーム</a>
+      <span aria-hidden="true">›</span>
+      <a href={pillarUrl} class={`${pillarConfig.pillarColor} font-semibold hover:underline transition-colors`}>
+        {pillarConfig.pillarIcon} {pillarConfig.pillarLabel}
+      </a>
+      <span aria-hidden="true">›</span>
+      <span class="text-slate-700 font-medium" aria-current="page">{subcatConfig.label}</span>
+    </nav>
+
+    <!-- 見出し -->
+    <div class={`border-l-4 ${pillarConfig.borderClass} pl-4 mb-8`}>
+      <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+        <span>{pillarConfig.pillarIcon}</span>
+        <span class={pillarConfig.pillarColor}>{subcatConfig.label}</span>
+        <span class="text-base font-normal text-slate-500">の記事一覧（{posts.length}件）</span>
+      </h1>
+      <p class="text-sm text-slate-500 mt-1">{subcatConfig.description}</p>
+    </div>
+
+    {subcatConfig.disclaimer && (
+      <div class={`text-xs text-slate-600 leading-relaxed p-3 rounded border mb-6 ${pillarConfig.bgClass}`}>
+        {subcatConfig.disclaimer}
+      </div>
+    )}
+
+    {posts.length === 0 ? (
+      <div class="text-center py-16 text-slate-400">
+        <p class="text-4xl mb-4">📝</p>
+        <p>近日公開予定です。お楽しみに。</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {posts.map(post => (
+          <a href={`/blog/${post.slug}/`}
+            class="block bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+            {post.data.heroImage ? (
+              <img src={post.data.heroImage} alt={post.data.title} class="w-full h-36 object-cover" />
+            ) : (
+              <div class="w-full h-36 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                <span class="text-5xl opacity-20">{pillarConfig.pillarIcon}</span>
+              </div>
+            )}
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${pillarConfig.badgeClass}`}>
+                  {post.data.category}
+                </span>
+                <span class="text-xs text-slate-400">
+                  {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
+                </span>
+              </div>
+              <h2 class="text-base font-bold text-slate-900 mb-2 leading-snug">{post.data.title}</h2>
+              {post.data.description && (
+                <p class="text-slate-500 text-xs line-clamp-2 mb-3">{post.data.description}</p>
+              )}
+              <div class={`text-xs font-semibold ${pillarConfig.pillarColor}`}>記事を読む →</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <!-- 親カテゴリへのリンク -->
+    <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+      <a href={pillarUrl} class={`inline-block text-sm font-semibold ${pillarConfig.pillarColor} hover:underline`}>
+        ← {pillarConfig.pillarLabel}の記事一覧に戻る
+      </a>
+    </div>
+
+  </div>
+</BaseLayout>

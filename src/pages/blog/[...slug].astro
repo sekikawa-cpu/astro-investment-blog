@@ -35,15 +35,26 @@ const schemaData = {
   "description": description,
   "image": ogImageUrl,
   "datePublished": new Date(pubDate).toISOString(),
+  "dateModified": entry.data.updatedDate
+    ? new Date(entry.data.updatedDate).toISOString()
+    : new Date(pubDate).toISOString(),
   "author": {
     "@type": "Person",
     "name": author || "ただの会社員",
-    "url": "https://tech-wealth-mind.com/profile"
+    "url": "https://tech-wealth-mind.com/about/"
   },
   "publisher": {
     "@type": "Organization",
     "name": "会社員の生活日記",
-    "url": "https://tech-wealth-mind.com"
+    "url": "https://tech-wealth-mind.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://tech-wealth-mind.com/images/profile.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": fullUrl
   },
   "url": fullUrl,
   "articleSection": category,
@@ -56,23 +67,30 @@ const PILLAR_URLS: Record<string, string> = {
   '心理学': '/category/shinrigaku/',
 };
 const CATEGORY_URLS: Record<string, string> = {
-  'キーワード解説': '/category/keyword-kaisetsu/',
+  // 投資サブカテゴリ（専用ページあり）
+  'キーワード解説': '/category/toshi/keyword/',
+  '資産運用':       '/category/toshi/shisan-unyo/',
+  'コラム':         '/category/toshi/column/',
+  // 投資サブカテゴリ（ピラーページへ）
   'マーケット分析': '/category/toshi/',
-  '資産運用': '/category/toshi/',
-  '投資戦略': '/category/toshi/',
-  '経済ニュース': '/category/toshi/',
-  '初心者ガイド': '/category/toshi/',
+  '投資戦略':       '/category/toshi/',
+  '経済ニュース':   '/category/toshi/',
+  '初心者ガイド':   '/category/toshi/',
   '用語・基礎知識': '/category/toshi/',
-  '銘柄分析': '/category/toshi/',
-  'ファンド・ETF': '/category/toshi/',
-  'AI最新情報': '/category/business-ai-dx/',
-  'DX・業務改善': '/category/business-ai-dx/',
-  'AIツール': '/category/business-ai-dx/',
-  '資格・学習': '/category/business-ai-dx/',
-  '心理学・メンタル': '/category/shinrigaku/',
+  '銘柄分析':       '/category/toshi/',
+  'ファンド・ETF':  '/category/toshi/',
+  // AI/DXサブカテゴリ（専用ページあり）
+  'AIツール':       '/category/business-ai-dx/ai-tools/',
+  'DX・業務改善':   '/category/business-ai-dx/dx-kaizen/',
+  '資格・学習':     '/category/business-ai-dx/shikaku/',
+  '書籍レビュー':   '/category/business-ai-dx/books/',
+  // AI/DXサブカテゴリ（ピラーページへ）
+  'AI最新情報':     '/category/business-ai-dx/',
+  // 心理学サブカテゴリ（専用ページあり）
+  '心理学・メンタル': '/category/shinrigaku/mental/',
+  'ボランティア':     '/category/shinrigaku/volunteer/',
+  // 心理学サブカテゴリ（ピラーページへ）
   '生きづらさと回復': '/category/shinrigaku/',
-  '書籍レビュー': '/category/shinrigaku/',
-  'ボランティア': '/category/shinrigaku/',
 };
 const pillarUrl = pillar ? (PILLAR_URLS[pillar] ?? '/') : '/';
 const categoryUrl = category ? (CATEGORY_URLS[category] ?? pillarUrl) : pillarUrl;
