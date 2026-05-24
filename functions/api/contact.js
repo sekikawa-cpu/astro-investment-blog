@@ -31,7 +31,7 @@ export async function onRequestPost(context) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'お問い合わせフォーム <noreply@tech-wealth-mind.com>',
+        from: 'お問い合わせフォーム <onboarding@resend.dev>',
         to: ['sekijun0301@gmail.com'],
         reply_to: email,
         subject: `[お問い合わせ] ${subject}`,
