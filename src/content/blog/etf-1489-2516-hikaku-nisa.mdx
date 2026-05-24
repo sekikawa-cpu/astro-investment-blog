@@ -9,6 +9,7 @@ draft: false
 ---
 
 import BookAffiliate from '../../components/BookAffiliate.astro';
+import SourceCard from '../../components/SourceCard.astro';
 
 <div class="article-summary">
 
@@ -33,7 +34,7 @@ import BookAffiliate from '../../components/BookAffiliate.astro';
 
 | 項目 | 1489（日経高配当50ETF） | 2516（JPX高配当指数ETF） |
 |------|----------------------|------------------------|
-| 運用会社 | [NEXT FUNDS（野村AM）](https://nextfunds.jp/fund/1489/) | [MAXISシリーズ（三菱UFJ AM）](https://maxis-etf.com/fund/2516/) |
+| 運用会社 | [NEXT FUNDS（野村AM）](https://nextfunds.jp/lineup/1489/) | MAXISシリーズ（三菱UFJ AM） |
 | 連動指数 | 日経平均高配当株50指数 | JPX高配当指数 |
 | 構成銘柄数 | 約50銘柄 | 約40銘柄 |
 | 分配利回り（目安） | 約3.5〜4.0% | 約3.0〜3.5% |
@@ -107,10 +108,23 @@ import BookAffiliate from '../../components/BookAffiliate.astro';
 
 本記事の数値・制度情報は以下の一次情報をもとに作成しています。
 
-- [NEXT FUNDS 日経平均高配当株50指数連動型上場投信（1489）公式ページ](https://nextfunds.jp/fund/1489/)（野村アセットマネジメント）
-- [MAXIS 高配当日本株アクティブ上場投信（2516）公式ページ](https://maxis-etf.com/fund/2516/)（三菱UFJアセットマネジメント）
-- [日本取引所グループ（JPX）ETF一覧](https://www.jpx.co.jp/equities/products/etfs/)
-- [金融庁「NISAとは？」](https://www.fsa.go.jp/policy/nisa2/about/index.html)
+<SourceCard
+  org="野村アセットマネジメント（NEXT FUNDS）"
+  title="日経平均高配当株50指数連動型上場投信（1489）公式ページ"
+  url="https://nextfunds.jp/lineup/1489/"
+/>
+
+<SourceCard
+  org="日本取引所グループ（JPX）"
+  title="ETF銘柄一覧（東京証券取引所 上場ETF全銘柄）"
+  url="https://www.jpx.co.jp/equities/products/etfs/issues/01.html"
+/>
+
+<SourceCard
+  org="金融庁"
+  title="NISAとは？（NISA特設ウェブサイト）"
+  url="https://www.fsa.go.jp/policy/nisa2/about/index.html"
+/>
 
 ※分配利回り・信託報酬などは変更される場合があります。投資判断の際は各公式サイトの最新情報をご確認ください。
 

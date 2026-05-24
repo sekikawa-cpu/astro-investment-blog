@@ -1,0 +1,86 @@
+---
+interface Props {
+  org: string;
+  title: string;
+  url: string;
+  note?: string;
+}
+
+const { org, title, url, note } = Astro.props;
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer" class="source-card">
+  <div class="source-card-icon">🔗</div>
+  <div class="source-card-body">
+    <span class="source-card-org">{org}</span>
+    <span class="source-card-title">{title}</span>
+    {note && <span class="source-card-note">{note}</span>}
+  </div>
+  <span class="source-card-arrow">↗</span>
+</a>
+
+<style>
+.source-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.875rem 1.1rem;
+  margin-bottom: 0.6rem;
+  background: #fff;
+  border: 1px solid #dde3ed;
+  border-left: 4px solid #2563eb;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.18s, box-shadow 0.18s, border-left-color 0.18s;
+}
+
+.source-card:hover {
+  background: #eff6ff;
+  border-left-color: #1d4ed8;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.12);
+  text-decoration: none;
+}
+
+.source-card-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.source-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.source-card-org {
+  font-size: 0.73rem;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.source-card-title {
+  font-size: 0.9rem;
+  color: #1e40af;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.source-card-note {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin-top: 0.1rem;
+}
+
+.source-card-arrow {
+  color: #94a3b8;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+</style>
