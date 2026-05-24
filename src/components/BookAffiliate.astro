@@ -22,6 +22,8 @@ function buildRakutenLink(url: string): string {
 }
 ---
 
+<div class="book-affiliate-wrapper">
+  <p class="affiliate-disclosure">※本セクションにはアフィリエイト広告（PR）が含まれます</p>
 <div class="book-affiliate-card">
   {imageUrl && (
     <div class="book-cover-container">
@@ -47,13 +49,26 @@ function buildRakutenLink(url: string): string {
     </div>
   </div>
 </div>
+</div>
 
 <style>
+.book-affiliate-wrapper {
+  margin: 2rem 0;
+}
+
+.affiliate-disclosure {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 0 0 0.25rem 0;
+  padding: 0;
+  text-align: right;
+}
+
 .book-affiliate-card {
   display: flex;
   gap: 1.5rem;
   padding: 1.5rem;
-  margin: 2rem 0;
+  margin: 0;
   border: 2px solid #e8e8e8;
   border-radius: 12px;
   background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
