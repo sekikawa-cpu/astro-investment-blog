@@ -356,6 +356,8 @@ const pageLinks = [
         const currentPath = location.pathname;
         if (ctxNavMode === 'home-only' && refPath !== '/' && refPath !== '') return;
         const isListPage = currentPath.startsWith('/category/') || currentPath.startsWith('/search');
+        // カテゴリページ同士の行き来はループになるので表示しない
+        if (isListPage && refPath.startsWith('/category/')) return;
         if (refPath === '/' || refPath === '' || (isListPage && refPath.startsWith('/blog/'))) {
           btn.textContent = '🏠 トップページに戻る';
           btn.href = '/';
