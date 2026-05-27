@@ -25,10 +25,14 @@ const normalizedPath = rawPath === '/' ? '/' : (rawPath.endsWith('/') ? rawPath 
 const canonicalURL = new URL(normalizedPath, Astro.site);
 
 const categoryLinks = [
-  { name: '📊 投資', href: '/category/toshi/' },
   { name: '🤖 AI/DX', href: '/category/business-ai-dx/' },
-  { name: '🧠 心理学', href: '/category/shinrigaku/' },
+  { name: '📖 資格・学習', href: '/category/business-ai-dx/shikaku/' },
+  { name: '💼 仕事術', href: '/category/business-ai-dx/dx-kaizen/' },
   { name: '✨ 初めての方へ', href: '/for-beginners/' },
+];
+const subCategoryLinks = [
+  { name: '📊 投資', href: '/category/toshi/' },
+  { name: '🧠 心理学', href: '/category/shinrigaku/' },
 ];
 const pageLinks = [
   { name: 'プロフィール', href: '/about/' },
@@ -111,10 +115,17 @@ const pageLinks = [
 
           <!-- ドロップダウンメニュー（モバイル用・全リンク含む） -->
           <nav id="nav-menu" class="nav-menu">
-            <div class="nav-section-label">カテゴリ</div>
+            <div class="nav-section-label">メインコンテンツ</div>
             <ul class="nav-list">
               <li><a href="/" class="nav-link">🏠 ホーム</a></li>
               {categoryLinks.map((item) => (
+                <li><a href={item.href} class="nav-link">{item.name}</a></li>
+              ))}
+            </ul>
+            <div class="nav-divider"></div>
+            <div class="nav-section-label">その他のカテゴリ</div>
+            <ul class="nav-list">
+              {subCategoryLinks.map((item) => (
                 <li><a href={item.href} class="nav-link">{item.name}</a></li>
               ))}
             </ul>
