@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
   title="運営者について"
-  description="会社員の生活日記の運営者プロフィールです。投資・AI/DX・心理学の3本柱で発信する会社員の経歴・資格・投資歴をご紹介します。"
+  description="会社員の生活日記の運営者プロフィールです。AI/DX推進部の副部長として働く地方在住の会社員が、キャリア形成のリアルを発信しています。経歴・取得資格・このサイトへの想いをご紹介します。"
   ctxNavMode="home-only"
 >
   <script type="application/ld+json" set:html={JSON.stringify({
@@ -15,10 +15,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       "name": "ただの会社員",
       "url": "https://tech-wealth-mind.com/about/",
       "image": "https://tech-wealth-mind.com/images/profile.png",
-      "description": "会社員の生活日記の運営者プロフィールです。投資・AI/DX・心理学の3本柱で発信する会社員の経歴・資格・投資歴をご紹介します。",
+      "description": "AI/DX推進部の副部長として働く地方在住の会社員。キャリア形成・資格学習・生成AI活用のリアルを発信しています。",
       "jobTitle": "AI/DX推進部 副部長",
       "sameAs": ["https://x.com/TechWealthMind"],
-      "knowsAbout": ["高配当株投資", "新NISA", "AI/DX推進", "ビジネスプロセス改善", "産業カウンセリング", "心理学"],
+      "knowsAbout": ["AI/DX推進", "生成AI活用", "ビジネスプロセス改善", "キャリア形成", "資格学習", "産業カウンセリング"],
       "worksFor": {
         "@type": "Organization",
         "name": "会社員の生活日記",
@@ -40,7 +40,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="profile-badges">
             <span class="badge badge-blue">AI/DX推進部 副部長</span>
             <span class="badge badge-green">産業カウンセラー養成講座 修了</span>
-            <span class="badge badge-amber">高配当株・新NISA実践中</span>
+            <span class="badge badge-amber">資格学習継続中（30冠以上）</span>
           </div>
           <a href="https://x.com/TechWealthMind" target="_blank" rel="noopener noreferrer" class="x-link">
             <svg class="x-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -53,26 +53,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <section class="about-section">
         <h2 class="section-heading">経歴</h2>
         <p class="section-text">地方在住の40代会社員。現在は<strong>AI/DX推進部の副部長</strong>として、社内のデジタル変革・業務プロセス改善を推進しています。前職ではITエンジニアとして新人研修・人材育成に10年以上携わりました。</p>
-        <p class="section-text">2025年には<strong>産業カウンセラー養成講座（日本産業カウンセラー協会）を修了</strong>。心理学の学びを通じて、自分自身の生きづらさや対人関係を深く見つめ直す過程で心理学への理解が深まり、職場メンタルヘルス支援にも力を入れています。投資は高配当株・新NISAを軸に実践中。妻と子の3人暮らし。サイドFIREを目指しながら日々学んでいます。</p>
+        <p class="section-text">ITエンジニアからDX推進へのキャリアチェンジを経て、資格学習を通じた自己研鑽を継続中。2025年には<strong>産業カウンセラー養成講座（日本産業カウンセラー協会）を修了</strong>。2026年にはG検定で全8分野100%満点合格。「仕事に必要なことは学んで身につける」をモットーに30冠以上の資格を取得してきました。妻と子の3人暮らし。</p>
         <div class="profile-grid">
           <div><p class="grid-label">現職</p><p>AI/DX推進部 副部長</p></div>
           <div><p class="grid-label">前職</p><p>ITエンジニア / 新人研修講師</p></div>
-          <div><p class="grid-label">専門</p><p>DX推進・業務改善・メンタルケア・高配当株投資</p></div>
+          <div><p class="grid-label">専門</p><p>DX推進・業務改善・生成AI活用・キャリア形成</p></div>
           <div><p class="grid-label">16パーソナリティ</p><p>ENFP</p></div>
           <div><p class="grid-label">得意なこと</p><p>傾聴・人に寄り添うこと</p></div>
           <div><p class="grid-label">苦手なこと</p><p>きめ細かいスケジュール作成</p></div>
         </div>
-      </section>
-
-      <!-- 投資歴 -->
-      <section class="about-section">
-        <h2 class="section-heading">投資歴・スタイル</h2>
-        <ul class="invest-list">
-          <li><span class="invest-icon">▶</span><span>新NISAの成長投資枠を活用した高配当株への長期投資</span></li>
-          <li><span class="invest-icon">▶</span><span>日本株（通信・金融・商社・資源）と国内ETF（NF日経高配当50など）の組み合わせ</span></li>
-          <li><span class="invest-icon">▶</span><span>配当再投資による複利効果を重視した長期保有</span></li>
-          <li><span class="invest-icon">▶</span><span>株主優待と配当の「両取り」による実質利回りの最大化</span></li>
-        </ul>
       </section>
 
       <!-- 取得資格 -->
@@ -109,19 +98,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <li><span class="cert-check">✓</span><span>2025年8月　Microsoft Certified: Dynamics 365 Fundamentals CRM/ERP (MB-910 / MB-920)</span></li>
           <li><span class="cert-check cert-highlight">✓</span><span class="cert-highlight-text">2025年10月　産業カウンセラー養成講座 修了</span></li>
           <li><span class="cert-check">✓</span><span>2025年11月　ビジネス・キャリア検定（経営戦略）２級</span></li>
-          <li><span class="cert-check cert-highlight">✓</span><span class="cert-highlight-text">2026年5月　G検定（2026#3）</span></li>
+          <li><span class="cert-check cert-highlight">✓</span><span class="cert-highlight-text">2026年5月　G検定（2026#3）全8分野100%満点合格</span></li>
         </ul>
-        <p class="cert-skills">✨ スキル保有：Python・SQL・Tableau / AI・DXツール実践 / 心理学知見を活かした対人コミュニケーション / 新NISA・高配当投資実践</p>
+        <p class="cert-skills">✨ スキル保有：Python・SQL・Tableau / 生成AI活用（ChatGPT・Claude・Gemini）/ AI・DXツール実践 / 産業カウンセラー知見を活かした対人コミュニケーション</p>
       </section>
 
       <!-- このサイトについて -->
       <section class="about-section">
         <h2 class="section-heading">このサイトについて</h2>
-        <p class="section-text">「会社員の生活日記」は、<strong>投資・AI/DX・心理学</strong>の3本柱で、会社員としてのリアルな生活と学びを記録・発信するサイトです。</p>
+        <p class="section-text">「会社員の生活日記」は、<strong>自分自身のキャリア形成のリアル</strong>を記録するブログです。生成AIの使い方を教えるサイトではなく、「今の自分が仕事・資格・学習でどんな壁にぶつかり、どう乗り越えようとしているか」を等身大で書いています。</p>
         <div class="site-pillars">
-          <div class="pillar-item"><span class="pillar-icon">💹</span><p><strong>投資</strong>：高配当株・新NISA・株主優待の実践記録。</p></div>
-          <div class="pillar-item"><span class="pillar-icon">🤖</span><p><strong>AI/DX</strong>：AI/DX推進部の副部長として現場で試したツール・施策のレポート。</p></div>
-          <div class="pillar-item"><span class="pillar-icon">🧠</span><p><strong>心理学</strong>：産業カウンセラー養成講座修了の知見をもとに、生きづらさ・愛着・回復をテーマとした自己開示記事。</p></div>
+          <div class="pillar-item"><span class="pillar-icon">🤖</span><p><strong>AI/DX活用</strong>：ChatGPT Teams・Claude・Geminiなど生成AIを実際の業務でどう使ったか、何がうまくいかなかったかのリアルな体験談。</p></div>
+          <div class="pillar-item"><span class="pillar-icon">📖</span><p><strong>資格・学習記録</strong>：AI系に限らず、キャリアを切り拓くために取り組んできた資格学習のすべて。合格体験より「詰まった場所・工夫した勉強法」を重視して書く。</p></div>
+          <div class="pillar-item"><span class="pillar-icon">💼</span><p><strong>仕事術・キャリア形成</strong>：DX推進の副部長として現場で感じた「壁」や気づき、ITエンジニアから現職へのキャリアチェンジの経緯。</p></div>
         </div>
       </section>
 
@@ -129,9 +118,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <section class="about-section">
         <h2 class="section-heading">執筆ポリシー</h2>
         <ul class="invest-list">
-          <li><span class="invest-icon">▶</span><span>投資記事は自身の保有銘柄・実損益を開示した上で執筆します</span></li>
+          <li><span class="invest-icon">▶</span><span>「こうすべき」という一般論は書きません。自分が実際にやってみた体験・失敗・気づきのみを書きます</span></li>
           <li><span class="invest-icon">▶</span><span>AIツールのレビューは必ず自分で試した結果のみを掲載します</span></li>
-          <li><span class="invest-icon">▶</span><span>心理学関連の記事は、産業カウンセラー養成講座の学びおよび公的資料を一次情報源とします</span></li>
+          <li><span class="invest-icon">▶</span><span>資格学習の記事は、受験体験・実際の学習プロセスを開示した上で執筆します</span></li>
           <li><span class="invest-icon">▶</span><span>生成AIを執筆補助に使用する場合も、筆者自身の体験・検証を加えた上で公開します</span></li>
         </ul>
       </section>
