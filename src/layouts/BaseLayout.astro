@@ -30,10 +30,6 @@ const categoryLinks = [
   { name: '💼 仕事術', href: '/category/business-ai-dx/dx-kaizen/' },
   { name: '✨ 初めての方へ', href: '/for-beginners/' },
 ];
-const subCategoryLinks = [
-  { name: '📊 投資', href: '/category/toshi/' },
-  { name: '🧠 心理学', href: '/category/shinrigaku/' },
-];
 const pageLinks = [
   { name: 'プロフィール', href: '/about/' },
   { name: 'お問い合わせ', href: '/contact/' },
@@ -119,13 +115,6 @@ const pageLinks = [
             <ul class="nav-list">
               <li><a href="/" class="nav-link">🏠 ホーム</a></li>
               {categoryLinks.map((item) => (
-                <li><a href={item.href} class="nav-link">{item.name}</a></li>
-              ))}
-            </ul>
-            <div class="nav-divider"></div>
-            <div class="nav-section-label">その他のカテゴリ</div>
-            <ul class="nav-list">
-              {subCategoryLinks.map((item) => (
                 <li><a href={item.href} class="nav-link">{item.name}</a></li>
               ))}
             </ul>

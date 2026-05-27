@@ -6,7 +6,6 @@ import type { CollectionEntry } from 'astro:content';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, updatedDate, author, pillar, category, tags, heroImage, noindex } = Astro.props;
-const isInvestment = pillar === '投資' || !pillar;
 
 const currentPath = Astro.url.pathname;
 const fullUrl = `https://tech-wealth-mind.com${currentPath}`;
@@ -91,7 +90,7 @@ const breadcrumbData = {
         </div>
       </header>
 
-      {category === '生きづらさと回復' ? (
+      {category === '生きづらさと回復' && (
         <div class="content-warning">
           <div class="content-warning-header">
             <span>📢</span>
@@ -99,15 +98,7 @@ const breadcrumbData = {
           </div>
           <p class="content-warning-body">※本記事には家庭内の困難な経験に関する記述が含まれます。回復プロセスを共有する目的で執筆しています。</p>
         </div>
-      ) : isInvestment ? (
-        <div class="disclaimer disclaimer-prominent">
-          <div class="disclaimer-header">
-            <span class="disclaimer-icon">⚠️</span>
-            <strong>投資に関する重要な免責事項</strong>
-          </div>
-          <p class="disclaimer-content">本記事は情報提供・教育目的です。<strong>特定銘柄の購入・売却を推奨するものではありません。</strong>投資にはリスクが伴い、元本を割り込む可能性があります。投資判断は必ずご自身の責任で行ってください。</p>
-        </div>
-      ) : null}
+      )}
 
       {heroImage && (
         <div class="article-hero">
@@ -127,15 +118,6 @@ const breadcrumbData = {
         </div>
       )}
 
-      {isInvestment && (
-        <div class="disclaimer disclaimer-prominent">
-          <div class="disclaimer-header">
-            <span class="disclaimer-icon">⚠️</span>
-            <strong>重要な免責事項</strong>
-          </div>
-          <p class="disclaimer-content">本記事に掲載される投資・資産運用に関する情報は、教育・情報提供目的です。<strong>特定銘柄の購入・売却を推奨するものではありません。</strong>本記事の内容に基づいて投資判断を行う場合、必ずご自身の判断と責任で行ってください。投資にはリスクが伴い、元本を割り込む損失が生じる可能性があります。詳細は<a href="/privacy" class="disclaimer-link">プライバシーポリシー</a>および<a href="/disclaimer/" class="disclaimer-link">免責事項</a>をご確認ください。</p>
-        </div>
-      )}
 
       <div class="back-link">
         <a id="article-back-btn" href="/search"
