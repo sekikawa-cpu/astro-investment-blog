@@ -4,6 +4,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   return [
+    { params: { slug: 'ai-dx' } },
+    { params: { slug: 'shikaku' } },
+    { params: { slug: 'shigoto' } },
+    // 旧URL（後方互換）
     { params: { slug: 'toshi' } },
     { params: { slug: 'business-ai-dx' } },
     { params: { slug: 'shinrigaku' } },
@@ -21,42 +25,82 @@ const PILLAR_MAP: Record<string, {
   textClass: string;
   bgClass: string;
   filterByCategory?: string;
+  filterByCategories?: string[];
+  filterByPillar?: string;
 }> = {
+  // ── 新カテゴリ（3本柱） ──────────────────────────────────────────
+  'ai-dx': {
+    label: 'AI/DX',
+    icon: '🤖',
+    description: 'ChatGPT・Claude・Geminiなど生成AIを実際の業務でどう使ったか、AI/DX推進現場のリアルを発信します。',
+    longDescription: 'このカテゴリでは、AI/DX推進部 副部長として実務で活用した生成AIツール・業務改善施策の体験を記録しています。ツールの料金・機能は変更される場合があります。最新情報は各公式サイトでご確認ください。記事内の評価は筆者個人の体験に基づくものです。',
+    badgeClass: 'bg-purple-100 text-purple-700',
+    borderClass: 'border-purple-500',
+    textClass: 'text-purple-600',
+    bgClass: 'bg-purple-50 border-purple-200',
+    filterByPillar: 'ビジネス・AI・DX',
+  },
+  'shikaku': {
+    label: '資格・学習',
+    icon: '📖',
+    description: 'AI系に限らず、キャリアを切り拓くための資格学習・自己研鑽の全記録。勉強法・詰まった場所・仕事との両立を書いています。',
+    longDescription: 'このカテゴリでは、IT・AI・ビジネス・人事など幅広い分野の資格取得体験を記録しています。「合格した」だけでなく、どの教材を使ったか・どこで詰まったか・仕事と両立するためにどう工夫したかまで書いています。',
+    badgeClass: 'bg-amber-100 text-amber-700',
+    borderClass: 'border-amber-500',
+    textClass: 'text-amber-600',
+    bgClass: 'bg-amber-50 border-amber-200',
+    filterByCategory: '資格・学習',
+  },
+  'shigoto': {
+    label: '仕事術・キャリア',
+    icon: '💼',
+    description: 'DX推進部の副部長として現場で感じた壁や気づき、仕事を切り拓いてきた体験談をお届けします。',
+    longDescription: 'このカテゴリでは、DX推進・業務改善の現場体験と、書籍から得た仕事の知見を記録しています。うまくいったことより「こうすれば良かった」という気づきを大切にしています。',
+    badgeClass: 'bg-cyan-100 text-cyan-700',
+    borderClass: 'border-cyan-500',
+    textClass: 'text-cyan-600',
+    bgClass: 'bg-cyan-50 border-cyan-200',
+    filterByCategories: ['DX・業務改善', '書籍レビュー'],
+  },
+  // ── 旧カテゴリ（後方互換・記事非公開中） ────────────────────────
   'toshi': {
     label: '投資',
     icon: '📊',
-    description: '高配当株・新NISA・株主優待の実践記録。長期投資のリアルな記録を綴ります。',
-    longDescription: 'このカテゴリでは、筆者自身の新NISA・高配当株・ETF投資の体験をもとに、初心者が判断材料にしやすいよう制度・リスク・実践記録を整理しています。記事内の情報は教育・情報提供を目的としたものであり、特定銘柄の売買を推奨するものではありません。投資はご自身の判断と責任において行ってください。',
+    description: '高配当株・新NISA・株主優待の実践記録。',
+    longDescription: '',
     badgeClass: 'bg-blue-100 text-blue-700',
     borderClass: 'border-blue-500',
     textClass: 'text-blue-600',
     bgClass: 'bg-blue-50 border-blue-200',
+    filterByPillar: '投資',
   },
   'business-ai-dx': {
     label: 'ビジネス・AI・DX',
     icon: '🤖',
     description: 'AI/DX推進部 副部長として現場で試したツール・施策・資格学習のレポート。',
-    longDescription: 'このカテゴリでは、DX推進部 副部長として実務で活用したAIツール・業務改善施策・資格学習の記録を整理しています。ツールの料金・機能は変更される場合があります。最新情報は各公式サイトでご確認ください。記事内の意見・評価は筆者個人の体験に基づくものです。',
+    longDescription: '',
     badgeClass: 'bg-purple-100 text-purple-700',
     borderClass: 'border-purple-500',
     textClass: 'text-purple-600',
     bgClass: 'bg-purple-50 border-purple-200',
+    filterByPillar: 'ビジネス・AI・DX',
   },
   'shinrigaku': {
     label: '心理学',
     icon: '🧠',
-    description: '産業カウンセラー養成講座修了の知見をもとに、メンタルヘルス・生きづらさの回復をテーマにした記事。',
-    longDescription: 'このカテゴリでは、産業カウンセラー養成講座を修了した筆者が、心理学の考え方を職場理解・セルフケアに活かすための学習記録・体験談を整理しています。記事は診断を目的としたものではなく、医療的な助言に代わるものでもありません。メンタルヘルス上の不調については、医療機関や専門家にご相談ください。',
+    description: '産業カウンセラー養成講座修了の知見をもとにした記事。',
+    longDescription: '',
     badgeClass: 'bg-teal-100 text-teal-700',
     borderClass: 'border-teal-500',
     textClass: 'text-teal-600',
     bgClass: 'bg-teal-50 border-teal-200',
+    filterByPillar: '心理学',
   },
   'keyword-kaisetsu': {
     label: 'キーワード解説',
     icon: '📖',
-    description: '投資・資産運用・NISA・ETFなど、知っておきたい金融・経済キーワードをわかりやすく解説します。',
-    longDescription: 'このカテゴリでは、投資初心者が疑問に感じやすい金融・経済用語をわかりやすく解説しています。掲載情報は教育・情報提供を目的としており、特定商品の購入を推奨するものではありません。数値・制度は変更される場合がありますので、最新情報は公的機関・各金融機関の公式サイトでご確認ください。',
+    description: '金融・経済キーワードをわかりやすく解説します。',
+    longDescription: '',
     badgeClass: 'bg-orange-100 text-orange-700',
     borderClass: 'border-orange-500',
     textClass: 'text-orange-600',
@@ -72,7 +116,9 @@ const allPosts = await getCollection('blog');
 const posts = allPosts
   .filter(p => {
     if (p.data.draft || p.data.noindex) return false;
+    if (pillarInfo.filterByCategories) return pillarInfo.filterByCategories.includes(p.data.category ?? '');
     if (pillarInfo.filterByCategory) return p.data.category === pillarInfo.filterByCategory;
+    if (pillarInfo.filterByPillar) return (p.data.pillar ?? '投資') === pillarInfo.filterByPillar;
     return (p.data.pillar ?? '投資') === pillarInfo.label;
   })
   .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());

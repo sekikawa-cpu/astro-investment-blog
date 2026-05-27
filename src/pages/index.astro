@@ -72,7 +72,7 @@ const PILLAR_COLORS: Record<string, string> = {
 };
 const PILLAR_SLUGS: Record<string, string> = {
   '投資': 'toshi',
-  'ビジネス・AI・DX': 'business-ai-dx',
+  'ビジネス・AI・DX': 'ai-dx',
   '心理学': 'shinrigaku',
 };
 
@@ -342,9 +342,9 @@ function getWatermarkSvg(category: string, title: string) {
 
         <!-- デスクトップ：カテゴリナビ -->
         <nav class="hidden lg:flex items-center gap-1 ml-2">
-          <a href="/category/business-ai-dx/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🤖 AI/DX</a>
-          <a href="/category/business-ai-dx/shikaku/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">📖 資格・学習</a>
-          <a href="/category/business-ai-dx/dx-kaizen/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">💼 仕事術</a>
+          <a href="/category/ai-dx/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">🤖 AI/DX</a>
+          <a href="/category/shikaku/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">📖 資格・学習</a>
+          <a href="/category/shigoto/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">💼 仕事術</a>
           <a href="/about/" class="text-white/80 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded hover:bg-white/15 transition-colors whitespace-nowrap">👤 プロフィール</a>
           <a href="/contact/" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-2.5 py-1.5 rounded transition-colors whitespace-nowrap">✉ お問い合わせ</a>
         </nav>
@@ -407,17 +407,17 @@ function getWatermarkSvg(category: string, title: string) {
             </a>
           </div>
           <div class="flex gap-2 flex-shrink-0">
-            <a href="/category/business-ai-dx/"
+            <a href="/category/ai-dx/"
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center w-16">
               <span class="text-xl leading-none">🤖</span>
               <span class="text-xs font-bold mt-1 leading-tight">AI・DX</span>
             </a>
-            <a href="/category/business-ai-dx/shikaku/"
+            <a href="/category/shikaku/"
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center w-16">
               <span class="text-xl leading-none">📖</span>
               <span class="text-xs font-bold mt-1 leading-tight">資格</span>
             </a>
-            <a href="/category/business-ai-dx/dx-kaizen/"
+            <a href="/category/shigoto/"
               class="flex flex-col items-center bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors text-center w-16">
               <span class="text-xl leading-none">💼</span>
               <span class="text-xs font-bold mt-1 leading-tight">仕事術</span>
@@ -642,9 +642,9 @@ function getWatermarkSvg(category: string, title: string) {
             <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">コンテンツ</p>
             <nav class="flex gap-4 flex-wrap justify-center text-xs">
               <a href="/" class="hover:text-blue-300 transition-colors">ホーム</a>
-              <a href="/category/business-ai-dx/" class="hover:text-blue-300 transition-colors">🤖 AI/DX</a>
-              <a href="/category/business-ai-dx/shikaku/" class="hover:text-blue-300 transition-colors">📖 資格・学習</a>
-              <a href="/category/business-ai-dx/dx-kaizen/" class="hover:text-blue-300 transition-colors">💼 仕事術</a>
+              <a href="/category/ai-dx/" class="hover:text-blue-300 transition-colors">🤖 AI/DX</a>
+              <a href="/category/shikaku/" class="hover:text-blue-300 transition-colors">📖 資格・学習</a>
+              <a href="/category/shigoto/" class="hover:text-blue-300 transition-colors">💼 仕事術</a>
               <a href="/for-beginners/" class="hover:text-blue-300 transition-colors">✨ 初めての方へ</a>
             </nav>
           </div>
