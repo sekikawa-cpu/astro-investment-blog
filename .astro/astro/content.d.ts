@@ -397,6 +397,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"g-kentei-2026-3-kekka.mdx": {
+	id: "g-kentei-2026-3-kekka.mdx";
+  slug: "g-kentei-2026-3-kekka";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "g-kentei-2026-jukken-report.mdx": {
 	id: "g-kentei-2026-jukken-report.mdx";
   slug: "g-kentei-2026-jukken-report";
