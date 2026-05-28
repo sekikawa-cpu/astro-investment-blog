@@ -17,63 +17,58 @@ posts.forEach(p => {
 // 人気記事（最新5本をPVの代わりに使用）
 const popularPosts = posts.slice(0, 5);
 
-// 柱別記事（各最大4件）
-const PILLAR_KEYS = ['ビジネス・AI・DX'] as const;
-const postsByPillar: Record<string, typeof posts> = {};
-PILLAR_KEYS.forEach(p => {
-  postsByPillar[p] = posts.filter(post => (post.data.pillar ?? '投資') === p);
+// ── 3本柱セクション定義 ────────────────────────────────────────────
+const SECTION_KEYS = ['AI/DX・生成AI活用', '資格・学習記録', '仕事術・キャリア形成'] as const;
+type SectionKey = typeof SECTION_KEYS[number];
+
+const SECTION_CONFIG: Record<SectionKey, {
+  icon: string;
+  borderClass: string;
+  textClass: string;
+  bgClass: string;
+  slug: string;
+  categories: string[];
+}> = {
+  'AI/DX・生成AI活用': {
+    icon: '🤖',
+    borderClass: 'border-purple-500',
+    textClass: 'text-purple-600',
+    bgClass: 'bg-purple-100 text-purple-700',
+    slug: 'ai-dx',
+    categories: ['AIツール', 'AI最新情報'],
+  },
+  '資格・学習記録': {
+    icon: '📖',
+    borderClass: 'border-amber-500',
+    textClass: 'text-amber-600',
+    bgClass: 'bg-amber-100 text-amber-700',
+    slug: 'shikaku',
+    categories: ['資格・学習'],
+  },
+  '仕事術・キャリア形成': {
+    icon: '💼',
+    borderClass: 'border-cyan-500',
+    textClass: 'text-cyan-600',
+    bgClass: 'bg-cyan-100 text-cyan-700',
+    slug: 'shigoto',
+    categories: ['DX・業務改善', '書籍レビュー'],
+  },
+};
+
+// セクション別記事（各最大4件）
+const postsBySection: Record<string, typeof posts> = {};
+SECTION_KEYS.forEach(key => {
+  const cats = SECTION_CONFIG[key].categories;
+  postsBySection[key] = posts.filter(p => cats.includes(p.data.category ?? ''));
 });
 
-// サブカテゴリURLマッピング（/search?q= の代わりに固有URLを使用）
+// サブカテゴリURLマッピング
 const SUBCATEGORY_URLS: Record<string, string> = {
-  '資産運用':     '/category/toshi/shisan-unyo/',
-  'キーワード解説': '/category/toshi/keyword/',
-  'コラム':       '/category/toshi/column/',
-  'AIツール':     '/category/business-ai-dx/ai-tools/',
-  'DX・業務改善': '/category/business-ai-dx/dx-kaizen/',
-  '資格・学習':   '/category/business-ai-dx/shikaku/',
-  '書籍レビュー': '/category/business-ai-dx/books/',
-  '心理学・メンタル': '/category/shinrigaku/mental/',
-  'ボランティア': '/category/shinrigaku/volunteer/',
-};
-
-// 柱カラー定義
-const PILLAR_BORDER: Record<string, string> = {
-  '投資':   'border-blue-500',
-  'ビジネス・AI・DX': 'border-purple-500',
-  '心理学': 'border-teal-500',
-};
-const PILLAR_TEXT: Record<string, string> = {
-  '投資':   'text-blue-600',
-  'ビジネス・AI・DX': 'text-purple-600',
-  '心理学': 'text-teal-600',
-};
-const PILLAR_BG: Record<string, string> = {
-  '投資':   'bg-blue-100 text-blue-700',
-  'ビジネス・AI・DX': 'bg-purple-100 text-purple-700',
-  '心理学': 'bg-teal-100 text-teal-700',
-};
-
-// 3本柱のカテゴリー定義
-const PILLAR_CATEGORIES: Record<string, string[]> = {
-  '投資':   ['マーケット分析', '資産運用', '投資戦略', '経済ニュース', '初心者ガイド', 'キーワード解説', 'コラム'],
-  'ビジネス・AI・DX': ['AI最新情報', 'AIツール', 'DX・業務改善', '資格・学習', '書籍レビュー'],
-  '心理学': ['心理学・メンタル', '生きづらさと回復', 'ボランティア'],
-};
-const PILLAR_ICONS: Record<string, string> = {
-  '投資':   '📊',
-  'ビジネス・AI・DX': '🤖',
-  '心理学': '🧠',
-};
-const PILLAR_COLORS: Record<string, string> = {
-  '投資':   'text-blue-600',
-  'ビジネス・AI・DX': 'text-purple-600',
-  '心理学': 'text-teal-600',
-};
-const PILLAR_SLUGS: Record<string, string> = {
-  '投資': 'toshi',
-  'ビジネス・AI・DX': 'ai-dx',
-  '心理学': 'shinrigaku',
+  'AIツール':     '/category/ai-dx/',
+  'AI最新情報':   '/category/ai-dx/',
+  '資格・学習':   '/category/shikaku/',
+  'DX・業務改善': '/category/shigoto/',
+  '書籍レビュー': '/category/shigoto/',
 };
 
 // カード透かしSVG生成関数（Astroのビルド時にサーバー側で実行されます）
@@ -300,20 +295,20 @@ function getWatermarkSvg(category: string, title: string) {
         </form>
       </div>
 
-      <!-- カテゴリーツリー（AI/DXのみ） -->
-      {PILLAR_KEYS.filter(p => p === 'ビジネス・AI・DX').map(pillar => {
-        const cats = PILLAR_CATEGORIES[pillar];
-        const total = cats.reduce((s, c) => s + (categoryCount[c] || 0), 0);
+      <!-- カテゴリーツリー（3本柱） -->
+      {SECTION_KEYS.map(sectionKey => {
+        const cfg = SECTION_CONFIG[sectionKey];
+        const total = cfg.categories.reduce((s, c) => s + (categoryCount[c] || 0), 0);
         return (
           <>
-            <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
-              class={`flex items-center justify-between px-5 py-2.5 bg-slate-50 font-bold text-sm ${PILLAR_TEXT[pillar]}`}>
-              <span>{PILLAR_ICONS[pillar]} {pillar}</span>
+            <a href={`/category/${cfg.slug}/`}
+              class={`flex items-center justify-between px-5 py-2.5 bg-slate-50 font-bold text-sm ${cfg.textClass}`}>
+              <span>{cfg.icon} {sectionKey}</span>
               {total > 0 && <span class="cat-badge">{total}</span>}
             </a>
             <div class="ml-5 border-l-2 border-slate-200">
-              {cats.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
-                <a href={SUBCATEGORY_URLS[cat] || `/search?q=${encodeURIComponent(cat)}`}
+              {cfg.categories.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
+                <a href={SUBCATEGORY_URLS[cat] || `/category/${cfg.slug}/`}
                   class="flex items-center justify-between pl-3 pr-5 py-2 border-b border-slate-50 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600">
                   <span>{cat}</span>
                   <span class="cat-badge">{categoryCount[cat]}</span>
@@ -482,20 +477,21 @@ function getWatermarkSvg(category: string, title: string) {
 
         <!-- メイン：3本柱別 記事一覧 -->
         <div class="flex-1 min-w-0 space-y-8">
-          {PILLAR_KEYS.map(pillar => {
-            const pillarPosts = postsByPillar[pillar];
-            const displayPosts = pillarPosts.slice(0, 4);
-            const hasMore = pillarPosts.length > 4;
+          {SECTION_KEYS.map(sectionKey => {
+            const cfg = SECTION_CONFIG[sectionKey];
+            const sectionPosts = postsBySection[sectionKey];
+            const displayPosts = sectionPosts.slice(0, 4);
+            const hasMore = sectionPosts.length > 4;
             return (
               <section>
-                <h2 class={`text-lg font-bold border-b-2 ${PILLAR_BORDER[pillar]} pb-2 mb-4 flex items-center justify-between`}>
+                <h2 class={`text-lg font-bold border-b-2 ${cfg.borderClass} pb-2 mb-4 flex items-center justify-between`}>
                   <span class="flex items-center gap-2">
-                    <span>{PILLAR_ICONS[pillar]}</span>
-                    <span class={PILLAR_TEXT[pillar]}>{pillar}</span>
+                    <span>{cfg.icon}</span>
+                    <span class={cfg.textClass}>{sectionKey}</span>
                   </span>
-                  <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
-                    class={`text-xs font-normal ${PILLAR_TEXT[pillar]} hover:underline`}>
-                    すべて見る ({pillarPosts.length}件) →
+                  <a href={`/category/${cfg.slug}/`}
+                    class={`text-xs font-normal ${cfg.textClass} hover:underline`}>
+                    すべて見る ({sectionPosts.length}件) →
                   </a>
                 </h2>
 
@@ -513,12 +509,12 @@ function getWatermarkSvg(category: string, title: string) {
                         )}
                         <div class="post-card-inner p-4">
                           {!post.data.heroImage && (
-                            <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'マーケット分析', post.data.title)} />
+                            <div class="post-card-wm" set:html={getWatermarkSvg(post.data.category || 'DX・業務改善', post.data.title)} />
                           )}
                           <div class="post-card-content">
                             <div class="flex items-center gap-2 mb-2">
-                              <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${PILLAR_BG[pillar]}`}>
-                                {post.data.category || 'マーケット分析'}
+                              <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${cfg.bgClass}`}>
+                                {post.data.category}
                               </span>
                               <p class="text-xs text-slate-400">
                                 {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
@@ -528,7 +524,7 @@ function getWatermarkSvg(category: string, title: string) {
                               {post.data.title}
                             </h3>
                             <p class="text-slate-500 text-xs line-clamp-2 mb-2">{post.data.description}</p>
-                            <div class={`flex items-center text-xs font-semibold ${PILLAR_TEXT[pillar]}`}>
+                            <div class={`flex items-center text-xs font-semibold ${cfg.textClass}`}>
                               記事を読む <span class="ml-1">→</span>
                             </div>
                           </div>
@@ -540,9 +536,9 @@ function getWatermarkSvg(category: string, title: string) {
 
                 {hasMore && (
                   <div class="mt-3 text-right">
-                    <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
-                      class={`text-xs font-semibold ${PILLAR_TEXT[pillar]} hover:underline`}>
-                      {pillar}の記事をもっと見る（残り{pillarPosts.length - 4}件）→
+                    <a href={`/category/${cfg.slug}/`}
+                      class={`text-xs font-semibold ${cfg.textClass} hover:underline`}>
+                      {sectionKey}の記事をもっと見る（残り{sectionPosts.length - 4}件）→
                     </a>
                   </div>
                 )}
@@ -605,19 +601,19 @@ function getWatermarkSvg(category: string, title: string) {
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">📂 カテゴリー</div>
             <div class="py-2">
-              {PILLAR_KEYS.filter(p => p === 'ビジネス・AI・DX').map(pillar => {
-                const cats = PILLAR_CATEGORIES[pillar];
-                const total = cats.reduce((s, c) => s + (categoryCount[c] || 0), 0);
+              {SECTION_KEYS.map(sectionKey => {
+                const cfg = SECTION_CONFIG[sectionKey];
+                const total = cfg.categories.reduce((s, c) => s + (categoryCount[c] || 0), 0);
                 return (
                   <>
-                    <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
-                      class={`flex items-center justify-between px-3 py-2 hover:bg-slate-50 font-bold text-sm ${PILLAR_TEXT[pillar]}`}>
-                      <span>{PILLAR_ICONS[pillar]} {pillar}</span>
+                    <a href={`/category/${cfg.slug}/`}
+                      class={`flex items-center justify-between px-3 py-2 hover:bg-slate-50 font-bold text-sm ${cfg.textClass}`}>
+                      <span>{cfg.icon} {sectionKey}</span>
                       {total > 0 && <span class="cat-badge">{total}</span>}
                     </a>
                     <div class="ml-4 mb-1 border-l-2 border-slate-200 pl-2">
-                      {cats.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
-                        <a href={SUBCATEGORY_URLS[cat] || `/search?q=${encodeURIComponent(cat)}`}
+                      {cfg.categories.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
+                        <a href={SUBCATEGORY_URLS[cat] || `/category/${cfg.slug}/`}
                           class="flex items-center justify-between py-1 px-2 hover:bg-slate-50 rounded text-xs text-slate-600 hover:text-blue-600">
                           <span>{cat}</span>
                           <span class="text-slate-400">{categoryCount[cat]}</span>

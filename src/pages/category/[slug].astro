@@ -30,18 +30,18 @@ const PILLAR_MAP: Record<string, {
 }> = {
   // ── 新カテゴリ（3本柱） ──────────────────────────────────────────
   'ai-dx': {
-    label: 'AI/DX',
+    label: 'AI/DX・生成AI活用',
     icon: '🤖',
     description: 'ChatGPT・Claude・Geminiなど生成AIを実際の業務でどう使ったか、AI/DX推進現場のリアルを発信します。',
-    longDescription: 'このカテゴリでは、AI/DX推進部 副部長として実務で活用した生成AIツール・業務改善施策の体験を記録しています。ツールの料金・機能は変更される場合があります。最新情報は各公式サイトでご確認ください。記事内の評価は筆者個人の体験に基づくものです。',
+    longDescription: 'このカテゴリでは、AI/DX推進部 副部長として実務で活用した生成AIツール・AI最新情報を記録しています。ツールの料金・機能は変更される場合があります。最新情報は各公式サイトでご確認ください。記事内の評価は筆者個人の体験に基づくものです。',
     badgeClass: 'bg-purple-100 text-purple-700',
     borderClass: 'border-purple-500',
     textClass: 'text-purple-600',
     bgClass: 'bg-purple-50 border-purple-200',
-    filterByPillar: 'ビジネス・AI・DX',
+    filterByCategories: ['AIツール', 'AI最新情報'],
   },
   'shikaku': {
-    label: '資格・学習',
+    label: '資格・学習記録',
     icon: '📖',
     description: 'AI系に限らず、キャリアを切り拓くための資格学習・自己研鑽の全記録。勉強法・詰まった場所・仕事との両立を書いています。',
     longDescription: 'このカテゴリでは、IT・AI・ビジネス・人事など幅広い分野の資格取得体験を記録しています。「合格した」だけでなく、どの教材を使ったか・どこで詰まったか・仕事と両立するためにどう工夫したかまで書いています。',
@@ -52,7 +52,7 @@ const PILLAR_MAP: Record<string, {
     filterByCategory: '資格・学習',
   },
   'shigoto': {
-    label: '仕事術・キャリア',
+    label: '仕事術・キャリア形成',
     icon: '💼',
     description: 'DX推進部の副部長として現場で感じた壁や気づき、仕事を切り拓いてきた体験談をお届けします。',
     longDescription: 'このカテゴリでは、DX推進・業務改善の現場体験と、書籍から得た仕事の知見を記録しています。うまくいったことより「こうすれば良かった」という気づきを大切にしています。',
