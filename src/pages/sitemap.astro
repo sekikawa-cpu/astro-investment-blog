@@ -7,26 +7,39 @@ const posts = allPosts
   .filter(p => !p.data.draft && !p.data.noindex)
   .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
-const PILLAR_KEYS = ['投資', 'ビジネス・AI・DX', '心理学'] as const;
-const PILLAR_SLUGS: Record<string, string> = {
-  '投資': 'toshi',
-  'ビジネス・AI・DX': 'business-ai-dx',
-  '心理学': 'shinrigaku',
-};
-const PILLAR_ICONS: Record<string, string> = {
-  '投資': '📊',
-  'ビジネス・AI・DX': '🤖',
-  '心理学': '🧠',
-};
-const PILLAR_COLORS: Record<string, { border: string; text: string }> = {
-  '投資':            { border: 'border-blue-400',   text: 'text-blue-600'   },
-  'ビジネス・AI・DX': { border: 'border-purple-400', text: 'text-purple-600' },
-  '心理学':          { border: 'border-teal-400',   text: 'text-teal-600'   },
-};
+const PILLARS = [
+  {
+    key: 'ai-dx',
+    label: 'AI/DX・生成AI活用',
+    icon: '🤖',
+    slug: 'ai-dx',
+    border: 'border-purple-400',
+    text: 'text-purple-600',
+    categories: ['AIツール', 'AI最新情報'],
+  },
+  {
+    key: 'shikaku',
+    label: '資格・学習記録',
+    icon: '📖',
+    slug: 'shikaku',
+    border: 'border-amber-400',
+    text: 'text-amber-600',
+    categories: ['資格・学習'],
+  },
+  {
+    key: 'shigoto',
+    label: '仕事術・キャリア形成',
+    icon: '💼',
+    slug: 'shigoto',
+    border: 'border-cyan-400',
+    text: 'text-cyan-600',
+    categories: ['DX・業務改善', '書籍レビュー'],
+  },
+];
 ---
 <BaseLayout
   title="サイトマップ"
-  description="会社員の生活日記のサイトマップです。投資・AI/DX・心理学のカテゴリ別記事一覧と主要ページへのリンクをまとめています。"
+  description="会社員の生活日記のサイトマップです。AI/DX・資格・学習・仕事術のカテゴリ別記事一覧と主要ページへのリンクをまとめています。"
   ctxNavMode="home-only"
 >
   <div class="max-w-3xl mx-auto px-4 py-10">
@@ -57,17 +70,16 @@ const PILLAR_COLORS: Record<string, { border: string; text: string }> = {
     </section>
 
     <!-- カテゴリ別記事 -->
-    {PILLAR_KEYS.map(pillar => {
-      const pillarPosts = posts.filter(p => (p.data.pillar ?? '投資') === pillar);
-      const { border, text } = PILLAR_COLORS[pillar];
+    {PILLARS.map(({ label, icon, slug, border, text, categories }) => {
+      const pillarPosts = posts.filter(p => categories.includes(p.data.category ?? ''));
       return (
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
           <h2 class={`text-base font-bold mb-1 flex items-center gap-2 ${text}`}>
-            <span>{PILLAR_ICONS[pillar]}</span>
-            <span>{pillar}</span>
+            <span>{icon}</span>
+            <span>{label}</span>
             <span class="text-slate-400 font-normal text-sm ml-auto">{pillarPosts.length}件</span>
           </h2>
-          <a href={`/category/${PILLAR_SLUGS[pillar]}/`}
+          <a href={`/category/${slug}/`}
             class={`inline-block text-xs font-semibold ${text} hover:underline mb-4`}>
             カテゴリページを見る →
           </a>
