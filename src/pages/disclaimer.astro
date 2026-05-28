@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout
   title="免責事項"
-  description="会社員の生活日記の免責事項です。投資・医療・心理学に関する情報の取り扱い、および当サイト情報の正確性についてご説明します。"
+  description="会社員の生活日記の免責事項です。当サイト掲載情報の正確性・利用に関する免責事項をご説明します。"
   ctxNavMode="home-only"
 >
   <div class="max-w-3xl mx-auto px-4 py-10">
@@ -17,27 +17,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         当サイト「会社員の生活日記」に掲載されている情報は、運営者個人の体験・学習記録に基づくものです。
         専門家による助言・診断・推奨ではありません。以下の免責事項をご確認の上、ご利用ください。
       </p>
-
-      <!-- 投資 -->
-      <section class="disclaimer-card disclaimer-card--yellow mb-6">
-        <h2 class="disclaimer-title">📊 投資に関する免責事項</h2>
-        <ul class="disclaimer-list">
-          <li>当サイトの投資関連情報は、<strong>教育・情報提供を目的</strong>としたものであり、特定銘柄への投資勧誘・購入推奨ではありません。</li>
-          <li>掲載内容に基づいて投資判断を行う際には、<strong>必ずご自身の判断と責任において</strong>行ってください。</li>
-          <li>投資にはリスクが伴います。過去のパフォーマンスは将来の成果を保証しません。</li>
-          <li>具体的な投資判断については、証券会社・ファイナンシャルプランナーなど専門家にご相談ください。</li>
-        </ul>
-      </section>
-
-      <!-- 医療・心理学 -->
-      <section class="disclaimer-card disclaimer-card--blue mb-6">
-        <h2 class="disclaimer-title">🧠 医療・心理学に関する免責事項</h2>
-        <ul class="disclaimer-list">
-          <li>メンタルヘルス・心理学に関する記事は、運営者個人の学習記録と体験談であり、<strong>医療的診断・治療の代替ではありません</strong>。</li>
-          <li>精神的・身体的な不調を感じている場合は、医師・カウンセラー・公認心理師などの専門家にご相談ください。</li>
-          <li>産業カウンセラー養成講座に関する記事は、資格学習の体験記録であり、個別の相談対応は行っていません。</li>
-        </ul>
-      </section>
 
       <!-- 一般的免責 -->
       <section class="disclaimer-card disclaimer-card--gray mb-10">
@@ -69,14 +48,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     border-radius: 0.75rem;
     padding: 1.25rem 1.5rem;
     border: 1px solid;
-  }
-  .disclaimer-card--yellow {
-    background: #fffbeb;
-    border-color: #fde68a;
-  }
-  .disclaimer-card--blue {
-    background: #eff6ff;
-    border-color: #bfdbfe;
   }
   .disclaimer-card--gray {
     background: #f8fafc;
