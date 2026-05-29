@@ -7,11 +7,8 @@ export async function getStaticPaths() {
     { params: { slug: 'ai-dx' } },
     { params: { slug: 'shikaku' } },
     { params: { slug: 'shigoto' } },
-    // 旧URL（後方互換）
-    { params: { slug: 'toshi' } },
-    { params: { slug: 'business-ai-dx' } },
-    { params: { slug: 'shinrigaku' } },
-    { params: { slug: 'keyword-kaisetsu' } },
+    // 旧URL（toshi・business-ai-dx・shinrigaku・keyword-kaisetsu）は
+    // public/_redirects で 301 リダイレクト設定済み
   ];
 }
 

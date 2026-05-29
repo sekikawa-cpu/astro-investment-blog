@@ -16,7 +16,7 @@ const { entry, allEntries } = Astro.props;
 const { Content } = await entry.render();
 const { title, pubDate, description, tags = [], author, category, pillar, noindex = false, heroImage } = entry.data;
 
-const pillarEmoji = pillar === '投資' ? '📊' : pillar === 'ビジネス・AI・DX' ? '💼' : pillar === '心理学' ? '🧠' : '';
+const pillarEmoji = pillar === '投資' ? '📊' : pillar === 'ビジネス・AI・DX' ? '🤖' : pillar === '心理学' ? '🧠' : '';
 
 const relatedPosts = allEntries
   .filter(e => e.data.category === category && e.slug !== entry.slug && !e.data.draft)
@@ -62,35 +62,32 @@ const schemaData = {
 };
 
 const PILLAR_URLS: Record<string, string> = {
-  '投資': '/category/toshi/',
-  'ビジネス・AI・DX': '/category/business-ai-dx/',
-  '心理学': '/category/shinrigaku/',
+  '投資': '/',
+  'ビジネス・AI・DX': '/category/ai-dx/',
+  '心理学': '/',
 };
 const CATEGORY_URLS: Record<string, string> = {
-  // 投資サブカテゴリ（専用ページあり）
-  'キーワード解説': '/category/toshi/keyword/',
-  '資産運用':       '/category/toshi/shisan-unyo/',
-  'コラム':         '/category/toshi/column/',
-  // 投資サブカテゴリ（ピラーページへ）
-  'マーケット分析': '/category/toshi/',
-  '投資戦略':       '/category/toshi/',
-  '経済ニュース':   '/category/toshi/',
-  '初心者ガイド':   '/category/toshi/',
-  '用語・基礎知識': '/category/toshi/',
-  '銘柄分析':       '/category/toshi/',
-  'ファンド・ETF':  '/category/toshi/',
-  // AI/DXサブカテゴリ（専用ページあり）
-  'AIツール':       '/category/business-ai-dx/ai-tools/',
-  'DX・業務改善':   '/category/business-ai-dx/dx-kaizen/',
-  '資格・学習':     '/category/business-ai-dx/shikaku/',
-  '書籍レビュー':   '/category/business-ai-dx/books/',
-  // AI/DXサブカテゴリ（ピラーページへ）
-  'AI最新情報':     '/category/business-ai-dx/',
-  // 心理学サブカテゴリ（専用ページあり）
-  '心理学・メンタル': '/category/shinrigaku/mental/',
-  'ボランティア':     '/category/shinrigaku/volunteer/',
-  // 心理学サブカテゴリ（ピラーページへ）
-  '生きづらさと回復': '/category/shinrigaku/',
+  // AI/DXカテゴリ → 新URL
+  'AIツール':       '/category/ai-dx/',
+  'AI最新情報':     '/category/ai-dx/',
+  'DX・業務改善':   '/category/shigoto/',
+  '資格・学習':     '/category/shikaku/',
+  '書籍レビュー':   '/category/shigoto/',
+  // 旧投資カテゴリ（トップへ）
+  'キーワード解説': '/',
+  '資産運用':       '/',
+  'コラム':         '/',
+  'マーケット分析': '/',
+  '投資戦略':       '/',
+  '経済ニュース':   '/',
+  '初心者ガイド':   '/',
+  '用語・基礎知識': '/',
+  '銘柄分析':       '/',
+  'ファンド・ETF':  '/',
+  // 旧心理学カテゴリ（トップへ）
+  '心理学・メンタル': '/',
+  'ボランティア':     '/',
+  '生きづらさと回復': '/',
 };
 const pillarUrl = pillar ? (PILLAR_URLS[pillar] ?? '/') : '/';
 const categoryUrl = category ? (CATEGORY_URLS[category] ?? pillarUrl) : pillarUrl;

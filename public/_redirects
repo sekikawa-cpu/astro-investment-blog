@@ -9,3 +9,33 @@
 # /privacy-policy/ → /privacy/ へリダイレクト
 /privacy-policy   /privacy/  301
 /privacy-policy/  /privacy/  301
+
+# 旧カテゴリページ → 新URLへ301（カテゴリ統一）
+/category/business-ai-dx  /category/ai-dx/  301
+/category/business-ai-dx/ /category/ai-dx/  301
+/category/toshi           /                 301
+/category/toshi/          /                 301
+/category/shinrigaku      /                 301
+/category/shinrigaku/     /                 301
+/category/keyword-kaisetsu  /category/shikaku/  301
+/category/keyword-kaisetsu/ /category/shikaku/  301
+
+# 旧サブカテゴリページ → 新URLへ301
+/category/business-ai-dx/ai-tools   /category/ai-dx/    301
+/category/business-ai-dx/ai-tools/  /category/ai-dx/    301
+/category/business-ai-dx/dx-kaizen  /category/shigoto/  301
+/category/business-ai-dx/dx-kaizen/ /category/shigoto/  301
+/category/business-ai-dx/shikaku    /category/shikaku/  301
+/category/business-ai-dx/shikaku/   /category/shikaku/  301
+/category/business-ai-dx/books      /category/shigoto/  301
+/category/business-ai-dx/books/     /category/shigoto/  301
+/category/toshi/keyword   /category/shikaku/  301
+/category/toshi/keyword/  /category/shikaku/  301
+/category/toshi/shisan-unyo   /  301
+/category/toshi/shisan-unyo/  /  301
+/category/toshi/column   /  301
+/category/toshi/column/  /  301
+/category/shinrigaku/mental      /  301
+/category/shinrigaku/mental/     /  301
+/category/shinrigaku/volunteer   /  301
+/category/shinrigaku/volunteer/  /  301
