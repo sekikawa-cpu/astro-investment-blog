@@ -16,6 +16,15 @@ const { entry, allEntries } = Astro.props;
 const { Content } = await entry.render();
 const { title, pubDate, description, tags = [], author, category, pillar, noindex = false, heroImage } = entry.data;
 
+// パンくず用：article の category → 新カテゴリ表示名・URL・絵文字
+const BREADCRUMB_MAP: Record<string, { label: string; emoji: string; href: string }> = {
+  'AIツール':     { label: 'AI/DX・生成AI活用', emoji: '🤖', href: '/category/ai-dx/' },
+  'AI最新情報':   { label: 'AI/DX・生成AI活用', emoji: '🤖', href: '/category/ai-dx/' },
+  '資格・学習':   { label: '資格・学習記録',     emoji: '📖', href: '/category/shikaku/' },
+  'DX・業務改善': { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
+  '書籍レビュー': { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
+};
+const breadcrumbCat = category ? (BREADCRUMB_MAP[category] ?? null) : null;
 const pillarEmoji = pillar === '投資' ? '📊' : pillar === 'ビジネス・AI・DX' ? '🤖' : pillar === '心理学' ? '🧠' : '';
 
 const relatedPosts = allEntries
@@ -199,22 +208,12 @@ const breadcrumbData = {
       <nav aria-label="パンくずリスト" class="mb-4">
         <ol class="flex flex-wrap items-center gap-1 text-xs text-slate-500">
           <li><a href="/" class="hover:text-blue-600 transition-colors">ホーム</a></li>
-          {pillar && (
+          {breadcrumbCat && (
             <>
               <li class="text-slate-300" aria-hidden="true">›</li>
               <li>
-                <a href={pillarUrl} class="hover:text-blue-600 transition-colors">
-                  {pillarEmoji} {pillar}
-                </a>
-              </li>
-            </>
-          )}
-          {category && category !== pillar && (
-            <>
-              <li class="text-slate-300" aria-hidden="true">›</li>
-              <li>
-                <a href={categoryUrl} class="hover:text-blue-600 transition-colors">
-                  {category}
+                <a href={breadcrumbCat.href} class="hover:text-blue-600 transition-colors">
+                  {breadcrumbCat.emoji} {breadcrumbCat.label}
                 </a>
               </li>
             </>

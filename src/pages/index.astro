@@ -586,7 +586,7 @@ function getWatermarkSvg(category: string, title: string) {
             </div>
           </div>
 
-          <!-- カテゴリーツリー -->
+          <!-- カテゴリー（主要3カテゴリのみ・フラット表示） -->
           <div class="sidebar-widget">
             <div class="sidebar-widget-title">📂 カテゴリー</div>
             <div class="py-2">
@@ -594,22 +594,11 @@ function getWatermarkSvg(category: string, title: string) {
                 const cfg = SECTION_CONFIG[sectionKey];
                 const total = cfg.categories.reduce((s, c) => s + (categoryCount[c] || 0), 0);
                 return (
-                  <>
-                    <a href={`/category/${cfg.slug}/`}
-                      class={`flex items-center justify-between px-3 py-2 hover:bg-slate-50 font-bold text-sm ${cfg.textClass}`}>
-                      <span>{cfg.icon} {sectionKey}</span>
-                      {total > 0 && <span class="cat-badge">{total}</span>}
-                    </a>
-                    <div class="ml-4 mb-1 border-l-2 border-slate-200 pl-2">
-                      {cfg.categories.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
-                        <a href={SUBCATEGORY_URLS[cat] || `/category/${cfg.slug}/`}
-                          class="flex items-center justify-between py-1 px-2 hover:bg-slate-50 rounded text-xs text-slate-600 hover:text-blue-600">
-                          <span>{cat}</span>
-                          <span class="text-slate-400">{categoryCount[cat]}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </>
+                  <a href={`/category/${cfg.slug}/`}
+                    class={`flex items-center justify-between px-3 py-2.5 border-b border-slate-100 hover:bg-slate-50 font-semibold text-sm ${cfg.textClass}`}>
+                    <span>{cfg.icon} {sectionKey}</span>
+                    {total > 0 && <span class="cat-badge">{total}</span>}
+                  </a>
                 );
               })}
             </div>
