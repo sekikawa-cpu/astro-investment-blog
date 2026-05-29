@@ -503,7 +503,7 @@ function getWatermarkSvg(category: string, title: string) {
                           <div class="post-card-content">
                             <div class="flex items-center gap-2 mb-2">
                               <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${cfg.bgClass}`}>
-                                {post.data.category}
+                                {cfg.icon} {sectionKey}
                               </span>
                               <p class="text-xs text-slate-400">
                                 {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
