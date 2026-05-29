@@ -8,9 +8,11 @@ export async function GET() {
   // 末尾スラッシュあり（実際のサーバー配信形式に合わせる）
   const staticPages = [
     '/',
-    '/profile/',
+    '/about/',
     '/contact/',
     '/privacy/',
+    '/disclaimer/',
+    '/for-beginners/',
     '/search/',
   ];
 
