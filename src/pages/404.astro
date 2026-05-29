@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="ページが見つかりません（404）"
+  description="お探しのページは見つかりませんでした。移動・削除された可能性があります。"
+  noindex={true}
+>
+  <div class="max-w-2xl mx-auto px-4 py-20 text-center">
+    <p class="text-8xl font-black text-slate-200 mb-4">404</p>
+    <h1 class="text-2xl font-bold text-slate-800 mb-4">ページが見つかりません</h1>
+    <p class="text-slate-500 mb-8 leading-relaxed">
+      お探しのページは移動・削除されたか、URLが間違っている可能性があります。<br>
+      記事は整理・再編成中のため、一部のURLは変更されています。
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="/"
+        class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+        🏠 トップページへ
+      </a>
+      <a href="/category/ai-dx/"
+        class="inline-block bg-slate-700 hover:bg-slate-600 text-white font-bold px-8 py-3 rounded-full transition-colors text-sm">
+        🤖 AI/DX記事一覧
+      </a>
+    </div>
+  </div>
+</BaseLayout>

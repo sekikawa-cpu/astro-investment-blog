@@ -2,7 +2,8 @@
 /blog/:slug  /blog/:slug/  301
 /contact     /contact/     301
 /privacy     /privacy/     301
-/profile     /profile/     301
+/profile     /about/  301
+/profile/    /about/  301
 /search      /search/      301
 /about       /about/       301
 
