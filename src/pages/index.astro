@@ -295,27 +295,16 @@ function getWatermarkSvg(category: string, title: string) {
         </form>
       </div>
 
-      <!-- カテゴリーツリー（3本柱） -->
+      <!-- カテゴリー（3本柱・フラット表示） -->
       {SECTION_KEYS.map(sectionKey => {
         const cfg = SECTION_CONFIG[sectionKey];
         const total = cfg.categories.reduce((s, c) => s + (categoryCount[c] || 0), 0);
         return (
-          <>
-            <a href={`/category/${cfg.slug}/`}
-              class={`flex items-center justify-between px-5 py-2.5 bg-slate-50 font-bold text-sm ${cfg.textClass}`}>
-              <span>{cfg.icon} {sectionKey}</span>
-              {total > 0 && <span class="cat-badge">{total}</span>}
-            </a>
-            <div class="ml-5 border-l-2 border-slate-200">
-              {cfg.categories.filter(cat => (categoryCount[cat] || 0) > 0).map(cat => (
-                <a href={SUBCATEGORY_URLS[cat] || `/category/${cfg.slug}/`}
-                  class="flex items-center justify-between pl-3 pr-5 py-2 border-b border-slate-50 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600">
-                  <span>{cat}</span>
-                  <span class="cat-badge">{categoryCount[cat]}</span>
-                </a>
-              ))}
-            </div>
-          </>
+          <a href={`/category/${cfg.slug}/`}
+            class={`flex items-center justify-between px-5 py-3 border-b border-slate-100 font-semibold text-sm ${cfg.textClass} hover:bg-slate-50`}>
+            <span>{cfg.icon} {sectionKey}</span>
+            {total > 0 && <span class="cat-badge">{total}</span>}
+          </a>
         );
       })}
 
