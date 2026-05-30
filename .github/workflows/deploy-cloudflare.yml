@@ -58,6 +58,7 @@ jobs:
 
       - name: Install Wrangler
         run: npm install -g wrangler
+        continue-on-error: true
 
       - name: Deploy to Cloudflare Pages
         env:
