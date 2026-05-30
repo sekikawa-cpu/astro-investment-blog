@@ -245,7 +245,7 @@ const breadcrumbData = {
           )}
         </header>
 
-        {category === '生きづらさと回復' ? (
+        {category === '生きづらさと回復' && (
           <div class="content-warning mx-6 md:mx-12 mt-6">
             <div class="content-warning-header">
               <span>📢</span>
@@ -253,15 +253,7 @@ const breadcrumbData = {
             </div>
             <p class="content-warning-body">※本記事には家庭内の困難な経験に関する記述が含まれます。回復プロセスを共有する目的で執筆しています。</p>
           </div>
-        ) : pillar === '投資' ? (
-          <div class="article-disclaimer article-disclaimer--invest article-disclaimer--top mx-6 md:mx-12 mt-6">
-            <div class="article-disclaimer__header">
-              <span>⚠️</span>
-              <strong>投資に関する重要な免責事項</strong>
-            </div>
-            <p>本記事は情報提供・教育目的です。<strong>特定銘柄の購入・売却を推奨するものではありません。</strong>投資にはリスクが伴い、元本を割り込む可能性があります。投資判断は必ずご自身の責任で行ってください。</p>
-          </div>
-        ) : null}
+        )}
 
         {heroImage && (
           <div class="w-full">
@@ -321,25 +313,6 @@ const breadcrumbData = {
           </div>
         )}
 
-        {pillar === '投資' && (
-          <div class="article-disclaimer article-disclaimer--invest px-6 md:px-12 pb-6">
-            <div class="article-disclaimer__header">
-              <span>⚠️</span>
-              <strong>投資に関する免責事項</strong>
-            </div>
-            <p>本記事は筆者個人の投資記録であり、特定銘柄の売買を推奨するものではありません。掲載情報は執筆時点のものであり、最新情報は各自でご確認ください。投資判断はご自身の責任で行ってください。</p>
-          </div>
-        )}
-
-        {pillar === '心理学' && (
-          <div class="article-disclaimer article-disclaimer--health px-6 md:px-12 pb-6">
-            <div class="article-disclaimer__header">
-              <span>🩺</span>
-              <strong>医療・専門家への相談について</strong>
-            </div>
-            <p>本記事は筆者個人の学習記録および体験をもとにした情報提供を目的としています。医療行為や治療の代替となるものではありません。心理的な課題や体調不良については、医師・臨床心理士・カウンセラーなど専門家へのご相談をお勧めします。</p>
-          </div>
-        )}
 
         <div class="px-6 md:px-12 pb-10 pt-6 border-t border-slate-100 text-center">
           <a id="article-back-btn" href="/search"
