@@ -169,7 +169,7 @@ const posts = allPosts
             <div class="p-5">
               <div class="flex items-center gap-2 mb-2">
                 <span class={`text-xs font-bold px-2 py-0.5 rounded-full ${pillarInfo.badgeClass}`}>
-                  {post.data.category}
+                  {pillarInfo.icon} {pillarInfo.label}
                 </span>
                 <span class="text-xs text-slate-400">
                   {new Date(post.data.pubDate).toLocaleDateString('ja-JP')}
