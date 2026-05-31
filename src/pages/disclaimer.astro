@@ -19,13 +19,35 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </p>
 
       <!-- 一般的免責 -->
-      <section class="disclaimer-card disclaimer-card--gray mb-10">
+      <section class="disclaimer-card disclaimer-card--gray mb-6">
         <h2 class="disclaimer-title">📝 情報の正確性について</h2>
         <ul class="disclaimer-list">
           <li>掲載情報は公開時点での内容であり、最新情報とは異なる場合があります。</li>
           <li>情報の正確性・完全性を保証するものではありません。</li>
           <li>当サイトの情報を利用したことによる損害について、運営者は責任を負いかねます。</li>
           <li>リンク先の外部サイトについて、運営者は責任を負いかねます。</li>
+        </ul>
+      </section>
+
+      <!-- 個人体験・見解 -->
+      <section class="disclaimer-card disclaimer-card--blue mb-6">
+        <h2 class="disclaimer-title">🙋 個人体験・個人見解について</h2>
+        <ul class="disclaimer-list">
+          <li>当サイトの記事は、運営者（会社員・AI/DX推進部 副部長）の個人的な体験・学習記録・意見に基づくものです。</li>
+          <li>記事内で紹介するツール・サービス・学習方法・資格取得の成果は、筆者個人の体験に基づくものであり、同様の結果・効果を保証するものではありません。</li>
+          <li>AI・DX・資格・業務改善に関する記事は、筆者の体験時点の情報をもとにしており、ツールの仕様変更・試験内容の改定により内容が異なる場合があります。最新情報は各公式サイトでご確認ください。</li>
+          <li>記事内の意見・評価はすべて運営者個人の見解であり、所属組織の公式見解ではありません。</li>
+        </ul>
+      </section>
+
+      <!-- 広告・外部リンク -->
+      <section class="disclaimer-card disclaimer-card--yellow mb-10">
+        <h2 class="disclaimer-title">🔗 広告・外部リンクについて</h2>
+        <ul class="disclaimer-list">
+          <li>当サイトでは、第三者配信事業者（Google AdSenseなど）による広告の掲載を行う場合があります。広告配信事業者はユーザーの過去のアクセス情報に基づいて広告を配信することがあります。詳細は各事業者のプライバシーポリシーをご確認ください。</li>
+          <li>当サイトに掲載している外部リンクは、情報提供を目的としたものです。リンク先のサイトの内容・運営について、当サイトは一切の責任を負いません。</li>
+          <li>外部リンク先で提供されるサービス・商品に関するトラブルについて、当サイトは責任を負いかねます。</li>
+          <li>当サイトの記事に含まれるリンクの一部はアフィリエイトリンクである場合があります。その場合、購入者の方の負担は一切増えません。</li>
         </ul>
       </section>
 
@@ -52,6 +74,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .disclaimer-card--gray {
     background: #f8fafc;
     border-color: #e2e8f0;
+  }
+  .disclaimer-card--blue {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+  .disclaimer-card--yellow {
+    background: #fefce8;
+    border-color: #fde68a;
   }
   .disclaimer-title {
     font-size: 1rem;
