@@ -446,15 +446,24 @@ function getWatermarkSvg(category: string, title: string) {
             if (!post) return null;
             return (
               <a href={`/blog/${slug}/`}
-                class="flex flex-col gap-1.5 px-5 py-4 hover:bg-slate-50 transition-colors group">
-                <span class={`text-xs font-bold px-2 py-0.5 rounded-full self-start ${badge}`}>
-                  {icon} {pillar}
-                </span>
-                <p class={`text-sm font-bold text-slate-900 group-hover:${color} transition-colors leading-snug line-clamp-2`}>
-                  {post.data.title}
-                </p>
-                <p class="text-xs text-slate-500 line-clamp-2">{post.data.description}</p>
-                <span class={`text-xs font-semibold ${color} mt-auto`}>記事を読む →</span>
+                class="flex flex-col hover:bg-slate-50 transition-colors group overflow-hidden">
+                {post.data.heroImage ? (
+                  <img src={post.data.heroImage} alt={post.data.title} class="w-full h-36 object-cover" />
+                ) : (
+                  <div class="w-full h-36 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                    <span class="text-3xl">{icon}</span>
+                  </div>
+                )}
+                <div class="flex flex-col gap-1.5 px-5 py-4 flex-1">
+                  <span class={`text-xs font-bold px-2 py-0.5 rounded-full self-start ${badge}`}>
+                    {icon} {pillar}
+                  </span>
+                  <p class={`text-sm font-bold text-slate-900 group-hover:${color} transition-colors leading-snug line-clamp-2`}>
+                    {post.data.title}
+                  </p>
+                  <p class="text-xs text-slate-500 line-clamp-2">{post.data.description}</p>
+                  <span class={`text-xs font-semibold ${color} mt-auto`}>記事を読む →</span>
+                </div>
               </a>
             );
           })}
