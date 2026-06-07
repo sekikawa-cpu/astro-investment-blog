@@ -428,18 +428,18 @@ function getWatermarkSvg(category: string, title: string) {
               badge: 'bg-purple-100 text-purple-700',
             },
             {
-              slug: 'chatgpt-teams-gyomu-jissen',
-              pillar: 'AI/DX・生成AI活用',
-              icon: '🤖',
-              color: 'text-purple-600',
-              badge: 'bg-purple-100 text-purple-700',
-            },
-            {
               slug: 'naze-shikaku-tori-tsuzukeru',
               pillar: '資格・学習記録',
               icon: '📖',
               color: 'text-amber-600',
               badge: 'bg-amber-100 text-amber-700',
+            },
+            {
+              slug: 'tensyoku-nensyu-agaru-soshiki-bunka',
+              pillar: '仕事術・キャリア形成',
+              icon: '💼',
+              color: 'text-blue-600',
+              badge: 'bg-blue-100 text-blue-700',
             },
           ].map(({ slug, pillar, icon, color, badge }) => {
             const post = posts.find(p => p.slug === slug);
