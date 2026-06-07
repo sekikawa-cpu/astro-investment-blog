@@ -18,17 +18,20 @@ const { title, pubDate, description, tags = [], author, category, pillar, noinde
 
 // パンくず用：article の category → 新カテゴリ表示名・URL・絵文字
 const BREADCRUMB_MAP: Record<string, { label: string; emoji: string; href: string }> = {
-  'AIツール':     { label: 'AI/DX・生成AI活用', emoji: '🤖', href: '/category/ai-dx/' },
-  'AI最新情報':   { label: 'AI/DX・生成AI活用', emoji: '🤖', href: '/category/ai-dx/' },
-  '資格・学習':   { label: '資格・学習記録',     emoji: '📖', href: '/category/shikaku/' },
-  'DX・業務改善': { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
-  '書籍レビュー': { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
+  'AIツール':          { label: 'AI/DX・生成AI活用',   emoji: '🤖', href: '/category/ai-dx/' },
+  'AI最新情報':        { label: 'AI/DX・生成AI活用',   emoji: '🤖', href: '/category/ai-dx/' },
+  '資格・学習':        { label: '資格・学習記録',       emoji: '📖', href: '/category/shikaku/' },
+  'DX・業務改善':      { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
+  '書籍レビュー':      { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
+  '仕事術・キャリア形成': { label: '仕事術・キャリア形成', emoji: '💼', href: '/category/shigoto/' },
 };
 const breadcrumbCat = category ? (BREADCRUMB_MAP[category] ?? null) : null;
 const pillarEmoji = pillar === '投資' ? '📊' : pillar === 'ビジネス・AI・DX' ? '🤖' : pillar === '心理学' ? '🧠' : '';
 
-const relatedPosts = allEntries
-  .filter(e => e.data.category === category && e.slug !== entry.slug && !e.data.draft)
+// 同カテゴリ優先、足りなければ同ピラーで補完（最大3件）
+const sameCat = allEntries.filter(e => e.data.category === category && e.slug !== entry.slug && !e.data.draft);
+const samePillar = allEntries.filter(e => e.data.pillar === pillar && e.data.category !== category && e.slug !== entry.slug && !e.data.draft);
+const relatedPosts = [...sameCat, ...samePillar]
   .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
   .slice(0, 3);
 
@@ -79,9 +82,10 @@ const CATEGORY_URLS: Record<string, string> = {
   // AI/DXカテゴリ → 新URL
   'AIツール':       '/category/ai-dx/',
   'AI最新情報':     '/category/ai-dx/',
-  'DX・業務改善':   '/category/shigoto/',
-  '資格・学習':     '/category/shikaku/',
-  '書籍レビュー':   '/category/shigoto/',
+  'DX・業務改善':      '/category/shigoto/',
+  '資格・学習':        '/category/shikaku/',
+  '書籍レビュー':      '/category/shigoto/',
+  '仕事術・キャリア形成': '/category/shigoto/',
   // 旧投資カテゴリ（トップへ）
   'キーワード解説': '/',
   '資産運用':       '/',
@@ -274,6 +278,19 @@ const breadcrumbData = {
             ))}
           </div>
         )}
+
+        <!-- 著者ウィジェット -->
+        <div class="px-6 md:px-12 py-8 border-t border-slate-100">
+          <div class="flex items-start gap-4 bg-slate-50 rounded-xl p-5 border border-slate-200">
+            <img src="/images/profile.png" alt="ただの会社員" class="w-14 h-14 rounded-full object-cover flex-shrink-0 border-2 border-slate-200" />
+            <div class="min-w-0">
+              <p class="font-bold text-slate-800 text-sm mb-0.5">ただの会社員</p>
+              <p class="text-xs text-blue-600 font-semibold mb-2">AI/DX推進部 副部長｜産業カウンセラー養成講座修了</p>
+              <p class="text-xs text-slate-600 leading-relaxed">地方在住の40代会社員。SE・PLを経てAI/DX推進に携わる副部長。情報処理安全確保支援士・ITIL4・AWS/Azure/GCP等30冠以上の資格を保有。転職で年収110万円アップの実体験をもとに、AI活用・資格学習・キャリア形成をリアルに発信しています。</p>
+              <a href="/about/" class="inline-block mt-2 text-xs text-blue-600 hover:text-blue-800 font-semibold transition-colors">プロフィール詳細 →</a>
+            </div>
+          </div>
+        </div>
 
         {relatedPosts.length > 0 && (
           <div class="px-6 md:px-12 py-8 border-t border-slate-100">
