@@ -49,6 +49,25 @@
 /blog/kohaito-etf-1489-tokuchou/ / 301
 /blog/nisa-tsumitate-index-vs-haito/ / 301
 
+# ── shogi-study.comへ移行した記事 → 301リダイレクト（with-slash のみ。no-slashは上のline 1が /blog/:slug/ へ転送） ──
+/blog/2026-05-17-heygen-jikoshokai/ https://shogi-study.com/blog/2026-05-17-heygen-jikoshokai/ 301
+/blog/ai-dx-learning-roadmap/ https://shogi-study.com/blog/ai-dx-learning-roadmap/ 301
+/blog/ai-hallucination-checklist/ https://shogi-study.com/blog/ai-hallucination-checklist/ 301
+/blog/book-review-business-process-dx-guide/ https://shogi-study.com/blog/book-review-business-process-dx-guide/ 301
+/blog/chatgpt-teams-gyomu-jissen/ https://shogi-study.com/blog/chatgpt-teams-gyomu-jissen/ 301
+/blog/claude-code-dx-case-study-1/ https://shogi-study.com/blog/claude-code-dx-case-study-1/ 301
+/blog/claude-team-shakai-setsumeikai/ https://shogi-study.com/blog/claude-team-shakai-setsumeikai/ 301
+/blog/claude-vs-chatgpt-gyomu-hikaku/ https://shogi-study.com/blog/claude-vs-chatgpt-gyomu-hikaku/ 301
+/blog/dx-suishin-kaisha-naichousei/ https://shogi-study.com/blog/dx-suishin-kaisha-naichousei/ 301
+/blog/g-kentei-2026-3-kekka/ https://shogi-study.com/blog/g-kentei-2026-3-kekka/ 301
+/blog/g-kentei-2026-jukken-report/ https://shogi-study.com/blog/g-kentei-2026-jukken-report/ 301
+/blog/gemini-lyria3-pro-music-creation/ https://shogi-study.com/blog/gemini-lyria3-pro-music-creation/ 301
+/blog/hallucination-ai-lesson/ https://shogi-study.com/blog/hallucination-ai-lesson/ 301
+/blog/naze-shikaku-tori-tsuzukeru/ https://shogi-study.com/blog/naze-shikaku-tori-tsuzukeru/ 301
+/blog/sc-joho-anzen-shien-shi-benkyoho/ https://shogi-study.com/blog/sc-joho-anzen-shien-shi-benkyoho/ 301
+/blog/tensyoku-nensyu-110man-soshiki-bunka/ https://shogi-study.com/blog/tensyoku-nensyu-110man-soshiki-bunka/ 301
+/blog/tensyoku-nensyu-agaru-soshiki-bunka/ https://shogi-study.com/blog/tensyoku-nensyu-agaru-soshiki-bunka/ 301
+
 # ── 削除済み記事 → 301リダイレクト（soft 404対策） ────────────────────
 # 日付ベース記事（with-slash のみ。no-slashは上のline 1が /blog/:slug/ へ転送）
 /blog/2026-04-24/ / 301

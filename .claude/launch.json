@@ -6,6 +6,12 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["node_modules/astro/astro.js", "dev", "--port", "4321"],
       "port": 4321
+    },
+    {
+      "name": "shogi-study-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "C:\\Apps\\shogi-study.com", "--", "--port", "4322"],
+      "port": 4322
     }
   ]
 }
