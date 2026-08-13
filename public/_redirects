@@ -1,3 +1,6 @@
+# 旧サイトのトップページ → 移行先サイトへ
+/ https://shogi-study.com/ 301
+
 # Cloudflare Pages: 末尾スラッシュなしURLを正規URLへ301リダイレクト
 # ※ /blog/:slug が全ブログURLのno-slash版をwith-slash版へ転送するため
 #    blog soft-404ルールはwith-slash版のみで足りる（no-slash版は不要＝デッドコード）
